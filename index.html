@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ff66ccff - Personal Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f5f7fa;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --border-color: #e1e5eb;
+            --github-color: #333333;
+            --github-hover: #444444;
+        }
+
+        .dark-mode {
+            --primary-color: #3498db;
+            --secondary-color: #f8f9fa;
+            --background-color: #1a1a1a;
+            --card-background: #2d2d2d;
+            --text-color: #f8f9fa;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --border-color: #404040;
+            --github-color: #f8f9fa;
+            --github-hover: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .profile-card {
+            background-color: var(--card-background);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            border: 4px solid var(--background-color);
+            box-shadow: 0 5px 15px var(--shadow-color);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: none;
+        }
+
+        .avatar-icon {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .bio {
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: var(--background-color);
+            border-radius: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--card-background);
+            border: 2px solid var(--border-color);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            z-index: 1000;
+        }
+
+        .theme-toggle i {
+            font-size: 20px;
+            color: var(--secondary-color);
+        }
+
+        .github-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--github-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .github-link:hover {
+            transform: translateY(-3px);
+            background-color: var(--github-hover);
+        }
+
+        .github-link i {
+            transition: transform 0.3s ease;
+        }
+
+        .github-link:hover i {
+            transform: scale(1.2);
+        }
+
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: var(--card-background);
+            border: 2px solid var(--border-color);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            z-index: 1000;
+            font-weight: bold;
+        }
+
+        .debug-info {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 2000;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .profile-card {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .bio {
+                font-size: 1rem;
+                padding: 15px;
+            }
+
+            .avatar {
+                width: 120px;
+                height: 120px;
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-card {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .theme-toggle,
+            .github-link,
+            .language-toggle {
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-card {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="profile-card">
+            <div class="avatar pulse" id="avatarContainer">
+                <div class="avatar-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <img id="avatarImage" src="" alt="Profile Picture">
+            </div>
+            <h1 id="name">ff66ccff</h1>
+            <div class="subtitle" id="studentInfo">四川大学25级计算机学生</div>
+
+            <div class="bio" id="bioText">
+                <p>热爱编程，中文VOCALOID和科幻小说</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <div class="language-toggle" id="languageToggle">
+        <span>中</span>
+    </div>
+
+    <a href="https://github.com/ff66ccff/" target="_blank" class="github-link">
+        <i class="fab fa-github"></i>
+    </a>
+
+    <div class="debug-info" id="debugInfo"></div>
+
+    <script>
+        // i18n 多语言支持
+        const translations = {
+            zh: {
+                name: "ff66ccff",
+                studentInfo: "四川大学25级计算机学生",
+                bioText: "热爱编程，中文VOCALOID和科幻小说",
+                languageToggle: "中",
+                themeToggleTitle: "切换日夜模式",
+                avatarDebug: "头像调试: ",
+                avatarStatus: "头像加载状态: ",
+                loading: "加载中...",
+                success: "成功 ✅",
+                failed: "失败 ❌",
+                fileNotFound: "文件未找到",
+                checkPath: "请检查路径和文件名"
+            },
+            en: {
+                name: "ff66ccff",
+                studentInfo: "Computer Science Student, Class of 2025, Sichuan University",
+                bioText: "Passionate about programming, Chinese VOCALOID and science fiction novels",
+                languageToggle: "EN",
+                themeToggleTitle: "Toggle day/night mode",
+                avatarDebug: "Avatar Debug: ",
+                avatarStatus: "Avatar Status: ",
+                loading: "Loading...",
+                success: "Success ✅",
+                failed: "Failed ❌",
+                fileNotFound: "File not found",
+                checkPath: "Please check path and filename"
+            }
+        };
+
+        // 检测浏览器语言
+        function getBrowserLanguage() {
+            const lang = navigator.language || navigator.userLanguage;
+            return lang.startsWith('zh') ? 'zh' : 'en';
+        }
+
+        // 设置语言
+        function setLanguage(lang) {
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
+
+            document.getElementById('name').textContent = translations[lang].name;
+            document.getElementById('studentInfo').textContent = translations[lang].studentInfo;
+            document.getElementById('bioText').innerHTML = `<p>${translations[lang].bioText}</p>`;
+            document.getElementById('languageToggle').querySelector('span').textContent = translations[lang].languageToggle;
+            document.getElementById('themeToggle').title = translations[lang].themeToggleTitle;
+
+            localStorage.setItem('language', lang);
+        }
+
+        // 初始化语言
+        const savedLanguage = localStorage.getItem('language');
+        const browserLanguage = getBrowserLanguage();
+        const initialLanguage = savedLanguage || browserLanguage;
+        setLanguage(initialLanguage);
+
+        // 语言切换
+        document.getElementById('languageToggle').addEventListener('click', () => {
+            const currentLang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+            const newLang = currentLang === 'zh' ? 'en' : 'zh';
+            setLanguage(newLang);
+        });
+
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+
+        // 检查本地存储中的主题设置
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+
+        // 切换主题
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // 返回顶部功能
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 100) {
+                themeToggle.style.transform = 'scale(1.1)';
+            } else {
+                themeToggle.style.transform = 'scale(1)';
+            }
+        });
+
+        // 改进的头像加载函数
+        async function loadAvatar() {
+            const avatarImage = document.getElementById('avatarImage');
+            const avatarContainer = document.getElementById('avatarContainer');
+            const avatarIcon = avatarContainer.querySelector('.avatar-icon');
+            const debugInfo = document.getElementById('debugInfo');
+            const currentLang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+            const t = translations[currentLang];
+
+            // 显示调试信息
+            debugInfo.style.display = 'block';
+            debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.loading}<br>尝试路径: avatar.jpg`;
+
+            try {
+                // 尝试多个可能的路径
+                const possiblePaths = [
+                    'avatar.jpg',
+                    'Avatar.jpg',
+                    'avatar.png',
+                    'Avatar.png',
+                    'avatar.jpeg',
+                    'Avatar.jpeg'
+                ];
+
+                let success = false;
+                let workingPath = '';
+
+                for (const path of possiblePaths) {
+                    debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.loading}<br>尝试路径: ${path}`;
+
+                    if (await checkImageExists(path)) {
+                        avatarImage.src = path;
+                        avatarImage.style.display = 'block';
+                        workingPath = path;
+                        success = true;
+                        break;
+                    }
+                }
+
+                if (success) {
+                    avatarImage.onload = function () {
+                        avatarIcon.style.display = 'none';
+                        debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.success}<br>使用路径: ${workingPath}<br>尺寸: ${this.width}x${this.height}px`;
+                        setTimeout(() => {
+                            debugInfo.style.display = 'none';
+                        }, 3000);
+                    };
+
+                    avatarImage.onerror = function () {
+                        fallbackToDefaultIcon();
+                        debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.failed}<br>路径: ${workingPath} 存在但加载失败`;
+                    };
+                } else {
+                    fallbackToDefaultIcon();
+                    debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.failed}<br>${t.fileNotFound}<br>${t.checkPath}: ${possiblePaths.join(', ')}`;
+                }
+
+            } catch (error) {
+                fallbackToDefaultIcon();
+                debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.failed}<br>错误: ${error.message}`;
+            }
+        }
+
+        // 检查图片是否存在
+        function checkImageExists(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = url + '?t=' + new Date().getTime(); // 防止缓存
+            });
+        }
+
+        // 回退到默认图标
+        function fallbackToDefaultIcon() {
+            const avatarImage = document.getElementById('avatarImage');
+            const avatarIcon = document.getElementById('avatarContainer').querySelector('.avatar-icon');
+
+            avatarImage.style.display = 'none';
+            avatarIcon.style.display = 'flex';
+        }
+
+        // 手动触发头像加载（点击头像区域）
+        document.getElementById('avatarContainer').addEventListener('click', () => {
+            const currentLang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+            const t = translations[currentLang];
+
+            if (confirm(t.avatarDebug + "重新加载头像？")) {
+                document.getElementById('debugInfo').style.display = 'block';
+                loadAvatar();
+            }
+        });
+
+        // 页面加载完成后加载头像
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAvatar();
+
+            // 添加键盘快捷键：按A键重新加载头像
+            document.addEventListener('keydown', (e) => {
+                if (e.key.toLowerCase() === 'a' && e.ctrlKey) {
+                    e.preventDefault();
+                    document.getElementById('debugInfo').style.display = 'block';
+                    loadAvatar();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
