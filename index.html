@@ -4,102 +4,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ff66ccff - Personal Portfolio</title>
+    <title>ff66ccff - Personal Blog</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --background-color: #f5f7fa;
-            --card-background: #ffffff;
-            --text-color: #333333;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --border-color: #e1e5eb;
-            --github-color: #333333;
-            --github-hover: #444444;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-blue: #4facfe;
+            --accent-pink: #f093fb;
+            --accent-cyan: #00d4ff;
+
+            --bg-glow-inner: rgba(118, 75, 162, 0.22);
+            --bg-glow-outer: rgba(102, 126, 234, 0.18);
+
+            /* 主题色 - 编程代码风格 */
+            --code-color: #2ecc71;
+            --vocaloid-color: #39c5bb;
+            --scifi-color: #9b59b6;
+
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #546e7a;
+            --text-muted: #78909c;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
         }
 
-        .dark-mode {
-            --primary-color: #3498db;
-            --secondary-color: #f8f9fa;
-            --background-color: #1a1a1a;
-            --card-background: #2d2d2d;
-            --text-color: #f8f9fa;
-            --shadow-color: rgba(0, 0, 0, 0.3);
-            --border-color: #404040;
-            --github-color: #f8f9fa;
-            --github-hover: #ffffff;
+        [data-theme="dark"] {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #1c2128;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --border-color: rgba(255, 255, 255, 0.12);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+            --bg-glow-inner: rgba(118, 75, 162, 0.32);
+            --bg-glow-outer: rgba(79, 172, 254, 0.22);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            font-family: 'Poppins', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
             position: relative;
+            z-index: 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(320px circle at var(--bg-pointer-x, -200px) var(--bg-pointer-y, -200px),
+                    var(--bg-glow-inner),
+                    transparent 70%),
+                radial-gradient(500px circle at var(--bg-pointer-x, -200px) var(--bg-pointer-y, -200px),
+                    var(--bg-glow-outer),
+                    transparent 75%);
+            opacity: var(--bg-pointer-opacity, 0);
+            transition: opacity 0.25s ease;
+            z-index: 0;
         }
 
         .container {
             width: 100%;
-            max-width: 800px;
-            padding: 20px;
-        }
-
-        .profile-card {
-            background-color: var(--card-background);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px var(--shadow-color);
-            padding: 40px;
-            text-align: center;
+            max-width: 1000px;
             position: relative;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
+            z-index: 1;
         }
 
-        .profile-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        /* 主卡片 */
+        .profile-card {
+            background: linear-gradient(160deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.06)), var(--bg-card);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            padding: 50px;
+            position: relative;
+            border: 1px solid var(--border-color);
+            transition: box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        [data-theme="dark"] .profile-card {
+            background: linear-gradient(160deg, rgba(102, 126, 234, 0.22), rgba(118, 75, 162, 0.14)), var(--bg-card);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* 头像区域 */
+        .avatar-wrapper {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0;
         }
 
         .avatar {
-            width: 150px;
-            height: 150px;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            margin: 0 auto 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 48px;
-            font-weight: bold;
-            border: 4px solid var(--background-color);
-            box-shadow: 0 5px 15px var(--shadow-color);
+            font-size: 50px;
+            box-shadow: var(--shadow-md);
             overflow: hidden;
             position: relative;
+            border: 4px solid var(--bg-card);
+            transition: transform 0.3s ease;
+        }
+
+        .avatar:hover {
+            transform: scale(1.03);
         }
 
         .avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
             display: none;
         }
 
@@ -107,269 +160,416 @@
             position: absolute;
             width: 100%;
             height: 100%;
+            top: 0;
+            left: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1;
         }
 
-        h1 {
+        /* 标题和文字 */
+        .name {
             font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--secondary-color);
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .subtitle {
-            font-size: 1.2rem;
-            color: var(--secondary-color);
-            margin-bottom: 25px;
-            opacity: 0.9;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        .bio {
-            line-height: 1.8;
-            font-size: 1.1rem;
-            margin: 25px 0;
-            padding: 20px;
-            background-color: var(--background-color);
-            border-radius: 15px;
-            border-left: 4px solid var(--primary-color);
+        .intro-section {
+            width: 100%;
+            background: linear-gradient(150deg, rgba(102, 126, 234, 0.18), rgba(118, 75, 162, 0.08));
+            border: 1px solid rgba(102, 126, 234, 0.22);
+            border-radius: 18px;
+            padding: 40px 30px 35px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .intro-section .subtitle {
+            margin: 0;
+        }
+
+        [data-theme="dark"] .intro-section {
+            background: linear-gradient(150deg, rgba(102, 126, 234, 0.28), rgba(118, 75, 162, 0.16));
+            border-color: rgba(118, 75, 162, 0.38);
+        }
+
+        .hover-surface {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hover-surface::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(220px circle at var(--pointer-x, -100px) var(--pointer-y, -100px),
+                    rgba(255, 255, 255, 0.35),
+                    transparent 70%);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+            border-radius: inherit;
+            mix-blend-mode: screen;
+        }
+
+        [data-theme="dark"] .hover-surface::after {
+            background: radial-gradient(220px circle at var(--pointer-x, -100px) var(--pointer-y, -100px),
+                    rgba(255, 255, 255, 0.16),
+                    transparent 70%);
+        }
+
+        .hover-surface:hover::after {
+            opacity: 1;
+        }
+
+        /* 兴趣卡片区域 */
+        .interests-section {
+            margin: 0;
+            width: 100%;
+            text-align: left;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .interest-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .interest-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: currentColor;
+        }
+
+        [data-theme="dark"] .interest-card {
+            background: var(--bg-card);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .interest-card.coding {
+            color: var(--code-color);
+        }
+
+        .interest-card.vocaloid {
+            color: var(--vocaloid-color);
+        }
+
+        .interest-card.scifi {
+            color: var(--scifi-color);
+        }
+
+        .interest-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .interest-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .interest-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* GitHub按钮 */
+        .github-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #ffffff;
+            padding: 14px 30px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 0;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .github-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .github-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 控制按钮 */
+        .control-btn {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn i {
+            font-size: 20px;
+            color: var(--text-primary);
         }
 
         .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: var(--card-background);
-            border: 2px solid var(--border-color);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px var(--shadow-color);
-            z-index: 1000;
-        }
-
-        .theme-toggle i {
-            font-size: 20px;
-            color: var(--secondary-color);
-        }
-
-        .github-link {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--github-color);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
-
-        .github-link:hover {
-            transform: translateY(-3px);
-            background-color: var(--github-hover);
-        }
-
-        .github-link i {
-            transition: transform 0.3s ease;
-        }
-
-        .github-link:hover i {
-            transform: scale(1.2);
+            top: 25px;
+            right: 25px;
         }
 
         .language-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background-color: var(--card-background);
-            border: 2px solid var(--border-color);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px var(--shadow-color);
-            z-index: 1000;
-            font-weight: bold;
+            top: 25px;
+            left: 25px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
-        .debug-info {
-            position: fixed;
-            bottom: 80px;
-            left: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            z-index: 2000;
-            display: none;
-        }
-
+        /* 响应式设计 */
         @media (max-width: 768px) {
             .profile-card {
-                padding: 30px 20px;
+                padding: 40px 30px;
+                gap: 24px;
             }
 
-            h1 {
+            .intro-section {
+                padding: 32px 24px 28px;
+            }
+
+            .interests-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .interest-card {
+                padding: 20px;
+            }
+
+            .avatar-wrapper {
+                width: 130px;
+                height: 130px;
+            }
+
+            .name {
                 font-size: 2rem;
             }
 
-            .bio {
-                font-size: 1rem;
-                padding: 15px;
+            .control-btn {
+                width: 46px;
+                height: 46px;
             }
 
-            .avatar {
-                width: 120px;
-                height: 120px;
-                font-size: 36px;
+            .theme-toggle,
+            .language-toggle {
+                top: 20px;
+            }
+
+            .theme-toggle {
+                right: 20px;
+            }
+
+            .language-toggle {
+                left: 20px;
             }
         }
 
         @media (max-width: 480px) {
-            .profile-card {
-                padding: 25px 15px;
+            body {
+                padding: 15px;
             }
 
-            h1 {
+            .profile-card {
+                padding: 30px 20px;
+                gap: 20px;
+            }
+
+            .intro-section {
+                padding: 28px 18px 24px;
+            }
+
+            .avatar-wrapper {
+                width: 110px;
+                height: 110px;
+            }
+
+            .avatar {
+                font-size: 40px;
+            }
+
+            .name {
                 font-size: 1.8rem;
             }
 
             .subtitle {
-                font-size: 1rem;
+                font-size: 0.9rem;
             }
 
-            .theme-toggle,
-            .github-link,
-            .language-toggle {
-                width: 45px;
-                height: 45px;
-            }
-        }
-
-        /* 动画效果 */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+            .interest-icon {
+                font-size: 30px;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .profile-card {
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
+            .interest-title {
+                font-size: 0.95rem;
             }
 
-            70% {
-                box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+            .github-btn {
+                padding: 12px 24px;
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 
 <body>
+    <!-- 主容器 -->
     <div class="container">
         <div class="profile-card">
-            <div class="avatar pulse" id="avatarContainer">
-                <div class="avatar-icon">
-                    <i class="fas fa-user"></i>
+            <div class="intro-section hover-surface">
+                <div class="avatar-wrapper">
+                    <div class="avatar" id="avatarContainer">
+                        <div class="avatar-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <img id="avatarImage" src="avatar.jpg" alt="Profile Picture">
+                    </div>
                 </div>
-                <img id="avatarImage" src="" alt="Profile Picture">
+                <h1 class="name" id="name">ff66ccff</h1>
+                <div class="subtitle" id="subtitle">四川大学 25级计算机学生</div>
             </div>
-            <h1 id="name">ff66ccff</h1>
-            <div class="subtitle" id="studentInfo">四川大学25级计算机学生</div>
 
-            <div class="bio" id="bioText">
-                <p>热爱编程，中文VOCALOID和科幻小说</p>
+            <div class="interests-section">
+                <div class="section-title" id="interestsTitle">我的兴趣</div>
+                <div class="interests-grid">
+                    <div class="interest-card coding hover-surface">
+                        <div class="interest-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="interest-title" id="codingTitle">编程</div>
+                        <div class="interest-subtitle" id="codingSubtitle">Programming</div>
+                    </div>
+                    <div class="interest-card vocaloid hover-surface">
+                        <div class="interest-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <div class="interest-title" id="vocaloidTitle">中文 VOCALOID</div>
+                        <div class="interest-subtitle" id="vocaloidSubtitle">Chinese Vocaloid</div>
+                    </div>
+                    <div class="interest-card scifi hover-surface">
+                        <div class="interest-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="interest-title" id="scifiTitle">科幻小说</div>
+                        <div class="interest-subtitle" id="scifiSubtitle">Sci-Fi Novels</div>
+                    </div>
+                </div>
             </div>
+
+            <a href="https://github.com/ff66ccff" target="_blank" class="github-btn hover-surface">
+                <i class="fab fa-github"></i>
+                <span id="viewProfile">查看我的 GitHub</span>
+            </a>
         </div>
     </div>
 
-    <div class="theme-toggle" id="themeToggle">
+    <!-- 主题切换按钮 -->
+    <div class="control-btn theme-toggle hover-surface" id="themeToggle" title="切换主题">
         <i class="fas fa-moon"></i>
     </div>
 
-    <div class="language-toggle" id="languageToggle">
+    <!-- 语言切换按钮 -->
+    <div class="control-btn language-toggle hover-surface" id="languageToggle" title="切换语言">
         <span>中</span>
     </div>
 
-    <a href="https://github.com/ff66ccff/" target="_blank" class="github-link">
-        <i class="fab fa-github"></i>
-    </a>
-
-    <div class="debug-info" id="debugInfo"></div>
-
     <script>
-        // i18n 多语言支持
-        const translations = {
+        // 多语言配置
+        const i18n = {
             zh: {
                 name: "ff66ccff",
-                studentInfo: "四川大学25级计算机学生",
-                bioText: "热爱编程，中文VOCALOID和科幻小说",
-                languageToggle: "中",
-                themeToggleTitle: "切换日夜模式",
-                avatarDebug: "头像调试: ",
-                avatarStatus: "头像加载状态: ",
-                loading: "加载中...",
-                success: "成功 ✅",
-                failed: "失败 ❌",
-                fileNotFound: "文件未找到",
-                checkPath: "请检查路径和文件名"
+                subtitle: "四川大学 25级计算机学生",
+                viewProfile: "查看我的 GitHub",
+                interestsTitle: "我的兴趣",
+                codingTitle: "编程",
+                codingSubtitle: "Programming",
+                vocaloidTitle: "中文 VOCALOID",
+                vocaloidSubtitle: "Chinese Vocaloid",
+                scifiTitle: "科幻小说",
+                scifiSubtitle: "Sci-Fi Novels",
+                langToggle: "中",
+                themeTitle: "切换主题",
+                langTitle: "切换语言"
             },
             en: {
                 name: "ff66ccff",
-                studentInfo: "Computer Science Student, Class of 2025, Sichuan University",
-                bioText: "Passionate about programming, Chinese VOCALOID and science fiction novels",
-                languageToggle: "EN",
-                themeToggleTitle: "Toggle day/night mode",
-                avatarDebug: "Avatar Debug: ",
-                avatarStatus: "Avatar Status: ",
-                loading: "Loading...",
-                success: "Success ✅",
-                failed: "Failed ❌",
-                fileNotFound: "File not found",
-                checkPath: "Please check path and filename"
+                subtitle: "Computer Science Student, Class of 2025, Sichuan University",
+                viewProfile: "View My GitHub",
+                interestsTitle: "My Interests",
+                codingTitle: "Programming",
+                codingSubtitle: "Code & Dev",
+                vocaloidTitle: "Chinese VOCALOID",
+                vocaloidSubtitle: "Music & Voice Synth",
+                scifiTitle: "Sci-Fi Novels",
+                scifiSubtitle: "Science Fiction",
+                langToggle: "EN",
+                themeTitle: "Toggle Theme",
+                langTitle: "Switch Language"
             }
         };
 
-        // 检测浏览器语言
+        // 获取浏览器语言
         function getBrowserLanguage() {
             const lang = navigator.language || navigator.userLanguage;
             return lang.startsWith('zh') ? 'zh' : 'en';
@@ -377,171 +577,146 @@
 
         // 设置语言
         function setLanguage(lang) {
+            const t = i18n[lang];
             document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
-
-            document.getElementById('name').textContent = translations[lang].name;
-            document.getElementById('studentInfo').textContent = translations[lang].studentInfo;
-            document.getElementById('bioText').innerHTML = `<p>${translations[lang].bioText}</p>`;
-            document.getElementById('languageToggle').querySelector('span').textContent = translations[lang].languageToggle;
-            document.getElementById('themeToggle').title = translations[lang].themeToggleTitle;
-
+            document.getElementById('name').textContent = t.name;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('viewProfile').textContent = t.viewProfile;
+            document.getElementById('interestsTitle').textContent = t.interestsTitle;
+            document.getElementById('codingTitle').textContent = t.codingTitle;
+            document.getElementById('codingSubtitle').textContent = t.codingSubtitle;
+            document.getElementById('vocaloidTitle').textContent = t.vocaloidTitle;
+            document.getElementById('vocaloidSubtitle').textContent = t.vocaloidSubtitle;
+            document.getElementById('scifiTitle').textContent = t.scifiTitle;
+            document.getElementById('scifiSubtitle').textContent = t.scifiSubtitle;
+            document.getElementById('languageToggle').querySelector('span').textContent = t.langToggle;
+            document.getElementById('themeToggle').title = t.themeTitle;
+            document.getElementById('languageToggle').title = t.langTitle;
             localStorage.setItem('language', lang);
         }
 
         // 初始化语言
-        const savedLanguage = localStorage.getItem('language');
-        const browserLanguage = getBrowserLanguage();
-        const initialLanguage = savedLanguage || browserLanguage;
-        setLanguage(initialLanguage);
+        const savedLang = localStorage.getItem('language') || getBrowserLanguage();
+        setLanguage(savedLang);
 
         // 语言切换
         document.getElementById('languageToggle').addEventListener('click', () => {
-            const currentLang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+            const currentLang = localStorage.getItem('language') || 'zh';
             const newLang = currentLang === 'zh' ? 'en' : 'zh';
             setLanguage(newLang);
         });
 
-        // 主题切换功能
+        // 主题切换
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = themeToggle.querySelector('i');
+        const savedTheme = localStorage.getItem('theme');
 
-        // 检查本地存储中的主题设置
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
         }
 
-        // 切换主题
         themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
+            const currentTheme = document.documentElement.getAttribute('data-theme');
 
-            if (document.body.classList.contains('dark-mode')) {
-                themeIcon.classList.remove('fa-moon');
-                themeIcon.classList.add('fa-sun');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                themeIcon.classList.remove('fa-sun');
-                themeIcon.classList.add('fa-moon');
+            if (currentTheme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
                 localStorage.setItem('theme', 'light');
-            }
-        });
-
-        // 返回顶部功能
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 100) {
-                themeToggle.style.transform = 'scale(1.1)';
             } else {
-                themeToggle.style.transform = 'scale(1)';
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
             }
         });
 
-        // 改进的头像加载函数
-        async function loadAvatar() {
+        // 头像加载
+        function loadAvatar() {
             const avatarImage = document.getElementById('avatarImage');
-            const avatarContainer = document.getElementById('avatarContainer');
-            const avatarIcon = avatarContainer.querySelector('.avatar-icon');
-            const debugInfo = document.getElementById('debugInfo');
-            const currentLang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
-            const t = translations[currentLang];
+            const avatarIcon = document.querySelector('.avatar-icon');
 
-            // 显示调试信息
-            debugInfo.style.display = 'block';
-            debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.loading}<br>尝试路径: avatar.jpg`;
+            if (!avatarImage || !avatarIcon) {
+                return;
+            }
 
-            try {
-                // 尝试多个可能的路径
-                const possiblePaths = [
-                    'avatar.jpg',
-                    'Avatar.jpg',
-                    'avatar.png',
-                    'Avatar.png',
-                    'avatar.jpeg',
-                    'Avatar.jpeg'
-                ];
+            const showImage = () => {
+                avatarImage.style.display = 'block';
+                avatarIcon.style.display = 'none';
+            };
 
-                let success = false;
-                let workingPath = '';
+            const showFallback = () => {
+                avatarImage.style.display = 'none';
+                avatarIcon.style.display = 'flex';
+            };
 
-                for (const path of possiblePaths) {
-                    debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.loading}<br>尝试路径: ${path}`;
+            avatarImage.addEventListener('load', showImage);
+            avatarImage.addEventListener('error', showFallback);
 
-                    if (await checkImageExists(path)) {
-                        avatarImage.src = path;
-                        avatarImage.style.display = 'block';
-                        workingPath = path;
-                        success = true;
-                        break;
-                    }
-                }
-
-                if (success) {
-                    avatarImage.onload = function () {
-                        avatarIcon.style.display = 'none';
-                        debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.success}<br>使用路径: ${workingPath}<br>尺寸: ${this.width}x${this.height}px`;
-                        setTimeout(() => {
-                            debugInfo.style.display = 'none';
-                        }, 3000);
-                    };
-
-                    avatarImage.onerror = function () {
-                        fallbackToDefaultIcon();
-                        debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.failed}<br>路径: ${workingPath} 存在但加载失败`;
-                    };
+            if (avatarImage.complete) {
+                if (avatarImage.naturalWidth > 0) {
+                    showImage();
                 } else {
-                    fallbackToDefaultIcon();
-                    debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.failed}<br>${t.fileNotFound}<br>${t.checkPath}: ${possiblePaths.join(', ')}`;
+                    showFallback();
                 }
-
-            } catch (error) {
-                fallbackToDefaultIcon();
-                debugInfo.innerHTML = `<strong>${t.avatarDebug}</strong> ${t.avatarStatus}${t.failed}<br>错误: ${error.message}`;
+            } else {
+                showFallback();
             }
         }
 
-        // 检查图片是否存在
-        function checkImageExists(url) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(true);
-                img.onerror = () => resolve(false);
-                img.src = url + '?t=' + new Date().getTime(); // 防止缓存
+        // 启用指针高光效果
+        function initPointerHighlights() {
+            const surfaces = document.querySelectorAll('.hover-surface');
+            const body = document.body;
+
+            const updateBackgroundHighlight = (event) => {
+                const hoveringSurface = event.target.closest('.hover-surface');
+                if (hoveringSurface) {
+                    body.style.setProperty('--bg-pointer-opacity', '0');
+                    return;
+                }
+
+                body.style.setProperty('--bg-pointer-opacity', '1');
+                body.style.setProperty('--bg-pointer-x', `${event.clientX}px`);
+                body.style.setProperty('--bg-pointer-y', `${event.clientY}px`);
+            };
+
+            const hideBackgroundHighlight = () => {
+                body.style.setProperty('--bg-pointer-opacity', '0');
+            };
+
+            document.addEventListener('pointermove', updateBackgroundHighlight);
+            document.addEventListener('pointerleave', hideBackgroundHighlight);
+            document.addEventListener('pointerout', (event) => {
+                if (!event.relatedTarget) {
+                    hideBackgroundHighlight();
+                }
+            });
+            window.addEventListener('blur', hideBackgroundHighlight);
+
+            surfaces.forEach((surface) => {
+                surface.addEventListener('pointerenter', () => {
+                    body.style.setProperty('--bg-pointer-opacity', '0');
+                });
+
+                surface.addEventListener('pointermove', (event) => {
+                    const rect = surface.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+                    surface.style.setProperty('--pointer-x', `${x}px`);
+                    surface.style.setProperty('--pointer-y', `${y}px`);
+                });
+
+                surface.addEventListener('pointerleave', () => {
+                    surface.style.removeProperty('--pointer-x');
+                    surface.style.removeProperty('--pointer-y');
+                });
             });
         }
 
-        // 回退到默认图标
-        function fallbackToDefaultIcon() {
-            const avatarImage = document.getElementById('avatarImage');
-            const avatarIcon = document.getElementById('avatarContainer').querySelector('.avatar-icon');
-
-            avatarImage.style.display = 'none';
-            avatarIcon.style.display = 'flex';
-        }
-
-        // 手动触发头像加载（点击头像区域）
-        document.getElementById('avatarContainer').addEventListener('click', () => {
-            const currentLang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
-            const t = translations[currentLang];
-
-            if (confirm(t.avatarDebug + "重新加载头像？")) {
-                document.getElementById('debugInfo').style.display = 'block';
-                loadAvatar();
-            }
-        });
-
-        // 页面加载完成后加载头像
+        // 页面加载完成
         window.addEventListener('DOMContentLoaded', () => {
             loadAvatar();
-
-            // 添加键盘快捷键：按A键重新加载头像
-            document.addEventListener('keydown', (e) => {
-                if (e.key.toLowerCase() === 'a' && e.ctrlKey) {
-                    e.preventDefault();
-                    document.getElementById('debugInfo').style.display = 'block';
-                    loadAvatar();
-                }
-            });
+            initPointerHighlights();
         });
     </script>
 </body>
