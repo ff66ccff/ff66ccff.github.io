@@ -236,6 +236,10 @@
             opacity: 1;
         }
 
+        .hover-surface.is-active::after {
+            opacity: 1;
+        }
+
         /* 兴趣卡片区域 */
         .interests-section {
             margin: 0;
@@ -668,34 +672,75 @@
             const surfaces = document.querySelectorAll('.hover-surface');
             const body = document.body;
 
-            const updateBackgroundHighlight = (event) => {
-                const hoveringSurface = event.target.closest('.hover-surface');
-                if (hoveringSurface) {
-                    body.style.setProperty('--bg-pointer-opacity', '0');
-                    return;
-                }
-
+            const setBackgroundGlow = (x, y) => {
                 body.style.setProperty('--bg-pointer-opacity', '1');
-                body.style.setProperty('--bg-pointer-x', `${event.clientX}px`);
-                body.style.setProperty('--bg-pointer-y', `${event.clientY}px`);
+                body.style.setProperty('--bg-pointer-x', `${x}px`);
+                body.style.setProperty('--bg-pointer-y', `${y}px`);
             };
 
-            const hideBackgroundHighlight = () => {
+            const hideBackgroundGlow = () => {
                 body.style.setProperty('--bg-pointer-opacity', '0');
             };
 
-            document.addEventListener('pointermove', updateBackgroundHighlight);
-            document.addEventListener('pointerleave', hideBackgroundHighlight);
-            document.addEventListener('pointerout', (event) => {
+            const updateBackgroundFromPosition = (x, y, target) => {
+                const hoveringSurface = target && typeof target.closest === 'function'
+                    ? target.closest('.hover-surface')
+                    : null;
+
+                if (hoveringSurface) {
+                    hideBackgroundGlow();
+                } else {
+                    setBackgroundGlow(x, y);
+                }
+            };
+
+            document.addEventListener('pointermove', (event) => {
+                if (event.pointerType === 'touch') {
+                    return;
+                }
+                updateBackgroundFromPosition(event.clientX, event.clientY, event.target);
+            });
+
+            document.addEventListener('pointerleave', (event) => {
                 if (!event.relatedTarget) {
-                    hideBackgroundHighlight();
+                    hideBackgroundGlow();
                 }
             });
-            window.addEventListener('blur', hideBackgroundHighlight);
+
+            window.addEventListener('blur', hideBackgroundGlow);
+
+            const handleGlobalTouchMove = (event) => {
+                const touch = event.touches && event.touches[0];
+                if (!touch) {
+                    hideBackgroundGlow();
+                    return;
+                }
+
+                const targetElement = document.elementFromPoint
+                    ? document.elementFromPoint(touch.clientX, touch.clientY)
+                    : event.target;
+
+                updateBackgroundFromPosition(touch.clientX, touch.clientY, targetElement);
+            };
+
+            document.addEventListener('touchmove', handleGlobalTouchMove, { passive: true });
+            document.addEventListener('touchend', hideBackgroundGlow);
+            document.addEventListener('touchcancel', hideBackgroundGlow);
+
+            const activateSurface = (surface) => {
+                surface.classList.add('is-active');
+                hideBackgroundGlow();
+            };
+
+            const deactivateSurface = (surface) => {
+                surface.classList.remove('is-active');
+                surface.style.removeProperty('--pointer-x');
+                surface.style.removeProperty('--pointer-y');
+            };
 
             surfaces.forEach((surface) => {
                 surface.addEventListener('pointerenter', () => {
-                    body.style.setProperty('--bg-pointer-opacity', '0');
+                    activateSurface(surface);
                 });
 
                 surface.addEventListener('pointermove', (event) => {
@@ -704,12 +749,43 @@
                     const y = event.clientY - rect.top;
                     surface.style.setProperty('--pointer-x', `${x}px`);
                     surface.style.setProperty('--pointer-y', `${y}px`);
+                    surface.classList.add('is-active');
                 });
 
                 surface.addEventListener('pointerleave', () => {
-                    surface.style.removeProperty('--pointer-x');
-                    surface.style.removeProperty('--pointer-y');
+                    deactivateSurface(surface);
                 });
+
+                surface.addEventListener('touchstart', (event) => {
+                    const touch = event.touches && event.touches[0];
+                    if (!touch) {
+                        return;
+                    }
+
+                    activateSurface(surface);
+                    const rect = surface.getBoundingClientRect();
+                    surface.style.setProperty('--pointer-x', `${touch.clientX - rect.left}px`);
+                    surface.style.setProperty('--pointer-y', `${touch.clientY - rect.top}px`);
+                }, { passive: true });
+
+                surface.addEventListener('touchmove', (event) => {
+                    const touch = event.touches && event.touches[0];
+                    if (!touch) {
+                        return;
+                    }
+
+                    const rect = surface.getBoundingClientRect();
+                    surface.style.setProperty('--pointer-x', `${touch.clientX - rect.left}px`);
+                    surface.style.setProperty('--pointer-y', `${touch.clientY - rect.top}px`);
+                }, { passive: true });
+
+                const endTouch = () => {
+                    deactivateSurface(surface);
+                    hideBackgroundGlow();
+                };
+
+                surface.addEventListener('touchend', endTouch);
+                surface.addEventListener('touchcancel', endTouch);
             });
         }
 
