@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
     <style>
         :root {
             --primary-color: #667eea;
@@ -15,15 +16,8 @@
             --accent-blue: #4facfe;
             --accent-pink: #f093fb;
             --accent-cyan: #00d4ff;
-
             --bg-glow-inner: rgba(118, 75, 162, 0.22);
             --bg-glow-outer: rgba(102, 126, 234, 0.18);
-
-            /* 主题色 - 编程代码风格 */
-            --code-color: #2ecc71;
-            --vocaloid-color: #39c5bb;
-            --scifi-color: #9b59b6;
-
             --bg-primary: #f5f7fa;
             --bg-secondary: #ffffff;
             --bg-card: #ffffff;
@@ -64,8 +58,8 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
+            align-items: flex-start;
+            padding: 40px 20px;
             position: relative;
             z-index: 0;
             transition: background 0.3s ease, color 0.3s ease;
@@ -89,39 +83,59 @@
 
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
             position: relative;
             z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
         }
 
-        /* 主卡片 */
         .profile-card {
-            background: linear-gradient(160deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.06)), var(--bg-card);
-            border-radius: 24px;
+            background: linear-gradient(160deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.08)), var(--bg-card);
+            border-radius: 28px;
             box-shadow: var(--shadow-lg);
-            padding: 50px;
-            position: relative;
+            padding: 48px;
             border: 1px solid var(--border-color);
             transition: box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
-            align-items: center;
             gap: 30px;
-            overflow: hidden;
             width: 100%;
+            overflow: hidden;
         }
 
         [data-theme="dark"] .profile-card {
-            background: linear-gradient(160deg, rgba(102, 126, 234, 0.22), rgba(118, 75, 162, 0.14)), var(--bg-card);
+            background: linear-gradient(160deg, rgba(102, 126, 234, 0.22), rgba(118, 75, 162, 0.16)), var(--bg-card);
             border-color: rgba(255, 255, 255, 0.08);
         }
 
-        /* 头像区域 */
+        .intro-section {
+            width: 100%;
+            background: linear-gradient(150deg, rgba(102, 126, 234, 0.18), rgba(118, 75, 162, 0.08));
+            border: 1px solid rgba(102, 126, 234, 0.22);
+            border-radius: 18px;
+            padding: 40px 30px 35px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .intro-section .subtitle {
+            margin: 0;
+        }
+
+        [data-theme="dark"] .intro-section {
+            background: linear-gradient(150deg, rgba(102, 126, 234, 0.28), rgba(118, 75, 162, 0.16));
+            border-color: rgba(118, 75, 162, 0.38);
+        }
+
         .avatar-wrapper {
             position: relative;
             width: 160px;
             height: 160px;
-            margin: 0;
         }
 
         .avatar {
@@ -168,45 +182,6 @@
             z-index: 1;
         }
 
-        /* 标题和文字 */
-        .name {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 0;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .intro-section {
-            width: 100%;
-            background: linear-gradient(150deg, rgba(102, 126, 234, 0.18), rgba(118, 75, 162, 0.08));
-            border: 1px solid rgba(102, 126, 234, 0.22);
-            border-radius: 18px;
-            padding: 40px 30px 35px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .intro-section .subtitle {
-            margin: 0;
-        }
-
-        [data-theme="dark"] .intro-section {
-            background: linear-gradient(150deg, rgba(102, 126, 234, 0.28), rgba(118, 75, 162, 0.16));
-            border-color: rgba(118, 75, 162, 0.38);
-        }
-
         .hover-surface {
             position: relative;
             overflow: hidden;
@@ -232,19 +207,29 @@
                     transparent 70%);
         }
 
-        .hover-surface:hover::after {
-            opacity: 1;
-        }
-
+        .hover-surface:hover::after,
         .hover-surface.is-active::after {
             opacity: 1;
         }
 
-        /* 兴趣卡片区域 */
-        .interests-section {
+        .name {
+            font-size: 2.5rem;
+            font-weight: 700;
             margin: 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .interests-section {
             width: 100%;
-            text-align: left;
         }
 
         .section-title {
@@ -260,7 +245,6 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 18px;
-            margin-bottom: 30px;
         }
 
         .interest-card {
@@ -284,15 +268,15 @@
         }
 
         .interest-card.coding {
-            color: var(--code-color);
+            color: #2ecc71;
         }
 
         .interest-card.vocaloid {
-            color: var(--vocaloid-color);
+            color: #39c5bb;
         }
 
         .interest-card.scifi {
-            color: var(--scifi-color);
+            color: #9b59b6;
         }
 
         .interest-icon {
@@ -312,8 +296,14 @@
             color: var(--text-muted);
         }
 
-        /* GitHub按钮 */
-        .github-btn {
+        .actions-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-btn {
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -327,18 +317,238 @@
             border: 0;
             box-shadow: var(--shadow-md);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
         }
 
-        .github-btn:hover {
+        button.action-btn {
+            border: none;
+        }
+
+        .action-btn:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
         }
 
-        .github-btn:active {
+        .action-btn:active {
             transform: translateY(0);
         }
 
-        /* 控制按钮 */
+        .blog-card {
+            gap: 28px;
+        }
+
+        .blog-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .blog-title {
+            font-size: 2.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .blog-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .blog-layout {
+            display: grid;
+            grid-template-columns: minmax(240px, 320px) 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        .blog-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .search-box {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(102, 126, 234, 0.35);
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .post-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .post-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .post-summary {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .blog-article {
+            background: var(--bg-secondary);
+            border-radius: 22px;
+            border: 1px solid var(--border-color);
+            padding: 32px 36px;
+            min-height: 440px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .article-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .article-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        #articleContent {
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        #articleContent h1,
+        #articleContent h2,
+        #articleContent h3,
+        #articleContent h4 {
+            color: var(--text-primary);
+            margin-top: 28px;
+            margin-bottom: 12px;
+        }
+
+        #articleContent p,
+        #articleContent ul,
+        #articleContent ol {
+            margin-bottom: 16px;
+        }
+
+        #articleContent pre {
+            background: rgba(13, 17, 23, 0.85);
+            border-radius: 14px;
+            padding: 18px 20px;
+            overflow-x: auto;
+            line-height: 1.5;
+            color: #f8f8f2;
+        }
+
+        [data-theme="dark"] #articleContent pre {
+            background: rgba(22, 27, 34, 0.9);
+        }
+
+        #articleContent blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 16px;
+            margin: 20px 0;
+            color: var(--text-secondary);
+            background: rgba(102, 126, 234, 0.08);
+            border-radius: 0 12px 12px 0;
+        }
+
+        .article-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btns {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .ghost-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            color: var(--primary-color);
+            background: transparent;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .ghost-btn:hover {
+            background: rgba(102, 126, 234, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .ghost-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .empty-state {
+            padding: 44px 30px;
+            text-align: center;
+            border-radius: 18px;
+            border: 1px dashed rgba(102, 126, 234, 0.4);
+            color: var(--text-muted);
+        }
+
         .control-btn {
             position: fixed;
             width: 50px;
@@ -364,8 +574,9 @@
             transform: scale(0.95);
         }
 
-        .control-btn i {
-            font-size: 20px;
+        .control-btn i,
+        .control-btn span {
+            font-size: 18px;
             color: var(--text-primary);
         }
 
@@ -379,13 +590,21 @@
             left: 25px;
             font-size: 16px;
             font-weight: 700;
-            color: var(--text-primary);
         }
 
-        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .blog-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
+            body {
+                padding: 30px 16px;
+            }
+
             .profile-card {
-                padding: 40px 30px;
+                padding: 38px 28px;
                 gap: 24px;
             }
 
@@ -395,11 +614,6 @@
 
             .interests-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .interest-card {
-                padding: 20px;
             }
 
             .avatar-wrapper {
@@ -411,28 +625,18 @@
                 font-size: 2rem;
             }
 
-            .control-btn {
-                width: 46px;
-                height: 46px;
+            .blog-title {
+                font-size: 1.9rem;
             }
 
-            .theme-toggle,
-            .language-toggle {
-                top: 20px;
-            }
-
-            .theme-toggle {
-                right: 20px;
-            }
-
-            .language-toggle {
-                left: 20px;
+            .blog-article {
+                padding: 26px 24px;
             }
         }
 
         @media (max-width: 480px) {
             body {
-                padding: 15px;
+                padding: 20px 12px;
             }
 
             .profile-card {
@@ -461,16 +665,12 @@
                 font-size: 0.9rem;
             }
 
-            .interest-icon {
-                font-size: 30px;
-            }
-
-            .interest-title {
-                font-size: 0.95rem;
-            }
-
-            .github-btn {
+            .action-btn {
                 padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .search-input {
                 font-size: 0.9rem;
             }
         }
@@ -478,9 +678,8 @@
 </head>
 
 <body>
-    <!-- 主容器 -->
     <div class="container">
-        <div class="profile-card">
+        <div class="profile-card" id="profileCard">
             <div class="intro-section hover-surface">
                 <div class="avatar-wrapper">
                     <div class="avatar" id="avatarContainer">
@@ -521,30 +720,90 @@
                 </div>
             </div>
 
-            <a href="https://github.com/ff66ccff" target="_blank" class="github-btn hover-surface">
-                <i class="fab fa-github"></i>
-                <span id="viewProfile">查看我的 GitHub</span>
-            </a>
+            <div class="actions-row">
+                <a href="https://github.com/ff66ccff" target="_blank" class="action-btn hover-surface">
+                    <i class="fab fa-github"></i>
+                    <span id="viewProfile">查看我的 GitHub</span>
+                </a>
+                <button type="button" class="action-btn hover-surface" id="blogButton">
+                    <i class="fas fa-book-open"></i>
+                    <span id="viewBlog">进入博客</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="profile-card blog-card hover-surface" id="blogCard" hidden>
+            <div class="blog-top">
+                <div>
+                    <div class="blog-title" id="blogTitle">博客</div>
+                    <div class="blog-subtitle" id="blogSubtitle">记录代码、音乐和故事</div>
+                </div>
+                <div class="top-actions">
+                    <button type="button" class="action-btn hover-surface" id="backHomeButton">
+                        <i class="fas fa-house"></i>
+                        <span id="backHomeLabel">返回首页</span>
+                    </button>
+                    <a href="https://github.com/ff66ccff" target="_blank" class="action-btn hover-surface">
+                        <i class="fab fa-github"></i>
+                        <span id="viewProfileBlog">查看我的 GitHub</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="blog-layout">
+                <div class="blog-sidebar">
+                    <div class="search-box hover-surface">
+                        <input type="search" class="search-input" id="searchInput" placeholder="搜索文章标题或内容">
+                    </div>
+                    <div id="postList" class="post-list"></div>
+                </div>
+                <div class="blog-article hover-surface" id="articlePanel" hidden>
+                    <div class="article-title" id="articleTitle">文章标题</div>
+                    <div class="article-meta" id="articleMeta"></div>
+                    <article id="articleContent"></article>
+                    <div class="article-actions">
+                        <button class="ghost-btn" id="backToList">
+                            <i class="fas fa-arrow-left"></i>
+                            <span id="backToListLabel">返回列表</span>
+                        </button>
+                        <div class="nav-btns">
+                            <button class="ghost-btn" id="prevPost">
+                                <i class="fas fa-chevron-left"></i>
+                                <span id="prevPostLabel">上一篇</span>
+                            </button>
+                            <button class="ghost-btn" id="nextPost">
+                                <span id="nextPostLabel">下一篇</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="emptyState" class="empty-state" hidden>没有找到相关文章，换个关键词试试？</div>
         </div>
     </div>
 
-    <!-- 主题切换按钮 -->
     <div class="control-btn theme-toggle hover-surface" id="themeToggle" title="切换主题">
         <i class="fas fa-moon"></i>
     </div>
 
-    <!-- 语言切换按钮 -->
     <div class="control-btn language-toggle hover-surface" id="languageToggle" title="切换语言">
         <span>中</span>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script>
-        // 多语言配置
         const i18n = {
             zh: {
                 name: "ff66ccff",
                 subtitle: "四川大学 25级计算机学生",
                 viewProfile: "查看我的 GitHub",
+                viewProfileBlog: "查看我的 GitHub",
+                viewBlog: "进入博客",
                 interestsTitle: "我的兴趣",
                 codingTitle: "编程",
                 codingSubtitle: "Programming",
@@ -552,6 +811,17 @@
                 vocaloidSubtitle: "Chinese Vocaloid",
                 scifiTitle: "科幻小说",
                 scifiSubtitle: "Sci-Fi Novels",
+                blogTitle: "博客",
+                blogSubtitle: "记录代码、音乐和故事",
+                searchPlaceholder: "搜索文章标题或内容",
+                backHome: "返回首页",
+                backToList: "返回列表",
+                prevPost: "上一篇",
+                nextPost: "下一篇",
+                empty: "没有找到相关文章，换个关键词试试？",
+                loading: "文章加载中，请稍候...",
+                error: "文章加载失败，请稍后再试。",
+                fileLabel: "文件名",
                 langToggle: "中",
                 themeTitle: "切换主题",
                 langTitle: "切换语言"
@@ -560,6 +830,8 @@
                 name: "ff66ccff",
                 subtitle: "Computer Science Student, Class of 2025, Sichuan University",
                 viewProfile: "View My GitHub",
+                viewProfileBlog: "View My GitHub",
+                viewBlog: "Visit Blog",
                 interestsTitle: "My Interests",
                 codingTitle: "Programming",
                 codingSubtitle: "Code & Dev",
@@ -567,25 +839,96 @@
                 vocaloidSubtitle: "Music & Voice Synth",
                 scifiTitle: "Sci-Fi Novels",
                 scifiSubtitle: "Science Fiction",
+                blogTitle: "Blog",
+                blogSubtitle: "Notes on code, music, and stories",
+                searchPlaceholder: "Search by title or contents",
+                backHome: "Back Home",
+                backToList: "Back to List",
+                prevPost: "Previous",
+                nextPost: "Next",
+                empty: "No posts matched. Try different keywords?",
+                loading: "Loading posts, please wait...",
+                error: "Failed to load posts. Please try again later.",
+                fileLabel: "Filename",
                 langToggle: "EN",
                 themeTitle: "Toggle Theme",
                 langTitle: "Switch Language"
             }
         };
 
-        // 获取浏览器语言
+        const elements = {
+            profileCard: document.getElementById('profileCard'),
+            blogCard: document.getElementById('blogCard'),
+            blogButton: document.getElementById('blogButton'),
+            backHomeButton: document.getElementById('backHomeButton'),
+            searchInput: document.getElementById('searchInput'),
+            postList: document.getElementById('postList'),
+            articlePanel: document.getElementById('articlePanel'),
+            articleTitle: document.getElementById('articleTitle'),
+            articleMeta: document.getElementById('articleMeta'),
+            articleContent: document.getElementById('articleContent'),
+            emptyState: document.getElementById('emptyState'),
+            backToList: document.getElementById('backToList'),
+            prevPost: document.getElementById('prevPost'),
+            nextPost: document.getElementById('nextPost'),
+            blogTitle: document.getElementById('blogTitle'),
+            blogSubtitle: document.getElementById('blogSubtitle'),
+            backHomeLabel: document.getElementById('backHomeLabel'),
+            backToListLabel: document.getElementById('backToListLabel'),
+            prevPostLabel: document.getElementById('prevPostLabel'),
+            nextPostLabel: document.getElementById('nextPostLabel'),
+            viewProfile: document.getElementById('viewProfile'),
+            viewProfileBlog: document.getElementById('viewProfileBlog'),
+            viewBlog: document.getElementById('viewBlog'),
+            languageToggle: document.getElementById('languageToggle'),
+            themeToggle: document.getElementById('themeToggle')
+        };
+
+        const blogState = {
+            posts: [],
+            filtered: [],
+            currentIndex: -1,
+            loaded: false
+        };
+
+        let currentLang = 'zh';
+
         function getBrowserLanguage() {
             const lang = navigator.language || navigator.userLanguage;
             return lang.startsWith('zh') ? 'zh' : 'en';
         }
 
-        // 设置语言
+        function updateEmptyStateText() {
+            const t = i18n[currentLang];
+            const state = elements.emptyState.dataset.state || 'empty';
+            if (state === 'loading') {
+                elements.emptyState.textContent = t.loading;
+            } else if (state === 'error') {
+                elements.emptyState.textContent = t.error;
+            } else {
+                elements.emptyState.textContent = t.empty;
+            }
+        }
+
         function setLanguage(lang) {
+            currentLang = lang;
             const t = i18n[lang];
             document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
             document.getElementById('name').textContent = t.name;
             document.getElementById('subtitle').textContent = t.subtitle;
-            document.getElementById('viewProfile').textContent = t.viewProfile;
+            elements.viewProfile.textContent = t.viewProfile;
+            elements.viewBlog.textContent = t.viewBlog;
+            elements.blogTitle.textContent = t.blogTitle;
+            elements.blogSubtitle.textContent = t.blogSubtitle;
+            elements.backHomeLabel.textContent = t.backHome;
+            elements.backToListLabel.textContent = t.backToList;
+            elements.prevPostLabel.textContent = t.prevPost;
+            elements.nextPostLabel.textContent = t.nextPost;
+            elements.searchInput.placeholder = t.searchPlaceholder;
+            elements.languageToggle.querySelector('span').textContent = t.langToggle;
+            elements.themeToggle.title = t.themeTitle;
+            elements.languageToggle.title = t.langTitle;
+            elements.viewProfileBlog.textContent = t.viewProfileBlog;
             document.getElementById('interestsTitle').textContent = t.interestsTitle;
             document.getElementById('codingTitle').textContent = t.codingTitle;
             document.getElementById('codingSubtitle').textContent = t.codingSubtitle;
@@ -593,25 +936,20 @@
             document.getElementById('vocaloidSubtitle').textContent = t.vocaloidSubtitle;
             document.getElementById('scifiTitle').textContent = t.scifiTitle;
             document.getElementById('scifiSubtitle').textContent = t.scifiSubtitle;
-            document.getElementById('languageToggle').querySelector('span').textContent = t.langToggle;
-            document.getElementById('themeToggle').title = t.themeTitle;
-            document.getElementById('languageToggle').title = t.langTitle;
+            updateEmptyStateText();
+            updateArticleMeta();
             localStorage.setItem('language', lang);
         }
 
-        // 初始化语言
         const savedLang = localStorage.getItem('language') || getBrowserLanguage();
         setLanguage(savedLang);
 
-        // 语言切换
-        document.getElementById('languageToggle').addEventListener('click', () => {
-            const currentLang = localStorage.getItem('language') || 'zh';
+        elements.languageToggle.addEventListener('click', () => {
             const newLang = currentLang === 'zh' ? 'en' : 'zh';
             setLanguage(newLang);
         });
 
-        // 主题切换
-        const themeToggle = document.getElementById('themeToggle');
+        const themeToggle = elements.themeToggle;
         const themeIcon = themeToggle.querySelector('i');
         const savedTheme = localStorage.getItem('theme');
 
@@ -622,7 +960,6 @@
 
         themeToggle.addEventListener('click', () => {
             const currentTheme = document.documentElement.getAttribute('data-theme');
-
             if (currentTheme === 'dark') {
                 document.documentElement.removeAttribute('data-theme');
                 themeIcon.classList.replace('fa-sun', 'fa-moon');
@@ -634,7 +971,173 @@
             }
         });
 
-        // 头像加载
+        function showBlog() {
+            elements.profileCard.hidden = true;
+            elements.blogCard.hidden = false;
+            if (!blogState.loaded) {
+                loadPosts();
+            }
+            history.replaceState(null, '', `${window.location.pathname}#blog`);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showProfile() {
+            elements.blogCard.hidden = true;
+            elements.profileCard.hidden = false;
+            history.replaceState(null, '', window.location.pathname);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        elements.blogButton.addEventListener('click', showBlog);
+        elements.backHomeButton.addEventListener('click', showProfile);
+
+        elements.backToList.addEventListener('click', () => {
+            elements.articlePanel.hidden = true;
+        });
+
+        function extractSummary(markdown) {
+            const plain = markdown
+                .replace(/```[\s\S]*?```/g, '')
+                .replace(/`[^`]+`/g, '')
+                .replace(/^[#>\-\*\d\.\s]+/gm, '')
+                .split('\n')
+                .map(line => line.trim())
+                .filter(Boolean);
+            if (!plain.length) {
+                return '';
+            }
+            const snippet = plain[0];
+            return snippet.length > 120 ? `${snippet.slice(0, 120)}...` : snippet;
+        }
+
+        function renderPostList(list) {
+            elements.postList.innerHTML = '';
+            list.forEach(post => {
+                const card = document.createElement('article');
+                card.className = 'post-card hover-surface';
+                card.innerHTML = `
+                    <div class="post-title">${post.slug}</div>
+                    ${post.summary ? `<div class="post-summary">${post.summary}</div>` : ''}
+                `;
+                card.addEventListener('click', () => openPost(post.slug));
+                elements.postList.appendChild(card);
+            });
+            if (list.length === 0) {
+                elements.emptyState.dataset.state = 'empty';
+                updateEmptyStateText();
+                elements.emptyState.hidden = false;
+            } else {
+                elements.emptyState.hidden = true;
+            }
+        }
+
+        function updateArticleMeta() {
+            if (blogState.currentIndex < 0) {
+                return;
+            }
+            const post = blogState.posts[blogState.currentIndex];
+            if (!post) {
+                return;
+            }
+            elements.articleMeta.textContent = `${i18n[currentLang].fileLabel}: ${post.filename}`;
+        }
+
+        async function loadPosts() {
+            try {
+                elements.emptyState.dataset.state = 'loading';
+                updateEmptyStateText();
+                elements.emptyState.hidden = false;
+                const response = await fetch('https://api.github.com/repos/ff66ccff/ff66ccff.github.io/contents/posts');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch directory listing');
+                }
+                const files = await response.json();
+                const markdownFiles = files.filter(file => file.type === 'file' && file.name.endsWith('.md'));
+                const posts = await Promise.all(markdownFiles.map(async (file) => {
+                    const res = await fetch(`${file.download_url}?cacheBust=${Date.now()}`);
+                    if (!res.ok) {
+                        throw new Error(`Failed to fetch ${file.name}`);
+                    }
+                    const content = await res.text();
+                    return {
+                        slug: file.name.replace(/\.md$/, ''),
+                        filename: file.name,
+                        content,
+                        summary: extractSummary(content)
+                    };
+                }));
+                posts.sort((a, b) => b.filename.localeCompare(a.filename));
+                blogState.posts = posts;
+                blogState.filtered = [...posts];
+                blogState.loaded = true;
+                renderPostList(blogState.filtered);
+                if (!posts.length) {
+                    elements.emptyState.dataset.state = 'empty';
+                    updateEmptyStateText();
+                    elements.emptyState.hidden = false;
+                }
+            } catch (error) {
+                console.error(error);
+                blogState.loaded = false;
+                elements.emptyState.dataset.state = 'error';
+                updateEmptyStateText();
+                elements.emptyState.hidden = false;
+            }
+        }
+
+        elements.searchInput.addEventListener('input', (event) => {
+            const keyword = event.target.value.trim().toLowerCase();
+            if (!blogState.loaded) {
+                return;
+            }
+            if (!keyword) {
+                blogState.filtered = [...blogState.posts];
+            } else {
+                blogState.filtered = blogState.posts.filter(post => {
+                    const haystack = `${post.slug} ${post.content}`.toLowerCase();
+                    return haystack.includes(keyword);
+                });
+            }
+            renderPostList(blogState.filtered);
+            if (blogState.filtered.length === 0) {
+                elements.articlePanel.hidden = true;
+            }
+        });
+
+        function openPost(slug) {
+            const absoluteIndex = blogState.posts.findIndex(post => post.slug === slug);
+            if (absoluteIndex === -1) {
+                return;
+            }
+            blogState.currentIndex = absoluteIndex;
+            const post = blogState.posts[absoluteIndex];
+            elements.articleTitle.textContent = post.slug;
+            const html = marked.parse(post.content, { gfm: true, breaks: true });
+            elements.articleContent.innerHTML = html;
+            Prism.highlightAllUnder(elements.articleContent);
+            updateArticleMeta();
+            elements.articlePanel.hidden = false;
+            updateNavigationButtons();
+        }
+
+        function updateNavigationButtons() {
+            const order = blogState.filtered.length ? blogState.filtered : blogState.posts;
+            const currentSlug = blogState.posts[blogState.currentIndex]?.slug;
+            const pointer = order.findIndex(post => post.slug === currentSlug);
+            const prev = pointer > 0 ? order[pointer - 1] : null;
+            const next = pointer >= 0 && pointer < order.length - 1 ? order[pointer + 1] : null;
+
+            elements.prevPost.disabled = !prev;
+            elements.nextPost.disabled = !next;
+
+            elements.prevPost.onclick = prev ? () => openPost(prev.slug) : null;
+            elements.nextPost.onclick = next ? () => openPost(next.slug) : null;
+        }
+
+        elements.backToList.addEventListener('click', () => {
+            elements.articlePanel.hidden = true;
+        });
+
         function loadAvatar() {
             const avatarImage = document.getElementById('avatarImage');
             const avatarIcon = document.querySelector('.avatar-icon');
@@ -667,19 +1170,18 @@
             }
         }
 
-        // 启用指针高光效果
         function initPointerHighlights() {
             const surfaces = document.querySelectorAll('.hover-surface');
-            const body = document.body;
+            const bodyEl = document.body;
 
             const setBackgroundGlow = (x, y) => {
-                body.style.setProperty('--bg-pointer-opacity', '1');
-                body.style.setProperty('--bg-pointer-x', `${x}px`);
-                body.style.setProperty('--bg-pointer-y', `${y}px`);
+                bodyEl.style.setProperty('--bg-pointer-opacity', '1');
+                bodyEl.style.setProperty('--bg-pointer-x', `${x}px`);
+                bodyEl.style.setProperty('--bg-pointer-y', `${y}px`);
             };
 
             const hideBackgroundGlow = () => {
-                body.style.setProperty('--bg-pointer-opacity', '0');
+                bodyEl.style.setProperty('--bg-pointer-opacity', '0');
             };
 
             const updateBackgroundFromPosition = (x, y, target) => {
@@ -715,11 +1217,9 @@
                     hideBackgroundGlow();
                     return;
                 }
-
                 const targetElement = document.elementFromPoint
                     ? document.elementFromPoint(touch.clientX, touch.clientY)
                     : event.target;
-
                 updateBackgroundFromPosition(touch.clientX, touch.clientY, targetElement);
             };
 
@@ -761,7 +1261,6 @@
                     if (!touch) {
                         return;
                     }
-
                     activateSurface(surface);
                     const rect = surface.getBoundingClientRect();
                     surface.style.setProperty('--pointer-x', `${touch.clientX - rect.left}px`);
@@ -773,7 +1272,6 @@
                     if (!touch) {
                         return;
                     }
-
                     const rect = surface.getBoundingClientRect();
                     surface.style.setProperty('--pointer-x', `${touch.clientX - rect.left}px`);
                     surface.style.setProperty('--pointer-y', `${touch.clientY - rect.top}px`);
@@ -789,10 +1287,12 @@
             });
         }
 
-        // 页面加载完成
         window.addEventListener('DOMContentLoaded', () => {
             loadAvatar();
             initPointerHighlights();
+            if (window.location.hash === '#blog') {
+                showBlog();
+            }
         });
     </script>
 </body>
