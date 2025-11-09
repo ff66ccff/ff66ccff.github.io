@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
     <style>
         :root {
             --primary-color: #667eea;
@@ -19,7 +18,6 @@
             --bg-glow-inner: rgba(118, 75, 162, 0.22);
             --bg-glow-outer: rgba(102, 126, 234, 0.18);
             --bg-primary: #f5f7fa;
-            --bg-secondary: #ffffff;
             --bg-card: #ffffff;
             --text-primary: #2c3e50;
             --text-secondary: #546e7a;
@@ -30,319 +28,358 @@
             --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
         }
 
-        [data-theme="dark"] {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-card: #1c2128;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --text-muted: #6e7681;
-            --border-color: rgba(255, 255, 255, 0.12);
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
-            --bg-glow-inner: rgba(118, 75, 162, 0.32);
-            --bg-glow-outer: rgba(79, 172, 254, 0.22);
+        <body><div class="container"><div class="profile-card hover-surface" id="profileCard"><div class="intro-section hover-surface"><div class="avatar-wrapper"><div class="avatar" id="avatarContainer"><div class="avatar-icon"><i class="fas fa-user"></i></div><img id="avatarImage" src="avatar.jpg" alt="Profile Picture"></div></div><h1 class="name" id="name">ff66ccff</h1><div class="subtitle" id="subtitle">四川大学 25级计算机学生</div></div><div class="interests-section"><div class="section-title" id="interestsTitle">我的兴趣</div><div class="interests-grid"><div class="interest-card coding hover-surface"><div class="interest-icon"><i class="fas fa-code"></i></div><div class="interest-title" id="codingTitle">编程</div><div class="interest-subtitle" id="codingSubtitle">Programming</div></div><div class="interest-card vocaloid hover-surface"><div class="interest-icon"><i class="fas fa-music"></i></div><div class="interest-title" id="vocaloidTitle">中文 VOCALOID</div><div class="interest-subtitle" id="vocaloidSubtitle">Chinese Vocaloid</div></div><div class="interest-card scifi hover-surface"><div class="interest-icon"><i class="fas fa-rocket"></i></div><div class="interest-title" id="scifiTitle">科幻小说</div><div class="interest-subtitle" id="scifiSubtitle">Sci-Fi Novels</div></div></div></div><div class="actions-row"><a href="https://github.com/ff66ccff" target="_blank" class="action-btn hover-surface"><i class="fab fa-github"></i><span id="viewProfile">查看我的 GitHub</span></a><a href="blog.html" class="action-btn hover-surface" id="blogLink"><i class="fas fa-book-open"></i><span id="viewBlog">进入博客</span></a></div></div></div><div class="control-btn theme-toggle hover-surface" id="themeToggle" title="切换主题"><i class="fas fa-moon"></i></div><div class="control-btn language-toggle hover-surface" id="languageToggle" title="切换语言"><span>中</span></div><script>const i18n= {
+            zh: {
+                name: "ff66ccff",
+                    subtitle: "四川大学 25级计算机学生",
+                    viewProfile: "查看我的 GitHub",
+                    viewBlog: "进入博客",
+                    interestsTitle: "我的兴趣",
+                    codingTitle: "编程",
+                    codingSubtitle: "Programming",
+                    vocaloidTitle: "中文 VOCALOID",
+                    vocaloidSubtitle: "Chinese Vocaloid",
+                    scifiTitle: "科幻小说",
+                    scifiSubtitle: "Sci-Fi Novels",
+                    langToggle: "中",
+                    themeTitle: "切换主题",
+                    langTitle: "切换语言"
+            }
+
+            ,
+            en: {
+                name: "ff66ccff",
+                    subtitle: "Computer Science Student, Class of 2025, Sichuan University",
+                    viewProfile: "View My GitHub",
+                    viewBlog: "Visit Blog",
+                    interestsTitle: "My Interests",
+                    codingTitle: "Programming",
+                    codingSubtitle: "Code & Dev",
+                    vocaloidTitle: "Chinese VOCALOID",
+                    vocaloidSubtitle: "Music & Voice Synth",
+                    scifiTitle: "Sci-Fi Novels",
+                    scifiSubtitle: "Science Fiction",
+                    langToggle: "EN",
+                    themeTitle: "Toggle Theme",
+                    langTitle: "Switch Language"
+            }
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        ;
+
+        const elements= {
+            name: document.getElementById('name'),
+                subtitle: document.getElementById('subtitle'),
+                viewProfile: document.getElementById('viewProfile'),
+                viewBlog: document.getElementById('viewBlog'),
+                interestsTitle: document.getElementById('interestsTitle'),
+                codingTitle: document.getElementById('codingTitle'),
+                codingSubtitle: document.getElementById('codingSubtitle'),
+                vocaloidTitle: document.getElementById('vocaloidTitle'),
+                vocaloidSubtitle: document.getElementById('vocaloidSubtitle'),
+                scifiTitle: document.getElementById('scifiTitle'),
+                scifiSubtitle: document.getElementById('scifiSubtitle'),
+                languageToggle: document.getElementById('languageToggle'),
+                themeToggle: document.getElementById('themeToggle')
         }
 
-        body {
-            font-family: 'Poppins', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 40px 20px;
-            position: relative;
-            z-index: 0;
-            transition: background 0.3s ease, color 0.3s ease;
+        ;
+
+        let currentLang='zh';
+
+        function getBrowserLanguage() {
+            const lang=navigator.language || navigator.userLanguage;
+            return lang && lang.startsWith ('zh') ? 'zh': 'en';
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background: radial-gradient(320px circle at var(--bg-pointer-x, -200px) var(--bg-pointer-y, -200px),
-                    var(--bg-glow-inner),
-                    transparent 70%),
-                radial-gradient(500px circle at var(--bg-pointer-x, -200px) var(--bg-pointer-y, -200px),
-                    var(--bg-glow-outer),
-                    transparent 75%);
-            opacity: var(--bg-pointer-opacity, 0);
-            transition: opacity 0.25s ease;
-            z-index: 0;
+        function setLanguage(lang) {
+            currentLang=lang;
+            const t=i18n[lang];
+            document.documentElement.lang=lang==='zh' ? 'zh-CN': 'en-US';
+            elements.name.textContent=t.name;
+            elements.subtitle.textContent=t.subtitle;
+            elements.viewProfile.textContent=t.viewProfile;
+            elements.viewBlog.textContent=t.viewBlog;
+            elements.interestsTitle.textContent=t.interestsTitle;
+            elements.codingTitle.textContent=t.codingTitle;
+            elements.codingSubtitle.textContent=t.codingSubtitle;
+            elements.vocaloidTitle.textContent=t.vocaloidTitle;
+            elements.vocaloidSubtitle.textContent=t.vocaloidSubtitle;
+            elements.scifiTitle.textContent=t.scifiTitle;
+            elements.scifiSubtitle.textContent=t.scifiSubtitle;
+            elements.languageToggle.querySelector('span').textContent=t.langToggle;
+            elements.themeToggle.title=t.themeTitle;
+            elements.languageToggle.title=t.langTitle;
+            localStorage.setItem('language', lang);
         }
 
-        .container {
-            width: 100%;
-            max-width: 1100px;
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 36px;
+        const savedLang=localStorage.getItem('language') || getBrowserLanguage();
+        setLanguage(savedLang);
+
+        elements.languageToggle.addEventListener('click', ()=> {
+                const nextLang=currentLang==='zh' ? 'en' : 'zh';
+                setLanguage(nextLang);
+            });
+
+        const themeToggle=elements.themeToggle;
+        const themeIcon=themeToggle.querySelector('i');
+        const savedTheme=localStorage.getItem('theme');
+
+        if (savedTheme==='dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
         }
 
-        .profile-card {
-            background: linear-gradient(160deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.08)), var(--bg-card);
-            border-radius: 28px;
-            box-shadow: var(--shadow-lg);
-            padding: 48px;
-            border: 1px solid var(--border-color);
-            transition: box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            width: 100%;
-            overflow: hidden;
+        themeToggle.addEventListener('click', ()=> {
+                const currentTheme=document.documentElement.getAttribute('data-theme');
+
+                if (currentTheme==='dark') {
+                    document.documentElement.removeAttribute('data-theme');
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                    localStorage.setItem('theme', 'light');
+                }
+
+                else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+
+        function loadAvatar() {
+            const avatarImage=document.getElementById('avatarImage');
+            const avatarIcon=document.querySelector('.avatar-icon');
+
+            if ( !avatarImage || !avatarIcon) {
+                return;
+            }
+
+            const showImage=()=> {
+                avatarImage.style.display='block';
+                avatarIcon.style.display='none';
+            }
+
+            ;
+
+            const showFallback=()=> {
+                avatarImage.style.display='none';
+                avatarIcon.style.display='flex';
+            }
+
+            ;
+
+            avatarImage.addEventListener('load', showImage);
+            avatarImage.addEventListener('error', showFallback);
+
+            if (avatarImage.complete) {
+                if (avatarImage.naturalWidth > 0) {
+                    showImage();
+                }
+
+                else {
+                    showFallback();
+                }
+            }
+
+            else {
+                showFallback();
+            }
         }
 
-        [data-theme="dark"] .profile-card {
-            background: linear-gradient(160deg, rgba(102, 126, 234, 0.22), rgba(118, 75, 162, 0.16)), var(--bg-card);
-            border-color: rgba(255, 255, 255, 0.08);
+        function initPointerHighlights() {
+            const surfaces=document.querySelectorAll('.hover-surface');
+            const bodyEl=document.body;
+
+            const setBackgroundGlow=(x, y)=> {
+                bodyEl.style.setProperty('--bg-pointer-opacity', '1');
+
+                bodyEl.style.setProperty('--bg-pointer-x', `$ {
+                        x
+                    }
+
+                    px`);
+
+                bodyEl.style.setProperty('--bg-pointer-y', `$ {
+                        y
+                    }
+
+                    px`);
+            }
+
+            ;
+
+            const hideBackgroundGlow=()=> {
+                bodyEl.style.setProperty('--bg-pointer-opacity', '0');
+            }
+
+            ;
+
+            const updateBackgroundFromPosition=(x, y, target)=> {
+                const hoveringSurface=target && typeof target.closest==='function'
+                ? target.closest('.hover-surface'): null;
+
+                if (hoveringSurface) {
+                    hideBackgroundGlow();
+                }
+
+                else {
+                    setBackgroundGlow(x, y);
+                }
+            }
+
+            ;
+
+            document.addEventListener('pointermove', (event)=> {
+                    if (event.pointerType==='touch') {
+                        return;
+                    }
+
+                    updateBackgroundFromPosition(event.clientX, event.clientY, event.target);
+                });
+
+            document.addEventListener('pointerleave', (event)=> {
+                    if ( !event.relatedTarget) {
+                        hideBackgroundGlow();
+                    }
+                });
+
+            window.addEventListener('blur', hideBackgroundGlow);
+
+            const handleGlobalTouchMove=(event)=> {
+                const touch=event.touches && event.touches[0];
+
+                if ( !touch) {
+                    hideBackgroundGlow();
+                    return;
+                }
+
+                const targetElement=document.elementFromPoint ? document.elementFromPoint(touch.clientX, touch.clientY) : event.target;
+                updateBackgroundFromPosition(touch.clientX, touch.clientY, targetElement);
+            }
+
+            ;
+
+            document.addEventListener('touchmove', handleGlobalTouchMove, {
+                passive: true
+            });
+        document.addEventListener('touchend', hideBackgroundGlow);
+        document.addEventListener('touchcancel', hideBackgroundGlow);
+
+        const activateSurface=(surface)=> {
+            surface.classList.add('is-active');
+            hideBackgroundGlow();
         }
 
-        .intro-section {
-            width: 100%;
-            background: linear-gradient(150deg, rgba(102, 126, 234, 0.18), rgba(118, 75, 162, 0.08));
-            border: 1px solid rgba(102, 126, 234, 0.22);
-            border-radius: 18px;
-            padding: 40px 30px 35px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 18px;
+        ;
+
+        const deactivateSurface=(surface)=> {
+            surface.classList.remove('is-active');
+            surface.style.removeProperty('--pointer-x');
+            surface.style.removeProperty('--pointer-y');
         }
 
-        .intro-section .subtitle {
-            margin: 0;
+        ;
+
+        surfaces.forEach((surface)=> {
+                surface.addEventListener('pointerenter', ()=> {
+                        activateSurface(surface);
+                    });
+
+                surface.addEventListener('pointermove', (event)=> {
+                        const rect=surface.getBoundingClientRect();
+                        const x=event.clientX - rect.left;
+                        const y=event.clientY - rect.top;
+
+                        surface.style.setProperty('--pointer-x', `$ {
+                                x
+                            }
+
+                            px`);
+
+                        surface.style.setProperty('--pointer-y', `$ {
+                                y
+                            }
+
+                            px`);
+                        surface.classList.add('is-active');
+                    });
+
+                surface.addEventListener('pointerleave', ()=> {
+                        deactivateSurface(surface);
+                    });
+
+                surface.addEventListener('touchstart', (event)=> {
+                        const touch=event.touches && event.touches[0];
+
+                        if ( !touch) {
+                            return;
+                        }
+
+                        activateSurface(surface);
+                        const rect=surface.getBoundingClientRect();
+
+                        surface.style.setProperty('--pointer-x', `$ {
+                                touch.clientX - rect.left
+                            }
+
+                            px`);
+
+                        surface.style.setProperty('--pointer-y', `$ {
+                                touch.clientY - rect.top
+                            }
+
+                            px`);
+                    }
+
+                    , {
+                    passive: true
+                });
+
+            surface.addEventListener('touchmove', (event)=> {
+                    const touch=event.touches && event.touches[0];
+
+                    if ( !touch) {
+                        return;
+                    }
+
+                    const rect=surface.getBoundingClientRect();
+
+                    surface.style.setProperty('--pointer-x', `$ {
+                            touch.clientX - rect.left
+                        }
+
+                        px`);
+
+                    surface.style.setProperty('--pointer-y', `$ {
+                            touch.clientY - rect.top
+                        }
+
+                        px`);
+                }
+
+                , {
+                passive: true
+            });
+
+        const endTouch=()=> {
+            deactivateSurface(surface);
+            hideBackgroundGlow();
         }
 
-        [data-theme="dark"] .intro-section {
-            background: linear-gradient(150deg, rgba(102, 126, 234, 0.28), rgba(118, 75, 162, 0.16));
-            border-color: rgba(118, 75, 162, 0.38);
+        ;
+
+        surface.addEventListener('touchend', endTouch);
+        surface.addEventListener('touchcancel', endTouch);
+        });
         }
 
-        .avatar-wrapper {
-            position: relative;
-            width: 160px;
-            height: 160px;
-        }
-
-        .avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 50px;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            position: relative;
-            border: 4px solid var(--bg-card);
-            transition: transform 0.3s ease;
-        }
-
-        .avatar:hover {
-            transform: scale(1.03);
-        }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 2;
-            display: none;
-        }
-
-        .avatar-icon {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-        }
-
-        .hover-surface {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hover-surface::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(220px circle at var(--pointer-x, -100px) var(--pointer-y, -100px),
-                    rgba(255, 255, 255, 0.35),
-                    transparent 70%);
-            opacity: 0;
-            transition: opacity 0.25s ease;
-            pointer-events: none;
-            border-radius: inherit;
-            mix-blend-mode: screen;
-        }
-
-        [data-theme="dark"] .hover-surface::after {
-            background: radial-gradient(220px circle at var(--pointer-x, -100px) var(--pointer-y, -100px),
-                    rgba(255, 255, 255, 0.16),
-                    transparent 70%);
-        }
-
-        .hover-surface:hover::after,
-        .hover-surface.is-active::after {
-            opacity: 1;
-        }
-
-        .name {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 0;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .interests-section {
-            width: 100%;
-        }
-
-        .section-title {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .interests-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-        }
-
-        .interest-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .interest-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            border-color: currentColor;
-        }
-
-        [data-theme="dark"] .interest-card {
-            background: var(--bg-card);
-            border-color: rgba(255, 255, 255, 0.08);
-        }
-
-        .interest-card.coding {
-            color: #2ecc71;
-        }
-
-        .interest-card.vocaloid {
-            color: #39c5bb;
-        }
-
-        .interest-card.scifi {
-            color: #9b59b6;
-        }
-
-        .interest-icon {
-            font-size: 36px;
-            margin-bottom: 12px;
-        }
-
-        .interest-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-        }
-
-        .interest-subtitle {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .actions-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: #ffffff;
-            padding: 14px 30px;
-            border-radius: 14px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            border: 0;
-            box-shadow: var(--shadow-md);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            cursor: pointer;
-        }
-
-        button.action-btn {
-            border: none;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .action-btn:active {
-            transform: translateY(0);
-        }
-
-        .blog-card {
-            gap: 28px;
-        }
-
-        .blog-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
+        window.addEventListener('DOMContentLoaded', ()=> {
+                loadAvatar();
+                initPointerHighlights();
+            });
+        </script></body></html>justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
         }
 
         .blog-title {
