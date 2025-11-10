@@ -836,21 +836,9 @@
             }
         }
 
-        function getLocalDate(dateString) {
-            if (!dateString) {
-                return null;
-            }
-            try {
-                const date = new Date(dateString);
-                return date;
-            } catch (error) {
-                return null;
-            }
-        }
-
         async function fetchCommitInfo(filename) {
             try {
-                const commitsUrl = `${GITHUB_API_BASE}/commits?path=${encodeURIComponent(`${POSTS_DIR}/${filename}`)}&per_page=1`;
+                const commitsUrl = `${GITHUB_API_BASE}/commits?path=${encodeURIComponent(`${POSTS_DIR}/${filename}`)}&per_page=100`;
                 const response = await fetch(commitsUrl);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch commit info for ${filename}`);
@@ -860,12 +848,7 @@
                     return { createdAt: null, updatedAt: null };
                 }
 
-                const latestCommit = commits[0];
-                const updatedDateStr = latestCommit?.commit?.author?.date ?? latestCommit?.commit?.committer?.date;
-
-                let oldestCommit = latestCommit;
-                let createdDateStr = updatedDateStr;
-
+                let oldestCommit = commits[commits.length - 1];
                 const linkHeader = response.headers.get('link');
                 if (linkHeader && linkHeader.includes('rel="last"')) {
                     const lastPart = linkHeader.split(',').find(part => part.includes('rel="last"'));
@@ -875,16 +858,15 @@
                         if (lastResponse.ok) {
                             const lastCommits = await lastResponse.json();
                             if (Array.isArray(lastCommits) && lastCommits.length) {
-                                const last = lastCommits[lastCommits.length - 1];
-                                createdDateStr = last?.commit?.author?.date ?? last?.commit?.committer?.date ?? createdDateStr;
+                                oldestCommit = lastCommits[lastCommits.length - 1];
                             }
                         }
                     }
                 }
 
                 return {
-                    updatedAt: updatedDateStr,
-                    createdAt: createdDateStr
+                    updatedAt: commits[0]?.commit?.author?.date ?? commits[0]?.commit?.committer?.date ?? null,
+                    createdAt: oldestCommit?.commit?.author?.date ?? oldestCommit?.commit?.committer?.date ?? null
                 };
             } catch (error) {
                 console.error(error);
