@@ -816,15 +816,41 @@
             try {
                 const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
                 const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-                return new Intl.DateTimeFormat(locale, options).format(new Date(dateString));
+                const date = new Date(dateString);
+                return new Intl.DateTimeFormat(locale, options).format(date);
             } catch (error) {
                 return dateString;
             }
         }
 
+        function isSameDay(date1String, date2String) {
+            if (!date1String || !date2String) {
+                return false;
+            }
+            try {
+                const date1 = new Date(date1String);
+                const date2 = new Date(date2String);
+                return date1.toDateString() === date2.toDateString();
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function getLocalDate(dateString) {
+            if (!dateString) {
+                return null;
+            }
+            try {
+                const date = new Date(dateString);
+                return date;
+            } catch (error) {
+                return null;
+            }
+        }
+
         async function fetchCommitInfo(filename) {
             try {
-                const commitsUrl = `${GITHUB_API_BASE}/commits?path=${encodeURIComponent(`${POSTS_DIR}/${filename}`)}&per_page=100`;
+                const commitsUrl = `${GITHUB_API_BASE}/commits?path=${encodeURIComponent(`${POSTS_DIR}/${filename}`)}&per_page=1`;
                 const response = await fetch(commitsUrl);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch commit info for ${filename}`);
@@ -833,7 +859,13 @@
                 if (!Array.isArray(commits) || !commits.length) {
                     return { createdAt: null, updatedAt: null };
                 }
-                let oldestCommit = commits[commits.length - 1];
+
+                const latestCommit = commits[0];
+                const updatedDateStr = latestCommit?.commit?.author?.date ?? latestCommit?.commit?.committer?.date;
+
+                let oldestCommit = latestCommit;
+                let createdDateStr = updatedDateStr;
+
                 const linkHeader = response.headers.get('link');
                 if (linkHeader && linkHeader.includes('rel="last"')) {
                     const lastPart = linkHeader.split(',').find(part => part.includes('rel="last"'));
@@ -843,14 +875,16 @@
                         if (lastResponse.ok) {
                             const lastCommits = await lastResponse.json();
                             if (Array.isArray(lastCommits) && lastCommits.length) {
-                                oldestCommit = lastCommits[lastCommits.length - 1];
+                                const last = lastCommits[lastCommits.length - 1];
+                                createdDateStr = last?.commit?.author?.date ?? last?.commit?.committer?.date ?? createdDateStr;
                             }
                         }
                     }
                 }
+
                 return {
-                    updatedAt: commits[0]?.commit?.author?.date ?? commits[0]?.commit?.committer?.date ?? null,
-                    createdAt: oldestCommit?.commit?.author?.date ?? oldestCommit?.commit?.committer?.date ?? null
+                    updatedAt: updatedDateStr,
+                    createdAt: createdDateStr
                 };
             } catch (error) {
                 console.error(error);
@@ -901,13 +935,18 @@
             }
             const t = i18n[currentLang];
             const parts = [];
-            if (post.createdAt) {
+
+            if (post.createdAt && post.updatedAt && isSameDay(post.createdAt, post.updatedAt)) {
                 parts.push(`${t.published}: ${formatDate(post.createdAt)}`);
+            } else {
+                if (post.createdAt) {
+                    parts.push(`${t.published}: ${formatDate(post.createdAt)}`);
+                }
+                if (post.updatedAt) {
+                    parts.push(`${t.updated}: ${formatDate(post.updatedAt)}`);
+                }
             }
-            if (post.updatedAt) {
-                parts.push(`${t.updated}: ${formatDate(post.updatedAt)}`);
-            }
-            parts.push(`${t.fileLabel}: ${post.filename}`);
+
             elements.overlayMeta.textContent = parts.join(' · ');
         }
 
@@ -1024,12 +1063,18 @@
 
                 const metaParts = [];
                 const t = i18n[currentLang];
-                if (post.createdAt) {
+
+                if (post.createdAt && post.updatedAt && isSameDay(post.createdAt, post.updatedAt)) {
                     metaParts.push(`${t.published}: ${formatDate(post.createdAt)}`);
+                } else {
+                    if (post.createdAt) {
+                        metaParts.push(`${t.published}: ${formatDate(post.createdAt)}`);
+                    }
+                    if (post.updatedAt) {
+                        metaParts.push(`${t.updated}: ${formatDate(post.updatedAt)}`);
+                    }
                 }
-                if (post.updatedAt) {
-                    metaParts.push(`${t.updated}: ${formatDate(post.updatedAt)}`);
-                }
+
                 if (metaParts.length) {
                     const meta = document.createElement('p');
                     meta.className = 'post-meta';
