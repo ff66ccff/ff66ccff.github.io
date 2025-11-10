@@ -747,6 +747,11 @@
 
         const POSTS_DIR = 'posts';
         const METADATA_URL = `${POSTS_DIR}/metadata.json`;
+        const REPO_OWNER = 'ff66ccff';
+        const REPO_NAME = 'ff66ccff.github.io';
+        const CDN_BRANCH = 'main';
+        const CDN_BASE = `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${CDN_BRANCH}`;
+        const CDN_MANIFEST_URL = `https://data.jsdelivr.com/v1/package/gh/${REPO_OWNER}/${REPO_NAME}@${CDN_BRANCH}`;
 
         const state = {
             posts: [],
@@ -889,6 +894,12 @@
             const encodedSegments = filename.split('/').map((segment) => encodeURIComponent(segment));
             const baseUrl = `${POSTS_DIR}/${encodedSegments.join('/')}`;
             return cacheKey ? `${baseUrl}?v=${encodeURIComponent(cacheKey)}` : baseUrl;
+        }
+
+        function buildCdnFileUrl(filename, hash) {
+            const encodedSegments = filename.split('/').map((segment) => encodeURIComponent(segment));
+            const baseUrl = `${CDN_BASE}/${POSTS_DIR}/${encodedSegments.join('/')}`;
+            return hash ? `${baseUrl}?v=${encodeURIComponent(hash)}` : baseUrl;
         }
 
         function getBrowserLanguage() {
@@ -1115,30 +1126,80 @@
             }
         }
 
+        async function fetchLocalMetadataEntries() {
+            try {
+                const response = await fetch(METADATA_URL, { cache: 'no-store' });
+                if (!response.ok) {
+                    return null;
+                }
+                const payload = await response.json();
+                const posts = Array.isArray(payload?.posts) ? payload.posts : [];
+                if (!posts.length) {
+                    return null;
+                }
+                return posts.map((item) => ({
+                    slug: item.slug || null,
+                    filename: item.filename || item.name || null,
+                    title: item.title || null,
+                    published: item.published || null,
+                    updated: item.updated || null,
+                    summary: item.summary || null,
+                    origin: 'local',
+                    url: item.filename ? buildPostUrl(item.filename, item.updated || item.published || null) : null
+                })).filter(entry => entry.filename && entry.slug && entry.url);
+            } catch (error) {
+                console.warn('Failed to read local metadata manifest:', error);
+                return null;
+            }
+        }
+
+        async function fetchCdnManifestEntries() {
+            const response = await fetch(CDN_MANIFEST_URL, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error('Failed to fetch CDN posts manifest');
+            }
+            const manifest = await response.json();
+            const files = Array.isArray(manifest?.files) ? manifest.files : [];
+            const postsDirectory = files.find((entry) => entry.type === 'directory' && entry.name === POSTS_DIR);
+            if (!postsDirectory || !Array.isArray(postsDirectory.files)) {
+                throw new Error('Posts directory missing in CDN manifest');
+            }
+            return postsDirectory.files
+                .filter((file) => file.type === 'file' && file.name.endsWith('.md'))
+                .map((file) => ({
+                    slug: file.name.replace(/\.md$/, ''),
+                    filename: file.name,
+                    title: null,
+                    published: null,
+                    updated: null,
+                    summary: null,
+                    origin: 'cdn',
+                    url: buildCdnFileUrl(file.name, file.hash)
+                }));
+        }
+
         async function loadPosts() {
             try {
                 showEmptyState('loading');
-                const metadataResponse = await fetch(METADATA_URL, { cache: 'no-store' });
-                if (!metadataResponse.ok) {
-                    throw new Error('Failed to fetch posts metadata');
+                let manifestEntries = await fetchLocalMetadataEntries();
+                if (!manifestEntries || !manifestEntries.length) {
+                    manifestEntries = await fetchCdnManifestEntries();
                 }
-                const metadataPayload = await metadataResponse.json();
-                const manifestEntries = Array.isArray(metadataPayload?.posts) ? metadataPayload.posts : [];
                 if (!manifestEntries.length) {
-                    throw new Error('No posts found in metadata');
+                    throw new Error('No posts found in manifest');
                 }
                 const posts = [];
 
                 for (const entry of manifestEntries) {
-                    const filename = entry.filename || entry.name || `${entry.slug}.md`;
-                    const cacheKey = entry.updated || entry.published || null;
-                    const markdownResponse = await fetch(buildPostUrl(filename, cacheKey), { cache: 'no-store' });
+                    const filename = entry.filename || `${entry.slug}.md`;
+                    const fetchUrl = entry.url || buildPostUrl(filename, entry.updated || entry.published || null);
+                    const markdownResponse = await fetch(fetchUrl, { cache: 'no-store' });
                     if (!markdownResponse.ok) {
                         throw new Error(`Failed to fetch ${filename}`);
                     }
                     const rawMarkdown = await markdownResponse.text();
                     const { attributes, body } = parseFrontMatter(rawMarkdown);
-                    const slug = entry.slug || filename.replace(/\.md$/, '');
+                    const slug = entry.slug || attributes.slug || filename.replace(/\.md$/, '');
                     const title = entry.title || attributes.title || extractTitleFromContent(body) || slug;
                     const summaryText = entry.summary || attributes.summary || extractSummary(body);
                     const createdAt = entry.published || attributes.published || attributes.date || null;
