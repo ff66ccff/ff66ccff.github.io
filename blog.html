@@ -790,9 +790,23 @@
                 elements.emptyState.textContent = t.loading;
             } else if (status === 'error') {
                 elements.emptyState.textContent = t.error;
-            } else {
+            } else if (status === 'empty') {
                 elements.emptyState.textContent = t.empty;
+            } else {
+                elements.emptyState.textContent = '';
             }
+        }
+
+        function showEmptyState(state) {
+            elements.emptyState.dataset.state = state;
+            updateEmptyStateText();
+            elements.emptyState.hidden = false;
+        }
+
+        function hideEmptyState() {
+            elements.emptyState.dataset.state = 'idle';
+            updateEmptyStateText();
+            elements.emptyState.hidden = true;
         }
 
         function updateOverlayMeta() {
@@ -881,13 +895,11 @@
 
         function renderPostList(list) {
             elements.postList.innerHTML = '';
-            elements.emptyState.hidden = true;
             if (!list.length) {
-                elements.emptyState.dataset.state = 'empty';
-                updateEmptyStateText();
-                elements.emptyState.hidden = false;
+                showEmptyState('empty');
                 return;
             }
+            hideEmptyState();
             list.forEach((post) => {
                 const card = document.createElement('article');
                 card.className = 'post-card hover-surface';
@@ -939,9 +951,7 @@
 
         async function loadPosts() {
             try {
-                elements.emptyState.dataset.state = 'loading';
-                updateEmptyStateText();
-                elements.emptyState.hidden = false;
+                showEmptyState('loading');
                 const response = await fetch('https://api.github.com/repos/ff66ccff/ff66ccff.github.io/contents/posts');
                 if (!response.ok) {
                     throw new Error('Failed to fetch directory listing');
@@ -970,13 +980,6 @@
                 state.filtered = [...posts];
                 state.loaded = true;
                 renderPostList(state.filtered);
-                if (!posts.length) {
-                    elements.emptyState.dataset.state = 'empty';
-                    updateEmptyStateText();
-                    elements.emptyState.hidden = false;
-                } else {
-                    elements.emptyState.hidden = true;
-                }
                 if (pendingSlug) {
                     const idx = state.posts.findIndex(post => post.slug === pendingSlug);
                     if (idx !== -1) {
@@ -987,9 +990,7 @@
             } catch (error) {
                 console.error(error);
                 state.loaded = false;
-                elements.emptyState.dataset.state = 'error';
-                updateEmptyStateText();
-                elements.emptyState.hidden = false;
+                showEmptyState('error');
             }
         }
 
