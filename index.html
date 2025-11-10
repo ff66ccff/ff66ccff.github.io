@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ff66ccff - Personal Blog</title>
+    <title>ff66ccff - Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -15,25 +15,34 @@
             --accent-blue: #4facfe;
             --accent-pink: #f093fb;
             --accent-cyan: #00d4ff;
-            --bg-primary: #f5f7fa;
-            --bg-card: #ffffff;
+            --bg-primary: #e8ecf7;
+            --mica-tint: rgba(255, 255, 255, 0.82);
+            --mica-tint-strong: rgba(255, 255, 255, 0.9);
+            --mica-noise: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(102, 126, 234, 0.16));
+            --mica-border: rgba(255, 255, 255, 0.62);
+            --reveal-glow: rgba(255, 255, 255, 0.72);
             --text-primary: #1f2937;
-            --text-secondary: #4b5563;
+            --text-secondary: #475569;
             --text-muted: #6b7280;
-            --border-color: rgba(15, 23, 42, 0.08);
-            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.08);
-            --shadow-md: 0 12px 36px rgba(15, 23, 42, 0.12);
+            --border-color: rgba(15, 23, 42, 0.12);
+            --shadow-sm: 0 12px 32px rgba(15, 23, 42, 0.14);
+            --shadow-md: 0 36px 76px rgba(15, 23, 42, 0.18);
+            --font-family: 'Segoe UI Variable Display', 'Segoe UI', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
         }
 
         [data-theme="dark"] {
-            --bg-primary: #0f172a;
-            --bg-card: #111c34;
+            --bg-primary: #0d1528;
+            --mica-tint: rgba(20, 29, 46, 0.82);
+            --mica-tint-strong: rgba(24, 34, 56, 0.9);
+            --mica-noise: linear-gradient(135deg, rgba(16, 26, 44, 0.65), rgba(102, 126, 234, 0.22));
+            --mica-border: rgba(148, 163, 184, 0.28);
+            --reveal-glow: rgba(148, 176, 224, 0.68);
             --text-primary: #f8fafc;
             --text-secondary: #cbd5f5;
             --text-muted: #94a3b8;
-            --border-color: rgba(148, 163, 184, 0.28);
-            --shadow-sm: 0 4px 12px rgba(8, 15, 35, 0.65);
-            --shadow-md: 0 12px 36px rgba(8, 15, 35, 0.75);
+            --border-color: rgba(148, 163, 184, 0.3);
+            --shadow-sm: 0 16px 42px rgba(8, 15, 35, 0.55);
+            --shadow-md: 0 46px 94px rgba(8, 15, 35, 0.7);
         }
 
         * {
@@ -42,17 +51,35 @@
 
         body {
             margin: 0;
-            font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
-            background: radial-gradient(circle at top, rgba(102, 126, 234, 0.28), transparent 55%),
-                radial-gradient(circle at bottom, rgba(118, 75, 162, 0.25), transparent 65%),
-                var(--bg-primary);
-            color: var(--text-primary);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px 16px;
+            font-family: var(--font-family);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 40px 24px 72px;
             transition: background 0.4s ease, color 0.4s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: -40vh -40vw;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        body::before {
+            background: var(--mica-noise);
+            filter: blur(72px) saturate(120%);
+            opacity: 0.95;
+        }
+
+        body::after {
+            background: rgba(102, 126, 234, 0.08);
+            z-index: -1;
+            opacity: 0.55;
         }
 
         a {
@@ -60,211 +87,307 @@
             text-decoration: none;
         }
 
-        .page {
+        .page-shell {
             width: 100%;
-            max-width: 960px;
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
         }
 
         .hover-surface {
             position: relative;
             z-index: 0;
+            border: 1px solid transparent;
+            background-clip: padding-box;
+            overflow: hidden;
         }
 
-        .hover-surface::before {
+        .hover-surface::before,
+        .hover-surface::after {
             content: "";
             position: absolute;
             inset: 0;
             border-radius: inherit;
-            background: radial-gradient(420px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(255, 255, 255, 0.22), transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
             pointer-events: none;
+            transition: opacity 0.18s ease;
+        }
+
+        .hover-surface::before {
+            z-index: -2;
+            background: radial-gradient(600px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+                    rgba(255, 255, 255, 0.06),
+                    transparent 40%);
+            opacity: 0;
+        }
+
+        .hover-surface::after {
             z-index: -1;
+            background: radial-gradient(800px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+                    rgba(102, 126, 234, 0.15),
+                    transparent 40%);
+            opacity: 0;
         }
 
         .hover-surface.is-active::before {
-            opacity: 1;
+            opacity: 0.5;
         }
 
-        .profile-card {
-            position: relative;
-            background: var(--bg-card);
-            border-radius: 32px;
-            padding: 48px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            overflow: hidden;
+        .hover-surface.is-active::after {
+            opacity: 0.8;
         }
 
-        .profile-card::before {
-            background: radial-gradient(120% 120% at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(102, 126, 234, 0.18), rgba(118, 75, 162, 0.05) 56%, transparent 75%);
-        }
-
-        .profile-content {
-            position: relative;
-            z-index: 1;
-            display: grid;
-            grid-template-columns: minmax(180px, 1fr) 1.4fr;
-            gap: 48px;
+        .page-header {
+            display: flex;
             align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 24px 30px;
+            border-radius: 28px;
+            background: var(--mica-tint);
+            border: 1px solid var(--mica-border);
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(26px) saturate(150%);
         }
 
-        .intro-section {
+        .header-main {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            color: var(--primary-color);
+        }
+
+        .header-note {
+            margin: 0;
+            font-size: 0.96rem;
+            color: var(--text-muted);
+        }
+
+        .ghost-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 22px;
+            border-radius: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.12);
+            border: 1px solid rgba(102, 126, 234, 0.32);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            backdrop-filter: blur(18px) saturate(135%);
+        }
+
+        .ghost-link:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(102, 126, 234, 0.48);
+        }
+
+        .hero-card {
+            display: grid;
+            grid-template-columns: minmax(260px, 0.95fr) 1.05fr;
+            gap: 36px;
+            padding: 48px 52px;
+            border-radius: 36px;
+            background: var(--mica-tint-strong);
+            border: 1px solid var(--mica-border);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(30px) saturate(150%);
+        }
+
+        .profile-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
             text-align: center;
         }
 
         .avatar-wrapper {
-            width: 160px;
-            height: 160px;
-            margin: 0 auto 24px;
-            border-radius: 32px;
+            width: 176px;
+            height: 176px;
+            border-radius: 40px;
             padding: 6px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--primary-color);
         }
 
         .avatar {
-            position: relative;
             width: 100%;
             height: 100%;
-            border-radius: 26px;
-            background: rgba(255, 255, 255, 0.92);
+            border-radius: 32px;
+            background: rgba(255, 255, 255, 0.94);
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
             color: var(--primary-color);
-            font-size: 54px;
+            font-size: 56px;
         }
 
         [data-theme="dark"] .avatar {
-            background: rgba(13, 23, 46, 0.85);
+            background: rgba(12, 20, 38, 0.86);
+        }
+
+        .avatar-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
         }
 
         .avatar img {
+            display: none;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: none;
         }
 
         .name {
-            font-size: 2.4rem;
+            margin: 0;
+            font-size: 2.6rem;
             font-weight: 700;
-            margin: 0 0 12px;
         }
 
         .subtitle {
             margin: 0;
+            font-size: 1.05rem;
             color: var(--text-secondary);
-            font-size: 1rem;
         }
 
-        .details-section {
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
-
-        .section-title {
-            margin: 0 0 18px;
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .interests-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 18px;
-        }
-
-        .interest-card {
-            padding: 20px;
-            border-radius: 20px;
-            background: rgba(102, 126, 234, 0.08);
-            border: 1px solid rgba(102, 126, 234, 0.18);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .interest-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        [data-theme="dark"] .interest-card {
-            background: rgba(102, 126, 234, 0.12);
-            border-color: rgba(102, 126, 234, 0.28);
-        }
-
-        .interest-icon {
-            font-size: 1.6rem;
-            color: var(--primary-color);
-            margin-bottom: 12px;
-        }
-
-        .interest-title {
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .interest-subtitle {
-            color: var(--text-muted);
+        .tagline {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
 
         .actions-row {
             display: flex;
             flex-wrap: wrap;
             gap: 16px;
-            margin-top: auto;
+            justify-content: center;
         }
 
         .action-btn {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            padding: 14px 28px;
-            border-radius: 18px;
+            padding: 14px 26px;
+            border-radius: 20px;
             font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: #ffffff;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .action-btn.secondary {
-            background: rgba(102, 126, 234, 0.12);
+            border: 1px solid rgba(102, 126, 234, 0.32);
+            background: rgba(102, 126, 234, 0.15);
             color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+            backdrop-filter: blur(20px) saturate(140%);
         }
 
         .action-btn:hover {
             transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(102, 126, 234, 0.48);
+        }
+
+        .details-column {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .focus-card {
+            padding: 26px 28px;
+            border-radius: 26px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--mica-border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            backdrop-filter: blur(24px) saturate(145%);
+        }
+
+        [data-theme="dark"] .focus-card {
+            background: rgba(17, 27, 47, 0.82);
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 1.18rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 18px;
+        }
+
+        .interest-card {
+            padding: 22px;
+            border-radius: 22px;
+            background: rgba(102, 126, 234, 0.17);
+            border: 1px solid rgba(102, 126, 234, 0.32);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .interest-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(102, 126, 234, 0.48);
+        }
+
+        .interest-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .interest-title {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .interest-subtitle {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.92rem;
         }
 
         .control-btn {
             position: fixed;
             width: 48px;
             height: 48px;
-            border-radius: 50%;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid var(--border-color);
-            background: var(--bg-card);
+            border: 1px solid var(--mica-border);
+            background: var(--mica-tint);
             color: var(--text-primary);
             box-shadow: var(--shadow-sm);
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
             z-index: 1000;
+            backdrop-filter: blur(18px) saturate(140%);
         }
 
         .control-btn:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-md);
+            border-color: rgba(102, 126, 234, 0.48);
         }
 
         .theme-toggle {
@@ -275,134 +398,148 @@
         .language-toggle {
             top: 28px;
             left: 28px;
-            font-weight: 600;
-        }
-
-        .tagline {
-            margin: 0;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
         }
 
         .language-toggle span {
-            font-size: 0.95rem;
+            font-size: 0.96rem;
+            font-weight: 600;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1080px) {
             body {
-                padding: 40px 16px;
+                padding: 36px 18px 64px;
             }
 
-            .profile-card {
-                padding: 40px;
-            }
-
-            .profile-content {
+            .hero-card {
+                padding: 42px 40px;
                 grid-template-columns: 1fr;
-                gap: 36px;
             }
 
-            .actions-row {
-                justify-content: center;
+            .profile-column {
+                align-items: center;
+                text-align: center;
+            }
+
+            .details-column {
+                width: 100%;
             }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 720px) {
             body {
-                padding: 28px 12px;
+                padding: 30px 14px 56px;
             }
 
-            .profile-card {
-                padding: 32px 24px;
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+                padding: 22px 24px;
+            }
+
+            .hero-card {
+                padding: 34px 26px;
             }
 
             .avatar-wrapper {
-                width: 132px;
-                height: 132px;
-            }
-
-            .name {
-                font-size: 2rem;
+                width: 150px;
+                height: 150px;
             }
 
             .control-btn {
                 width: 44px;
                 height: 44px;
+                border-radius: 14px;
             }
 
             .theme-toggle {
-                top: 20px;
-                right: 20px;
+                top: 18px;
+                right: 18px;
             }
 
             .language-toggle {
-                top: 20px;
-                left: 20px;
+                top: 18px;
+                left: 18px;
             }
+        }
 
-            .actions-row {
-                gap: 12px;
-            }
+        @media (max-width: 520px) {
 
+            .ghost-link,
             .action-btn {
-                flex: 1 1 100%;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero-card {
+                padding: 30px 20px;
+            }
+
+            .name {
+                font-size: 2.2rem;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="page">
-        <section class="profile-card hover-surface" id="profileCard">
-            <div class="profile-content">
-                <div class="intro-section">
-                    <div class="avatar-wrapper hover-surface" id="avatarWrapper">
-                        <div class="avatar" id="avatarContainer">
-                            <div class="avatar-icon">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <img id="avatarImage" src="avatar.jpg" alt="Profile Picture">
-                        </div>
-                    </div>
-                    <h1 class="name" id="name">ff66ccff</h1>
-                    <p class="subtitle" id="subtitle">四川大学 25级计算机学生</p>
-                </div>
-                <div class="details-section">
-                    <div>
-                        <h2 class="section-title" id="interestsTitle">我的兴趣</h2>
-                        <div class="interests-grid">
-                            <article class="interest-card hover-surface">
-                                <div class="interest-icon"><i class="fas fa-code"></i></div>
-                                <div class="interest-title" id="codingTitle">编程</div>
-                                <p class="interest-subtitle" id="codingSubtitle">Programming</p>
-                            </article>
-                            <article class="interest-card hover-surface">
-                                <div class="interest-icon"><i class="fas fa-music"></i></div>
-                                <div class="interest-title" id="vocaloidTitle">中文 VOCALOID</div>
-                                <p class="interest-subtitle" id="vocaloidSubtitle">Chinese Vocaloid</p>
-                            </article>
-                            <article class="interest-card hover-surface">
-                                <div class="interest-icon"><i class="fas fa-rocket"></i></div>
-                                <div class="interest-title" id="scifiTitle">科幻小说</div>
-                                <p class="interest-subtitle" id="scifiSubtitle">Sci-Fi Novels</p>
-                            </article>
-                        </div>
-                    </div>
-                    <p class="tagline" id="tagline">记录代码、音乐与故事，分享我的学习旅程。</p>
-                    <div class="actions-row">
-                        <a class="action-btn hover-surface" href="https://github.com/ff66ccff" target="_blank"
-                            rel="noopener" id="githubButton">
-                            <i class="fab fa-github"></i>
-                            <span id="viewProfile">查看我的 GitHub</span>
-                        </a>
-                        <a class="action-btn secondary hover-surface" href="blog.html" id="blogLink">
-                            <i class="fas fa-book-open"></i>
-                            <span id="viewBlog">进入博客</span>
-                        </a>
-                    </div>
-                </div>
+    <div class="page-shell">
+        <header class="page-header hover-surface">
+            <div class="header-main">
+                <span class="brand">ff66ccff</span>
+                <p class="header-note" id="headerNote">记录代码、音乐与故事，分享我的学习旅程。</p>
             </div>
-        </section>
+            <a class="ghost-link hover-surface" href="blog.html" id="blogLink">
+                <i class="fas fa-book-open"></i>
+                <span id="viewBlog">进入博客</span>
+            </a>
+        </header>
+
+        <main class="hero-card hover-surface">
+            <section class="profile-column">
+                <div class="avatar-wrapper hover-surface" id="avatarWrapper">
+                    <div class="avatar" id="avatarContainer">
+                        <div class="avatar-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <img id="avatarImage" src="avatar.jpg" alt="Profile Picture">
+                    </div>
+                </div>
+                <h1 class="name" id="name">ff66ccff</h1>
+                <p class="subtitle" id="subtitle">四川大学 25级计算机学生</p>
+                <p class="tagline" id="tagline">记录代码、音乐与故事，分享我的学习旅程。</p>
+                <div class="actions-row">
+                    <a class="action-btn hover-surface" href="https://github.com/ff66ccff" target="_blank"
+                        rel="noopener" id="githubButton">
+                        <i class="fab fa-github"></i>
+                        <span id="viewProfile">查看我的 GitHub</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="details-column">
+                <div class="focus-card hover-surface">
+                    <h2 class="section-title" id="interestsTitle">我的兴趣</h2>
+                    <div class="interests-grid">
+                        <article class="interest-card hover-surface">
+                            <div class="interest-icon"><i class="fas fa-code"></i></div>
+                            <div class="interest-title" id="codingTitle">编程</div>
+                            <p class="interest-subtitle" id="codingSubtitle">Programming</p>
+                        </article>
+                        <article class="interest-card hover-surface">
+                            <div class="interest-icon"><i class="fas fa-music"></i></div>
+                            <div class="interest-title" id="vocaloidTitle">中文 VOCALOID</div>
+                            <p class="interest-subtitle" id="vocaloidSubtitle">Chinese Vocaloid</p>
+                        </article>
+                        <article class="interest-card hover-surface">
+                            <div class="interest-icon"><i class="fas fa-rocket"></i></div>
+                            <div class="interest-title" id="scifiTitle">科幻小说</div>
+                            <p class="interest-subtitle" id="scifiSubtitle">Sci-Fi Novels</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
     <button class="control-btn theme-toggle" id="themeToggle" type="button" title="切换主题">
@@ -416,6 +553,8 @@
     <script>
         const i18n = {
             zh: {
+                pageTitle: "ff66ccff - 主页",
+                headerNote: "记录代码、音乐与故事，分享我的学习旅程。",
                 name: "ff66ccff",
                 subtitle: "四川大学 25级计算机学生",
                 interestsTitle: "我的兴趣",
@@ -425,7 +564,7 @@
                 vocaloidSubtitle: "Chinese Vocaloid",
                 scifiTitle: "科幻小说",
                 scifiSubtitle: "Sci-Fi Novels",
-                tagline: "记录代码、音乐与故事，分享我的学习旅程。",
+                tagline: "记录代码、音乐与故事,分享我的学习旅程。",
                 viewProfile: "查看我的 GitHub",
                 viewBlog: "进入博客",
                 langToggle: "中",
@@ -433,8 +572,10 @@
                 langTitle: "切换语言"
             },
             en: {
+                pageTitle: "ff66ccff - Home",
+                headerNote: "Notes on code, music, and stories from my learning journey.",
                 name: "ff66ccff",
-                subtitle: "Computer Science Student, Class of 2025, Sichuan University",
+                subtitle: "Computer Science Student, Sichuan University (Class of 2025)",
                 interestsTitle: "My Interests",
                 codingTitle: "Programming",
                 codingSubtitle: "Code & Dev",
@@ -452,6 +593,7 @@
         };
 
         const elements = {
+            headerNote: document.getElementById('headerNote'),
             name: document.getElementById('name'),
             subtitle: document.getElementById('subtitle'),
             interestsTitle: document.getElementById('interestsTitle'),
@@ -482,6 +624,8 @@
             currentLang = lang;
             const t = i18n[lang];
             document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
+            document.title = t.pageTitle;
+            elements.headerNote.textContent = t.headerNote;
             elements.name.textContent = t.name;
             elements.subtitle.textContent = t.subtitle;
             elements.interestsTitle.textContent = t.interestsTitle;
@@ -494,9 +638,14 @@
             elements.tagline.textContent = t.tagline;
             elements.viewProfile.textContent = t.viewProfile;
             elements.viewBlog.textContent = t.viewBlog;
-            elements.languageToggle.querySelector('span').textContent = t.langToggle;
+            const langToggleLabel = elements.languageToggle.querySelector('span');
+            if (langToggleLabel) {
+                langToggleLabel.textContent = t.langToggle;
+            }
             elements.themeToggle.title = t.themeTitle;
             elements.languageToggle.title = t.langTitle;
+            elements.themeToggle.setAttribute('aria-label', t.themeTitle);
+            elements.languageToggle.setAttribute('aria-label', t.langTitle);
             localStorage.setItem('language', lang);
         }
 
