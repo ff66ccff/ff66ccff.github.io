@@ -12,7 +12,7 @@ if (!fs.existsSync(postsDir)) {
     process.exit(0);
 }
 
-const postFiles = fs.readdirSync(postsDir).filter((file) => file.endsWith('.md'));
+const postFiles = fs.readdirSync(postsDir).filter((file) => file.endsWith('.md') && file !== 'metadata.json');
 
 if (postFiles.length === 0) {
     console.log('No markdown posts found, skipping metadata update.');
@@ -105,6 +105,7 @@ function buildFrontMatter(data, order, newline) {
 }
 
 let updatedCount = 0;
+const metadataEntries = [];
 
 postFiles.forEach((fileName) => {
     const relativePath = path.posix.join('posts', fileName);
@@ -147,10 +148,48 @@ postFiles.forEach((fileName) => {
         updatedCount += 1;
         console.log(`Updated metadata for ${relativePath}`);
     }
+
+    metadataEntries.push({
+        slug,
+        filename: fileName,
+        title,
+        published: metadata.published || null,
+        updated: metadata.updated || metadata.published || null
+    });
 });
 
 if (updatedCount === 0) {
     console.log('Post metadata already up to date.');
 } else {
     console.log(`Metadata updated for ${updatedCount} file(s).`);
+}
+
+metadataEntries.sort((a, b) => {
+    const aTime = a.updated ? Date.parse(a.updated) : (a.published ? Date.parse(a.published) : 0);
+    const bTime = b.updated ? Date.parse(b.updated) : (b.published ? Date.parse(b.published) : 0);
+    if (bTime !== aTime) {
+        return bTime - aTime;
+    }
+    return a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }) || a.slug.localeCompare(b.slug);
+});
+
+const metadataPayload = {
+    generatedAt: new Date().toISOString(),
+    posts: metadataEntries
+};
+
+const metadataPath = path.join(postsDir, 'metadata.json');
+const metadataJson = `${JSON.stringify(metadataPayload, null, 2)}\n`;
+let existingMetadata = '';
+try {
+    existingMetadata = fs.readFileSync(metadataPath, 'utf8');
+} catch (error) {
+    if (error.code !== 'ENOENT') {
+        console.warn('Unable to read existing metadata manifest:', error.message);
+    }
+}
+
+if (existingMetadata !== metadataJson) {
+    fs.writeFileSync(metadataPath, metadataJson, 'utf8');
+    console.log('Updated posts metadata manifest.');
 }

@@ -745,12 +745,8 @@
             nextPostLabel: document.getElementById('nextPostLabel')
         };
 
-        const REPO_OWNER = 'ff66ccff';
-        const REPO_NAME = 'ff66ccff.github.io';
         const POSTS_DIR = 'posts';
-        const CDN_BRANCH = 'main';
-        const CDN_BASE = `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${CDN_BRANCH}`;
-        const CDN_MANIFEST_URL = `https://data.jsdelivr.com/v1/package/gh/${REPO_OWNER}/${REPO_NAME}@${CDN_BRANCH}`;
+        const METADATA_URL = `${POSTS_DIR}/metadata.json`;
 
         const state = {
             posts: [],
@@ -889,10 +885,10 @@
             return headingMatch ? headingMatch[1].trim() : '';
         }
 
-        function buildCdnFileUrl(filename, hash) {
+        function buildPostUrl(filename, cacheKey) {
             const encodedSegments = filename.split('/').map((segment) => encodeURIComponent(segment));
-            const baseUrl = `${CDN_BASE}/${POSTS_DIR}/${encodedSegments.join('/')}`;
-            return hash ? `${baseUrl}?v=${encodeURIComponent(hash)}` : baseUrl;
+            const baseUrl = `${POSTS_DIR}/${encodedSegments.join('/')}`;
+            return cacheKey ? `${baseUrl}?v=${encodeURIComponent(cacheKey)}` : baseUrl;
         }
 
         function getBrowserLanguage() {
@@ -1119,42 +1115,38 @@
             }
         }
 
-        async function fetchPostManifest() {
-            const response = await fetch(CDN_MANIFEST_URL, { cache: 'no-store' });
-            if (!response.ok) {
-                throw new Error('Failed to fetch posts manifest');
-            }
-            const manifest = await response.json();
-            const files = Array.isArray(manifest?.files) ? manifest.files : [];
-            const postsDirectory = files.find((entry) => entry.type === 'directory' && entry.name === POSTS_DIR);
-            if (!postsDirectory || !Array.isArray(postsDirectory.files)) {
-                throw new Error('Posts directory missing in manifest');
-            }
-            return postsDirectory.files.filter((file) => file.type === 'file' && file.name.endsWith('.md'));
-        }
-
         async function loadPosts() {
             try {
                 showEmptyState('loading');
-                const manifestEntries = await fetchPostManifest();
+                const metadataResponse = await fetch(METADATA_URL, { cache: 'no-store' });
+                if (!metadataResponse.ok) {
+                    throw new Error('Failed to fetch posts metadata');
+                }
+                const metadataPayload = await metadataResponse.json();
+                const manifestEntries = Array.isArray(metadataPayload?.posts) ? metadataPayload.posts : [];
+                if (!manifestEntries.length) {
+                    throw new Error('No posts found in metadata');
+                }
                 const posts = [];
 
                 for (const entry of manifestEntries) {
-                    const markdownResponse = await fetch(buildCdnFileUrl(entry.name, entry.hash), { cache: 'no-store' });
+                    const filename = entry.filename || entry.name || `${entry.slug}.md`;
+                    const cacheKey = entry.updated || entry.published || null;
+                    const markdownResponse = await fetch(buildPostUrl(filename, cacheKey), { cache: 'no-store' });
                     if (!markdownResponse.ok) {
-                        throw new Error(`Failed to fetch ${entry.name}`);
+                        throw new Error(`Failed to fetch ${filename}`);
                     }
                     const rawMarkdown = await markdownResponse.text();
                     const { attributes, body } = parseFrontMatter(rawMarkdown);
-                    const slug = entry.name.replace(/\.md$/, '');
-                    const title = attributes.title || extractTitleFromContent(body) || slug;
-                    const summaryText = attributes.summary || extractSummary(body);
-                    const createdAt = attributes.published || attributes.date || null;
-                    const updatedAt = attributes.updated || attributes.modified || createdAt;
+                    const slug = entry.slug || filename.replace(/\.md$/, '');
+                    const title = entry.title || attributes.title || extractTitleFromContent(body) || slug;
+                    const summaryText = entry.summary || attributes.summary || extractSummary(body);
+                    const createdAt = entry.published || attributes.published || attributes.date || null;
+                    const updatedAt = entry.updated || attributes.updated || attributes.modified || createdAt;
 
                     posts.push({
                         slug,
-                        filename: entry.name,
+                        filename,
                         title,
                         content: body,
                         summary: summaryText,
