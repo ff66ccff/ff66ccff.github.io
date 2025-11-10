@@ -745,8 +745,12 @@
             nextPostLabel: document.getElementById('nextPostLabel')
         };
 
-        const GITHUB_API_BASE = 'https://api.github.com/repos/ff66ccff/ff66ccff.github.io';
+        const REPO_OWNER = 'ff66ccff';
+        const REPO_NAME = 'ff66ccff.github.io';
         const POSTS_DIR = 'posts';
+        const CDN_BRANCH = 'main';
+        const CDN_BASE = `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${CDN_BRANCH}`;
+        const CDN_MANIFEST_URL = `https://data.jsdelivr.com/v1/package/gh/${REPO_OWNER}/${REPO_NAME}@${CDN_BRANCH}`;
 
         const state = {
             posts: [],
@@ -836,42 +840,59 @@
             }
         }
 
-        async function fetchCommitInfo(filename) {
-            try {
-                const commitsUrl = `${GITHUB_API_BASE}/commits?path=${encodeURIComponent(`${POSTS_DIR}/${filename}`)}&per_page=100`;
-                const response = await fetch(commitsUrl);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch commit info for ${filename}`);
-                }
-                const commits = await response.json();
-                if (!Array.isArray(commits) || !commits.length) {
-                    return { createdAt: null, updatedAt: null };
-                }
-
-                let oldestCommit = commits[commits.length - 1];
-                const linkHeader = response.headers.get('link');
-                if (linkHeader && linkHeader.includes('rel="last"')) {
-                    const lastPart = linkHeader.split(',').find(part => part.includes('rel="last"'));
-                    const match = lastPart && lastPart.match(/<([^>]+)>/);
-                    if (match && match[1]) {
-                        const lastResponse = await fetch(match[1]);
-                        if (lastResponse.ok) {
-                            const lastCommits = await lastResponse.json();
-                            if (Array.isArray(lastCommits) && lastCommits.length) {
-                                oldestCommit = lastCommits[lastCommits.length - 1];
-                            }
-                        }
-                    }
-                }
-
-                return {
-                    updatedAt: commits[0]?.commit?.author?.date ?? commits[0]?.commit?.committer?.date ?? null,
-                    createdAt: oldestCommit?.commit?.author?.date ?? oldestCommit?.commit?.committer?.date ?? null
-                };
-            } catch (error) {
-                console.error(error);
-                return { createdAt: null, updatedAt: null };
+        function parseFrontMatter(markdown) {
+            const frontMatterPattern = /^---\s*[\r\n]+([\s\S]*?)\s*---\s*[\r\n]*/;
+            const match = markdown.match(frontMatterPattern);
+            if (!match) {
+                return { attributes: {}, body: markdown };
             }
+
+            const lines = match[1].split(/\r?\n/);
+            const attributes = {};
+            let currentKey = null;
+
+            lines.forEach((line) => {
+                if (!line.trim()) {
+                    return;
+                }
+
+                if (/^\s/.test(line) && currentKey) {
+                    attributes[currentKey] = `${attributes[currentKey]}\n${line.trim()}`;
+                    return;
+                }
+
+                const delimiterIndex = line.indexOf(':');
+                if (delimiterIndex === -1) {
+                    currentKey = null;
+                    return;
+                }
+
+                currentKey = line.slice(0, delimiterIndex).trim();
+                let value = line.slice(delimiterIndex + 1).trim();
+                if (value === '|' || value === '|-' || value === '>' || value === '>-') {
+                    value = '';
+                }
+                attributes[currentKey] = value;
+            });
+
+            Object.keys(attributes).forEach((key) => {
+                const normalized = attributes[key].replace(/^['"]|['"]$/g, '').trim();
+                attributes[key] = normalized;
+            });
+
+            const body = markdown.slice(match[0].length);
+            return { attributes, body };
+        }
+
+        function extractTitleFromContent(markdown) {
+            const headingMatch = markdown.match(/^#\s+(.+)$/m);
+            return headingMatch ? headingMatch[1].trim() : '';
+        }
+
+        function buildCdnFileUrl(filename, hash) {
+            const encodedSegments = filename.split('/').map((segment) => encodeURIComponent(segment));
+            const baseUrl = `${CDN_BASE}/${POSTS_DIR}/${encodedSegments.join('/')}`;
+            return hash ? `${baseUrl}?v=${encodeURIComponent(hash)}` : baseUrl;
         }
 
         function getBrowserLanguage() {
@@ -1020,7 +1041,8 @@
                 card.className = 'post-card hover-surface';
                 card.tabIndex = 0;
                 card.setAttribute('role', 'button');
-                card.setAttribute('aria-label', post.slug);
+                const displayTitle = post.title || post.slug;
+                card.setAttribute('aria-label', displayTitle);
                 card.addEventListener('click', (event) => {
                     const origin = event && typeof event.clientX === 'number' ? { x: event.clientX, y: event.clientY } : null;
                     openPostByIndex(post.index, origin);
@@ -1034,7 +1056,7 @@
 
                 const title = document.createElement('h2');
                 title.className = 'post-title';
-                title.textContent = post.slug;
+                title.textContent = displayTitle;
                 card.appendChild(title);
                 if (post.summary) {
                     const summary = document.createElement('p');
@@ -1078,7 +1100,7 @@
             } else {
                 const query = keyword.toLowerCase();
                 state.filtered = state.posts.filter((post) => {
-                    const content = `${post.slug} ${post.content}`.toLowerCase();
+                    const content = `${post.slug} ${post.title || ''} ${post.summary || ''} ${post.content}`.toLowerCase();
                     return content.includes(query);
                 });
             }
@@ -1097,42 +1119,57 @@
             }
         }
 
+        async function fetchPostManifest() {
+            const response = await fetch(CDN_MANIFEST_URL, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error('Failed to fetch posts manifest');
+            }
+            const manifest = await response.json();
+            const files = Array.isArray(manifest?.files) ? manifest.files : [];
+            const postsDirectory = files.find((entry) => entry.type === 'directory' && entry.name === POSTS_DIR);
+            if (!postsDirectory || !Array.isArray(postsDirectory.files)) {
+                throw new Error('Posts directory missing in manifest');
+            }
+            return postsDirectory.files.filter((file) => file.type === 'file' && file.name.endsWith('.md'));
+        }
+
         async function loadPosts() {
             try {
                 showEmptyState('loading');
-                const response = await fetch(`${GITHUB_API_BASE}/contents/${POSTS_DIR}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch directory listing');
+                const manifestEntries = await fetchPostManifest();
+                const posts = [];
+
+                for (const entry of manifestEntries) {
+                    const markdownResponse = await fetch(buildCdnFileUrl(entry.name, entry.hash), { cache: 'no-store' });
+                    if (!markdownResponse.ok) {
+                        throw new Error(`Failed to fetch ${entry.name}`);
+                    }
+                    const rawMarkdown = await markdownResponse.text();
+                    const { attributes, body } = parseFrontMatter(rawMarkdown);
+                    const slug = entry.name.replace(/\.md$/, '');
+                    const title = attributes.title || extractTitleFromContent(body) || slug;
+                    const summaryText = attributes.summary || extractSummary(body);
+                    const createdAt = attributes.published || attributes.date || null;
+                    const updatedAt = attributes.updated || attributes.modified || createdAt;
+
+                    posts.push({
+                        slug,
+                        filename: entry.name,
+                        title,
+                        content: body,
+                        summary: summaryText,
+                        createdAt: createdAt || null,
+                        updatedAt: updatedAt || null
+                    });
                 }
-                const files = await response.json();
-                const markdownFiles = files.filter(file => file.type === 'file' && file.name.endsWith('.md'));
-                const posts = await Promise.all(markdownFiles.map(async (file) => {
-                    const [content, commitInfo] = await Promise.all([
-                        (async () => {
-                            const res = await fetch(`${file.download_url}?cacheBust=${Date.now()}`);
-                            if (!res.ok) {
-                                throw new Error(`Failed to fetch ${file.name}`);
-                            }
-                            return res.text();
-                        })(),
-                        fetchCommitInfo(file.name)
-                    ]);
-                    return {
-                        slug: file.name.replace(/\.md$/, ''),
-                        filename: file.name,
-                        content,
-                        summary: extractSummary(content),
-                        createdAt: commitInfo.createdAt,
-                        updatedAt: commitInfo.updatedAt
-                    };
-                }));
+
                 posts.sort((a, b) => {
-                    const aTime = a.updatedAt ? Date.parse(a.updatedAt) : 0;
-                    const bTime = b.updatedAt ? Date.parse(b.updatedAt) : 0;
+                    const aTime = a.updatedAt ? Date.parse(a.updatedAt) : (a.createdAt ? Date.parse(a.createdAt) : 0);
+                    const bTime = b.updatedAt ? Date.parse(b.updatedAt) : (b.createdAt ? Date.parse(b.createdAt) : 0);
                     if (bTime !== aTime) {
                         return bTime - aTime;
                     }
-                    return b.filename.localeCompare(a.filename);
+                    return a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }) || a.slug.localeCompare(b.slug);
                 });
                 posts.forEach((post, index) => {
                     post.index = index;
@@ -1245,7 +1282,8 @@
             }
             state.currentIndex = index;
             const post = state.posts[index];
-            elements.overlayTitle.textContent = post.slug;
+            const displayTitle = post.title || post.slug;
+            elements.overlayTitle.textContent = displayTitle;
             const html = marked.parse(post.content, { gfm: true, breaks: true });
             elements.overlayContent.innerHTML = html;
             Prism.highlightAllUnder(elements.overlayContent);
