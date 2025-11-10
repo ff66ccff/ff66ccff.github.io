@@ -974,6 +974,8 @@
                     elements.emptyState.dataset.state = 'empty';
                     updateEmptyStateText();
                     elements.emptyState.hidden = false;
+                } else {
+                    elements.emptyState.hidden = true;
                 }
                 if (pendingSlug) {
                     const idx = state.posts.findIndex(post => post.slug === pendingSlug);
