@@ -890,6 +890,23 @@
             return headingMatch ? headingMatch[1].trim() : '';
         }
 
+        function stripLeadingTitleHeading(markdown, title) {
+            if (!markdown || !title) {
+                return markdown;
+            }
+            const headingPattern = /^\s*#\s+([^\n]+)\s*(?:\r?\n)+/;
+            const match = markdown.match(headingPattern);
+            if (!match) {
+                return markdown;
+            }
+            const headingText = match[1].trim();
+            if (headingText.toLowerCase() !== title.trim().toLowerCase()) {
+                return markdown;
+            }
+            const stripped = markdown.slice(match[0].length);
+            return stripped.replace(/^\s+/, '');
+        }
+
         function buildPostUrl(filename, cacheKey) {
             const encodedSegments = filename.split('/').map((segment) => encodeURIComponent(segment));
             const baseUrl = `${POSTS_DIR}/${encodedSegments.join('/')}`;
@@ -1200,8 +1217,11 @@
                     const rawMarkdown = await markdownResponse.text();
                     const { attributes, body } = parseFrontMatter(rawMarkdown);
                     const slug = entry.slug || attributes.slug || filename.replace(/\.md$/, '');
-                    const title = entry.title || attributes.title || extractTitleFromContent(body) || slug;
-                    const summaryText = entry.summary || attributes.summary || extractSummary(body);
+                    let contentBody = body;
+                    const derivedTitle = extractTitleFromContent(contentBody);
+                    const title = entry.title || attributes.title || derivedTitle || slug;
+                    contentBody = stripLeadingTitleHeading(contentBody, title);
+                    const summaryText = entry.summary || attributes.summary || extractSummary(contentBody);
                     const createdAt = entry.published || attributes.published || attributes.date || null;
                     const updatedAt = entry.updated || attributes.updated || attributes.modified || createdAt;
 
@@ -1209,7 +1229,7 @@
                         slug,
                         filename,
                         title,
-                        content: body,
+                        content: contentBody,
                         summary: summaryText,
                         createdAt: createdAt || null,
                         updatedAt: updatedAt || null
