@@ -1,19 +1,26 @@
 {
-  "generatedAt": "2025-11-10T12:47:27.832Z",
+  "generatedAt": "2025-11-11T15:07:24.147Z",
   "posts": [
+    {
+      "slug": "累",
+      "filename": "累.md",
+      "title": "心累",
+      "published": "2025-11-11T23:06:39+08:00",
+      "updated": "2025-11-11T23:06:39+08:00"
+    },
     {
       "slug": "welcome-to-the-blog",
       "filename": "welcome-to-the-blog.md",
       "title": "欢迎来到新的博客",
       "published": "2025-11-09T23:25:04+08:00",
-      "updated": "2025-11-10T12:34:00Z"
+      "updated": "2025-11-10T12:47:27Z"
     },
     {
       "slug": "游戏本的痛",
       "filename": "游戏本的痛.md",
       "title": "游戏本的痛",
       "published": "2025-11-10T12:01:14+08:00",
-      "updated": "2025-11-10T12:34:00Z"
+      "updated": "2025-11-10T12:47:27Z"
     }
   ]
 }
