@@ -1359,6 +1359,14 @@
             elements.overlayTitle.textContent = displayTitle;
             const html = marked.parse(post.content, { gfm: true, breaks: true });
             elements.overlayContent.innerHTML = html;
+            const leadingHeading = elements.overlayContent.querySelector('h1');
+            if (leadingHeading) {
+                const headingText = leadingHeading.textContent.trim().toLowerCase();
+                const titleText = displayTitle.trim().toLowerCase();
+                if (headingText === titleText) {
+                    leadingHeading.remove();
+                }
+            }
             Prism.highlightAllUnder(elements.overlayContent);
             updateOverlayMeta();
             showOverlay(origin);
