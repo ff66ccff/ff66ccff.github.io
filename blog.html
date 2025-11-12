@@ -245,6 +245,88 @@
             outline: none;
         }
 
+        .post-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 6px 2px;
+        }
+
+        .post-stats {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 36px;
+        }
+
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(102, 126, 234, 0.14);
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(102, 126, 234, 0.32);
+            backdrop-filter: blur(16px);
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-list {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            border: 1px solid rgba(102, 126, 234, 0.28);
+            border-radius: 18px;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 6px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+            backdrop-filter: blur(14px);
+        }
+
+        .filter-chip:hover {
+            transform: translateY(-1px);
+            background: rgba(102, 126, 234, 0.16);
+            border-color: rgba(102, 126, 234, 0.42);
+        }
+
+        .filter-chip.is-active {
+            color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.22);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .load-more {
+            align-self: center;
+            margin-top: 8px;
+        }
+
+        .scroll-sentinel {
+            width: 100%;
+            height: 1px;
+            pointer-events: none;
+        }
+
         .post-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
