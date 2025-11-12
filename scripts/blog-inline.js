@@ -767,6 +767,7 @@ function showOverlay(origin) {
         return;
     }
     elements.overlay.hidden = false;
+    elements.overlay.classList.remove('is-leaving');
     document.body.classList.add('is-overlay-open');
 
     requestAnimationFrame(() => {
@@ -792,12 +793,14 @@ function showOverlay(origin) {
 }
 
 function closeOverlay() {
-    if (elements.overlay.hidden && !elements.overlay.classList.contains('is-visible')) {
+    if ((elements.overlay.hidden && !elements.overlay.classList.contains('is-visible')) || elements.overlay.classList.contains('is-leaving')) {
         return;
     }
+    elements.overlay.classList.add('is-leaving');
     elements.overlay.classList.remove('is-visible');
     const finalize = () => {
         elements.overlay.hidden = true;
+        elements.overlay.classList.remove('is-leaving');
         if (elements.articleDialog) {
             elements.articleDialog.style.removeProperty('--origin-x');
             elements.articleDialog.style.removeProperty('--origin-y');
@@ -806,22 +809,25 @@ function closeOverlay() {
 
     if (elements.articleDialog) {
         const handleTransitionEnd = (event) => {
-            if (event.target !== elements.articleDialog || event.propertyName !== 'transform') {
+            if (event.target !== elements.articleDialog) {
                 return;
             }
-            if (elements.overlay.classList.contains('is-visible')) {
-                elements.overlay.removeEventListener('transitionend', handleTransitionEnd);
+            if (event.propertyName !== 'transform' && event.propertyName !== 'opacity') {
                 return;
             }
-            elements.overlay.removeEventListener('transitionend', handleTransitionEnd);
+            if (!elements.overlay.classList.contains('is-leaving')) {
+                return;
+            }
+            elements.articleDialog.removeEventListener('transitionend', handleTransitionEnd);
             finalize();
         };
-        elements.overlay.addEventListener('transitionend', handleTransitionEnd);
+        elements.articleDialog.addEventListener('transitionend', handleTransitionEnd);
         setTimeout(() => {
-            if (!elements.overlay.hidden && !elements.overlay.classList.contains('is-visible')) {
+            if (!elements.overlay.hidden && elements.overlay.classList.contains('is-leaving')) {
+                elements.articleDialog.removeEventListener('transitionend', handleTransitionEnd);
                 finalize();
             }
-        }, 400);
+        }, 700);
     } else {
         finalize();
     }

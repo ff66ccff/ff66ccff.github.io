@@ -448,13 +448,19 @@
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transition: opacity 0.32s ease;
+            transition: opacity 0.38s ease, backdrop-filter 0.38s ease;
         }
 
         .article-overlay.is-visible {
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
+        }
+
+        .article-overlay.is-leaving {
+            opacity: 0;
+            visibility: visible;
+            pointer-events: none;
         }
 
         .article-dialog {
@@ -469,14 +475,29 @@
             overflow: hidden;
             backdrop-filter: blur(28px) saturate(140%);
             transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
-            transform: scale(0.86);
+            transform: translateY(24px) scale(0.94);
             opacity: 0;
-            transition: transform 0.38s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.28s ease;
+            transition: transform 0.46s cubic-bezier(0.22, 0.7, 0.12, 1), opacity 0.32s ease;
+            will-change: transform, opacity;
         }
 
         .article-overlay.is-visible .article-dialog {
-            transform: scale(1);
+            transform: translateY(0) scale(1);
             opacity: 1;
+        }
+
+        .article-overlay.is-leaving .article-dialog {
+            transform: translateY(24px) scale(0.9);
+            opacity: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .article-overlay,
+            .article-dialog {
+                transition-duration: 0.01ms !important;
+                transition-delay: 0ms !important;
+            }
         }
 
         .overlay-header {
