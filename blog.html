@@ -29,6 +29,10 @@
             --shadow-sm: 0 12px 32px rgba(15, 23, 42, 0.14);
             --shadow-md: 0 36px 76px rgba(15, 23, 42, 0.18);
             --font-family: 'Segoe UI Variable Display', 'Segoe UI', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+            --safe-area-top: env(safe-area-inset-top, 0px);
+            --safe-area-right: env(safe-area-inset-right, 0px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-area-left: env(safe-area-inset-left, 0px);
         }
 
         [data-theme="dark"] {
@@ -56,7 +60,7 @@
             font-family: var(--font-family);
             background: var(--bg-primary);
             color: var(--text-primary);
-            padding: 40px 24px 72px;
+            padding: calc(40px + var(--safe-area-top)) calc(24px + var(--safe-area-right)) calc(72px + var(--safe-area-bottom)) calc(24px + var(--safe-area-left));
             transition: background 0.4s ease, color 0.4s ease;
             position: relative;
             overflow-x: hidden;
@@ -85,6 +89,7 @@
 
         body.is-overlay-open {
             overflow: hidden;
+            overscroll-behavior: contain;
         }
 
         a {
@@ -154,6 +159,7 @@
             border: 1px solid var(--mica-border);
             box-shadow: var(--shadow-sm);
             backdrop-filter: blur(26px) saturate(150%);
+            -webkit-backdrop-filter: blur(26px) saturate(150%);
         }
 
         .brand {
@@ -182,6 +188,7 @@
             box-shadow: var(--shadow-sm);
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
             backdrop-filter: blur(18px) saturate(135%);
+            -webkit-backdrop-filter: blur(18px) saturate(135%);
         }
 
         .ghost-link:hover {
@@ -200,6 +207,7 @@
             flex-direction: column;
             gap: 28px;
             backdrop-filter: blur(26px) saturate(135%);
+            -webkit-backdrop-filter: blur(26px) saturate(135%);
         }
 
         .panel-header {
@@ -230,6 +238,7 @@
             border: 1px solid rgba(102, 126, 234, 0.32);
             background: rgba(102, 126, 234, 0.12);
             backdrop-filter: blur(18px) saturate(130%);
+            -webkit-backdrop-filter: blur(18px) saturate(130%);
         }
 
         .search-row i {
@@ -301,6 +310,7 @@
             cursor: pointer;
             transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
             backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
         }
 
         .filter-chip:hover {
@@ -345,6 +355,7 @@
             transition: transform 0.22s ease, box-shadow 0.22s ease, border 0.22s ease;
             cursor: pointer;
             backdrop-filter: blur(20px) saturate(140%);
+            -webkit-backdrop-filter: blur(20px) saturate(140%);
         }
 
         .post-card:hover {
@@ -413,6 +424,7 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
             z-index: 1000;
             backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
         }
 
         .control-btn:hover {
@@ -422,13 +434,13 @@
         }
 
         .theme-toggle {
-            top: 28px;
-            right: 28px;
+            top: calc(28px + var(--safe-area-top));
+            right: calc(28px + var(--safe-area-right));
         }
 
         .language-toggle {
-            top: 28px;
-            left: 28px;
+            top: calc(28px + var(--safe-area-top));
+            left: calc(28px + var(--safe-area-left));
         }
 
         .language-toggle span {
@@ -439,9 +451,10 @@
         .article-overlay {
             position: fixed;
             inset: 0;
-            padding: 32px 16px;
+            padding: calc(32px + var(--safe-area-top)) calc(16px + var(--safe-area-right)) calc(32px + var(--safe-area-bottom)) calc(16px + var(--safe-area-left));
             background: rgba(15, 23, 42, 0.55);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             display: grid;
             place-items: center;
             z-index: 2000;
@@ -449,6 +462,7 @@
             visibility: hidden;
             pointer-events: none;
             transition: opacity 0.42s cubic-bezier(0.22, 0.7, 0.12, 1), backdrop-filter 0.42s ease;
+            overscroll-behavior: contain;
         }
 
         .article-overlay.is-visible {
@@ -464,6 +478,7 @@
         .article-dialog {
             width: min(1040px, 100%);
             height: min(90vh, 860px);
+            max-height: calc(100vh - var(--safe-area-top) - var(--safe-area-bottom));
             background: var(--mica-tint-strong);
             border-radius: 28px;
             border: 1px solid var(--mica-border);
@@ -472,6 +487,7 @@
             flex-direction: column;
             overflow: hidden;
             backdrop-filter: blur(28px) saturate(140%);
+            -webkit-backdrop-filter: blur(28px) saturate(140%);
             transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
             transform: translateY(28px) scale(0.94);
             opacity: 0;
@@ -487,6 +503,13 @@
         .article-overlay.is-closing .article-dialog {
             transform: translateY(28px) scale(0.9);
             opacity: 0;
+        }
+
+        @supports (height: 100dvh) {
+            .article-dialog {
+                height: min(90dvh, 860px);
+                max-height: calc(100dvh - var(--safe-area-top) - var(--safe-area-bottom));
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -582,6 +605,9 @@
             position: relative;
             transition: opacity 0.32s ease, transform 0.32s ease;
             will-change: opacity, transform;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
         }
 
         .overlay-body::after {
@@ -648,6 +674,7 @@
             cursor: pointer;
             transition: transform 0.2s ease, background 0.2s ease;
             backdrop-filter: blur(16px) saturate(130%);
+            -webkit-backdrop-filter: blur(16px) saturate(130%);
         }
 
         .ghost-btn {
@@ -683,7 +710,7 @@
 
         @media (max-width: 720px) {
             body {
-                padding: 30px 14px 56px;
+                padding: calc(30px + var(--safe-area-top)) calc(14px + var(--safe-area-right)) calc(56px + var(--safe-area-bottom)) calc(14px + var(--safe-area-left));
             }
 
             .page-header {
@@ -698,9 +725,16 @@
             }
 
             .article-dialog {
-                height: 100vh;
+                height: calc(100vh - var(--safe-area-top) - var(--safe-area-bottom));
                 width: 100%;
                 border-radius: 0;
+                max-height: none;
+            }
+
+            @supports (height: 100dvh) {
+                .article-dialog {
+                    height: calc(100dvh - var(--safe-area-top) - var(--safe-area-bottom));
+                }
             }
 
             .overlay-header,
@@ -717,13 +751,13 @@
             }
 
             .theme-toggle {
-                top: 18px;
-                right: 18px;
+                top: calc(18px + var(--safe-area-top));
+                right: calc(18px + var(--safe-area-right));
             }
 
             .language-toggle {
-                top: 18px;
-                left: 18px;
+                top: calc(18px + var(--safe-area-top));
+                left: calc(18px + var(--safe-area-left));
             }
         }
 
@@ -997,11 +1031,47 @@
             });
         }
 
-        function resetOverlayScroll(behavior = 'auto') {
+        function scrollOverlayToPosition(top, behavior = 'smooth') {
             if (!elements.overlayScroll) {
                 return;
             }
-            elements.overlayScroll.scrollTo({ top: 0, behavior });
+            const numericTop = typeof top === 'number' && isFinite(top) ? top : 0;
+            const target = Math.max(0, numericTop);
+            if (typeof elements.overlayScroll.scrollTo === 'function') {
+                try {
+                    elements.overlayScroll.scrollTo({ top: target, behavior });
+                    return;
+                } catch (error) {
+                    // Use manual scroll fallback when native options are unsupported.
+                }
+            }
+            elements.overlayScroll.scrollTop = target;
+        }
+
+        function resetOverlayScroll(behavior = 'auto') {
+            scrollOverlayToPosition(0, behavior);
+        }
+
+        function playOverlayContentExitAnimation(reduceMotion = prefersReducedMotion()) {
+            const targets = [elements.overlayTitle, elements.overlayMeta, elements.overlayScroll].filter(Boolean);
+            if (reduceMotion || !elements.overlay.classList.contains('is-visible') || !targets.length) {
+                resetSwapState();
+                return 0;
+            }
+
+            resetSwapState();
+            targets.forEach((node) => node.classList.remove('is-swapping-in'));
+
+            requestAnimationFrame(() => {
+                targets.forEach((node) => node.classList.add('is-swapping-out'));
+            });
+
+            motion.swapTimer = setTimeout(() => {
+                targets.forEach((node) => node.classList.remove('is-swapping-out'));
+                motion.swapTimer = null;
+            }, MOTION_DURATIONS.swap);
+
+            return MOTION_DURATIONS.swap;
         }
 
         function getCurrentPost() {
@@ -1597,12 +1667,14 @@
 
             clearTimeout(motion.overlayTimer);
             motion.overlayTimer = null;
-            resetSwapState();
+            const reduceMotion = prefersReducedMotion();
+            const exitDuration = playOverlayContentExitAnimation(reduceMotion);
 
             elements.overlay.classList.add('is-closing');
             elements.overlay.classList.remove('is-visible');
 
             const finalize = () => {
+                resetSwapState();
                 elements.overlay.hidden = true;
                 elements.overlay.classList.remove('is-closing');
                 if (elements.articleDialog) {
@@ -1612,7 +1684,7 @@
                 resetOverlayScroll('auto');
             };
 
-            const duration = prefersReducedMotion() ? 0 : MOTION_DURATIONS.overlay;
+            const duration = reduceMotion ? 0 : Math.max(MOTION_DURATIONS.overlay, exitDuration);
             if (duration === 0) {
                 finalize();
             } else {
@@ -1672,11 +1744,11 @@
         });
 
         elements.scrollTopBtn.addEventListener('click', () => {
-            elements.overlayScroll.scrollTo({ top: 0, behavior: 'smooth' });
+            scrollOverlayToPosition(0, 'smooth');
         });
 
         elements.scrollBottomBtn.addEventListener('click', () => {
-            elements.overlayScroll.scrollTo({ top: elements.overlayScroll.scrollHeight, behavior: 'smooth' });
+            scrollOverlayToPosition(elements.overlayScroll.scrollHeight, 'smooth');
         });
 
         window.addEventListener('keydown', (event) => {
