@@ -448,7 +448,7 @@
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transition: opacity 0.38s ease, backdrop-filter 0.38s ease;
+            transition: opacity 0.42s cubic-bezier(0.22, 0.7, 0.12, 1), backdrop-filter 0.42s ease;
         }
 
         .article-overlay.is-visible {
@@ -457,9 +457,7 @@
             pointer-events: auto;
         }
 
-        .article-overlay.is-leaving {
-            opacity: 0;
-            visibility: visible;
+        .article-overlay.is-closing {
             pointer-events: none;
         }
 
@@ -473,48 +471,12 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            position: relative;
             backdrop-filter: blur(28px) saturate(140%);
             transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
-            transform: translateY(24px) scale(0.94);
+            transform: translateY(28px) scale(0.94);
             opacity: 0;
-            transition: transform 0.46s cubic-bezier(0.22, 0.7, 0.12, 1), opacity 0.32s ease;
+            transition: transform 0.5s cubic-bezier(0.19, 0.7, 0.22, 1), opacity 0.36s ease;
             will-change: transform, opacity;
-        }
-
-        .article-dialog::after,
-        .article-dialog::before {
-            content: "";
-            position: absolute;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.32s ease;
-        }
-
-        .article-dialog::after {
-            inset: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.14));
-        }
-
-        .article-dialog::before {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            border: 3px solid rgba(102, 126, 234, 0.32);
-            border-top-color: rgba(102, 126, 234, 0.9);
-            top: 50%;
-            left: 50%;
-            margin-top: -28px;
-            margin-left: -28px;
-        }
-
-        .article-dialog.is-swapping::after {
-            opacity: 1;
-        }
-
-        .article-dialog.is-swapping::before {
-            opacity: 1;
-            animation: overlay-spinner 0.9s linear infinite;
         }
 
         .article-overlay.is-visible .article-dialog {
@@ -522,8 +484,8 @@
             opacity: 1;
         }
 
-        .article-overlay.is-leaving .article-dialog {
-            transform: translateY(24px) scale(0.9);
+        .article-overlay.is-closing .article-dialog {
+            transform: translateY(28px) scale(0.9);
             opacity: 0;
         }
 
@@ -533,13 +495,12 @@
             .article-dialog,
             .overlay-body,
             .overlay-header h2,
-            .overlay-meta {
+            .overlay-meta,
+            #overlayTitle,
+            #overlayMeta,
+            #overlayScroll {
                 transition-duration: 0.01ms !important;
                 transition-delay: 0ms !important;
-            }
-
-            .article-dialog::before {
-                animation: none !important;
             }
         }
 
@@ -556,25 +517,45 @@
             font-size: 1.7rem;
             font-weight: 700;
             color: var(--text-primary);
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity 0.32s ease, transform 0.32s ease;
             will-change: opacity, transform;
-        }
-
-        .overlay-header h2.is-swapping {
-            opacity: 0;
-            transform: translateY(-10px);
         }
 
         .overlay-meta {
             font-size: 0.9rem;
             color: var(--text-muted);
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity 0.32s ease, transform 0.32s ease;
             will-change: opacity, transform;
         }
 
-        .overlay-meta.is-swapping {
+        #overlayTitle,
+        #overlayMeta,
+        #overlayScroll {
+            transition: opacity 0.32s ease, transform 0.32s ease;
+            will-change: opacity, transform;
+        }
+
+        #overlayTitle,
+        #overlayMeta {
+            transform-origin: center left;
+        }
+
+        #overlayTitle.is-swapping-out,
+        #overlayMeta.is-swapping-out {
             opacity: 0;
-            transform: translateY(-6px);
+            transform: translateY(-12px);
+        }
+
+        #overlayScroll.is-swapping-out {
+            opacity: 0;
+            transform: translateY(18px);
+        }
+
+        #overlayTitle.is-swapping-in,
+        #overlayMeta.is-swapping-in,
+        #overlayScroll.is-swapping-in {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .overlay-toolbar {
@@ -613,20 +594,11 @@
             pointer-events: none;
         }
 
-        .overlay-body.is-swapping {
-            opacity: 0;
-            transform: translateY(18px);
-        }
-
-        .overlay-body.is-swapping::after {
+        #overlayScroll.is-swapping-out::after,
+        #overlayScroll.is-swapping-in::after {
             opacity: 1;
         }
 
-        @keyframes overlay-spinner {
-            to {
-                transform: rotate(360deg);
-            }
-        }
 
         #overlayContent h1,
         #overlayContent h2,
@@ -948,6 +920,16 @@
             loaded: false
         };
 
+        const motion = {
+            overlayTimer: null,
+            swapTimer: null
+        };
+
+        const MOTION_DURATIONS = {
+            overlay: 420,
+            swap: 320
+        };
+
         const revealSurfaces = new WeakSet();
 
         function bindRevealSurface(surface) {
@@ -997,6 +979,92 @@
             requestAnimationFrame(() => {
                 document.querySelectorAll('.hover-surface').forEach(bindRevealSurface);
             });
+        }
+
+        function prefersReducedMotion() {
+            try {
+                return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function resetSwapState() {
+            clearTimeout(motion.swapTimer);
+            motion.swapTimer = null;
+            [elements.overlayTitle, elements.overlayMeta, elements.overlayScroll].forEach((node) => {
+                node?.classList.remove('is-swapping-out', 'is-swapping-in');
+            });
+        }
+
+        function resetOverlayScroll(behavior = 'auto') {
+            if (!elements.overlayScroll) {
+                return;
+            }
+            elements.overlayScroll.scrollTo({ top: 0, behavior });
+        }
+
+        function getCurrentPost() {
+            if (state.currentIndex < 0) {
+                return null;
+            }
+            return state.posts[state.currentIndex] || null;
+        }
+
+        function setOverlayContent(post) {
+            if (!post) {
+                return;
+            }
+            const displayTitle = post.title || post.slug;
+            elements.overlayTitle.textContent = displayTitle;
+            const html = marked.parse(post.content, { gfm: true, breaks: true });
+            elements.overlayContent.innerHTML = html;
+            const leadingHeading = elements.overlayContent.querySelector('h1');
+            if (leadingHeading) {
+                const headingText = leadingHeading.textContent.trim().toLowerCase();
+                const titleText = displayTitle.trim().toLowerCase();
+                if (headingText === titleText) {
+                    leadingHeading.remove();
+                }
+            }
+            Prism.highlightAllUnder(elements.overlayContent);
+            updateOverlayMeta();
+        }
+
+        function swapOverlayContent(post) {
+            resetSwapState();
+            const targets = [elements.overlayTitle, elements.overlayMeta, elements.overlayScroll].filter(Boolean);
+            const animate = !prefersReducedMotion() && elements.overlay.classList.contains('is-visible') && targets.length;
+            if (!animate) {
+                setOverlayContent(post);
+                resetOverlayScroll('auto');
+                return;
+            }
+
+            targets.forEach((node) => node.classList.remove('is-swapping-in'));
+
+            requestAnimationFrame(() => {
+                targets.forEach((node) => node.classList.add('is-swapping-out'));
+            });
+
+            clearTimeout(motion.swapTimer);
+            motion.swapTimer = setTimeout(() => {
+                setOverlayContent(post);
+                resetOverlayScroll('auto');
+
+                requestAnimationFrame(() => {
+                    targets.forEach((node) => {
+                        node.classList.remove('is-swapping-out');
+                        node.classList.add('is-swapping-in');
+                    });
+
+                    clearTimeout(motion.swapTimer);
+                    motion.swapTimer = setTimeout(() => {
+                        targets.forEach((node) => node.classList.remove('is-swapping-in'));
+                        motion.swapTimer = null;
+                    }, MOTION_DURATIONS.swap);
+                });
+            }, MOTION_DURATIONS.swap);
         }
 
         let currentLang = 'zh';
@@ -1139,11 +1207,7 @@
         }
 
         function updateOverlayMeta() {
-            if (state.currentIndex < 0) {
-                elements.overlayMeta.textContent = '';
-                return;
-            }
-            const post = state.posts[state.currentIndex];
+            const post = getCurrentPost();
             if (!post) {
                 elements.overlayMeta.textContent = '';
                 return;
@@ -1454,9 +1518,20 @@
         }
 
         function updateNavigationButtons() {
+            if (!elements.prevPost || !elements.nextPost) {
+                return;
+            }
+            const current = getCurrentPost();
+            if (!current) {
+                elements.prevPost.disabled = true;
+                elements.prevPost.onclick = null;
+                elements.nextPost.disabled = true;
+                elements.nextPost.onclick = null;
+                return;
+            }
+
             const order = state.filtered.length ? state.filtered : state.posts;
-            const currentSlug = state.posts[state.currentIndex]?.slug;
-            const pointer = order.findIndex(post => post.slug === currentSlug);
+            const pointer = order.findIndex((post) => post.slug === current.slug);
             const prev = pointer > 0 ? order[pointer - 1] : null;
             const next = pointer >= 0 && pointer < order.length - 1 ? order[pointer + 1] : null;
 
@@ -1471,65 +1546,80 @@
             if (elements.overlay.classList.contains('is-visible')) {
                 return;
             }
+
+            clearTimeout(motion.overlayTimer);
+            motion.overlayTimer = null;
+            resetSwapState();
+            elements.overlay.classList.remove('is-closing');
             elements.overlay.hidden = false;
             document.body.classList.add('is-overlay-open');
 
-            requestAnimationFrame(() => {
-                if (origin && elements.articleDialog) {
-                    const dialogRect = elements.articleDialog.getBoundingClientRect();
-                    if (dialogRect.width && dialogRect.height) {
-                        const clamp = (value) => Math.max(0, Math.min(100, value));
-                        const originX = clamp(((origin.x - dialogRect.left) / dialogRect.width) * 100);
-                        const originY = clamp(((origin.y - dialogRect.top) / dialogRect.height) * 100);
-                        elements.articleDialog.style.setProperty('--origin-x', `${originX}%`);
-                        elements.articleDialog.style.setProperty('--origin-y', `${originY}%`);
-                    }
-                } else if (elements.articleDialog) {
-                    elements.articleDialog.style.removeProperty('--origin-x');
-                    elements.articleDialog.style.removeProperty('--origin-y');
+            if (origin && elements.articleDialog) {
+                const dialogRect = elements.articleDialog.getBoundingClientRect();
+                if (dialogRect.width && dialogRect.height) {
+                    const clamp = (value) => Math.max(0, Math.min(100, value));
+                    const originX = clamp(((origin.x - dialogRect.left) / dialogRect.width) * 100);
+                    const originY = clamp(((origin.y - dialogRect.top) / dialogRect.height) * 100);
+                    elements.articleDialog.style.setProperty('--origin-x', `${originX}%`);
+                    elements.articleDialog.style.setProperty('--origin-y', `${originY}%`);
                 }
+            } else if (elements.articleDialog) {
+                elements.articleDialog.style.removeProperty('--origin-x');
+                elements.articleDialog.style.removeProperty('--origin-y');
+            }
 
+            requestAnimationFrame(() => {
                 elements.overlay.classList.add('is-visible');
-                requestAnimationFrame(() => {
-                    elements.closeOverlay.focus({ preventScroll: true });
-                });
             });
+
+            const focusDelay = prefersReducedMotion() ? 20 : MOTION_DURATIONS.overlay;
+            motion.overlayTimer = setTimeout(() => {
+                motion.overlayTimer = null;
+                if (!elements.overlay.classList.contains('is-visible')) {
+                    return;
+                }
+                if (elements.closeOverlay) {
+                    elements.closeOverlay.focus({ preventScroll: true });
+                }
+            }, focusDelay);
         }
 
         function closeOverlay() {
-            if (elements.overlay.hidden && !elements.overlay.classList.contains('is-visible')) {
+            if (!elements.overlay.classList.contains('is-visible') && elements.overlay.hidden) {
+                clearTimeout(motion.overlayTimer);
+                motion.overlayTimer = null;
+                resetSwapState();
+                state.currentIndex = -1;
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+                document.body.classList.remove('is-overlay-open');
                 return;
             }
+
+            clearTimeout(motion.overlayTimer);
+            motion.overlayTimer = null;
+            resetSwapState();
+
+            elements.overlay.classList.add('is-closing');
             elements.overlay.classList.remove('is-visible');
+
             const finalize = () => {
                 elements.overlay.hidden = true;
+                elements.overlay.classList.remove('is-closing');
                 if (elements.articleDialog) {
                     elements.articleDialog.style.removeProperty('--origin-x');
                     elements.articleDialog.style.removeProperty('--origin-y');
                 }
+                resetOverlayScroll('auto');
             };
 
-            if (elements.articleDialog) {
-                const handleTransitionEnd = (event) => {
-                    if (event.target !== elements.articleDialog || event.propertyName !== 'transform') {
-                        return;
-                    }
-                    if (elements.overlay.classList.contains('is-visible')) {
-                        elements.overlay.removeEventListener('transitionend', handleTransitionEnd);
-                        return;
-                    }
-                    elements.overlay.removeEventListener('transitionend', handleTransitionEnd);
-                    finalize();
-                };
-                elements.overlay.addEventListener('transitionend', handleTransitionEnd);
-                // Fallback in case transitionend does not fire.
-                setTimeout(() => {
-                    if (!elements.overlay.hidden && !elements.overlay.classList.contains('is-visible')) {
-                        finalize();
-                    }
-                }, 400);
-            } else {
+            const duration = prefersReducedMotion() ? 0 : MOTION_DURATIONS.overlay;
+            if (duration === 0) {
                 finalize();
+            } else {
+                motion.overlayTimer = setTimeout(() => {
+                    finalize();
+                    motion.overlayTimer = null;
+                }, duration);
             }
 
             document.body.classList.remove('is-overlay-open');
@@ -1541,22 +1631,27 @@
             if (index < 0 || index >= state.posts.length) {
                 return;
             }
+            const previousIndex = state.currentIndex;
             state.currentIndex = index;
             const post = state.posts[index];
-            const displayTitle = post.title || post.slug;
-            elements.overlayTitle.textContent = displayTitle;
-            const html = marked.parse(post.content, { gfm: true, breaks: true });
-            elements.overlayContent.innerHTML = html;
-            const leadingHeading = elements.overlayContent.querySelector('h1');
-            if (leadingHeading) {
-                const headingText = leadingHeading.textContent.trim().toLowerCase();
-                const titleText = displayTitle.trim().toLowerCase();
-                if (headingText === titleText) {
-                    leadingHeading.remove();
-                }
+            const overlayAlreadyVisible = elements.overlay.classList.contains('is-visible');
+
+            if (overlayAlreadyVisible && previousIndex === index) {
+                updateOverlayMeta();
+                resetOverlayScroll(prefersReducedMotion() ? 'auto' : 'smooth');
+                showOverlay(origin);
+                updateNavigationButtons();
+                history.replaceState(null, '', `${window.location.pathname}${window.location.search}#post=${encodeURIComponent(post.slug)}`);
+                return;
             }
-            Prism.highlightAllUnder(elements.overlayContent);
-            updateOverlayMeta();
+
+            if (overlayAlreadyVisible) {
+                swapOverlayContent(post);
+            } else {
+                setOverlayContent(post);
+                resetOverlayScroll('auto');
+            }
+
             showOverlay(origin);
             updateNavigationButtons();
             history.replaceState(null, '', `${window.location.pathname}${window.location.search}#post=${encodeURIComponent(post.slug)}`);
