@@ -551,6 +551,11 @@
                             <div class="interest-title" id="scifiTitle">科幻小说</div>
                             <p class="interest-subtitle" id="scifiSubtitle">Sci-Fi Novels</p>
                         </article>
+                        <article class="interest-card hover-surface">
+                            <div class="interest-icon"><i class="fas fa-database"></i></div>
+                            <div class="interest-title" id="placeholderTitle">[数据删除]</div>
+                            <p class="interest-subtitle" id="placeholderSubtitle">[数据删除]</p>
+                        </article>
                     </div>
                 </div>
             </section>
@@ -579,6 +584,8 @@
                 vocaloidSubtitle: "Chinese Vocaloid",
                 scifiTitle: "科幻小说",
                 scifiSubtitle: "Sci-Fi Novels",
+                placeholderTitle: "[数据删除]",
+                placeholderSubtitle: "[数据删除]",
                 tagline: "记录代码、音乐与故事,分享我的学习旅程。",
                 viewProfile: "查看我的 GitHub",
                 viewBlog: "进入博客",
@@ -598,6 +605,8 @@
                 vocaloidSubtitle: "Music & Voice Synth",
                 scifiTitle: "Sci-Fi Novels",
                 scifiSubtitle: "Science Fiction",
+                placeholderTitle: "[数据删除]",
+                placeholderSubtitle: "[数据删除]",
                 tagline: "Notes on coding, music, and stories from my learning journey.",
                 viewProfile: "View My GitHub",
                 viewBlog: "Visit Blog",
@@ -618,6 +627,8 @@
             vocaloidSubtitle: document.getElementById('vocaloidSubtitle'),
             scifiTitle: document.getElementById('scifiTitle'),
             scifiSubtitle: document.getElementById('scifiSubtitle'),
+            placeholderTitle: document.getElementById('placeholderTitle'),
+            placeholderSubtitle: document.getElementById('placeholderSubtitle'),
             tagline: document.getElementById('tagline'),
             viewProfile: document.getElementById('viewProfile'),
             viewBlog: document.getElementById('viewBlog'),
@@ -651,6 +662,12 @@
             elements.vocaloidSubtitle.textContent = t.vocaloidSubtitle;
             elements.scifiTitle.textContent = t.scifiTitle;
             elements.scifiSubtitle.textContent = t.scifiSubtitle;
+            if (elements.placeholderTitle) {
+                elements.placeholderTitle.textContent = t.placeholderTitle;
+            }
+            if (elements.placeholderSubtitle) {
+                elements.placeholderSubtitle.textContent = t.placeholderSubtitle;
+            }
             elements.tagline.textContent = t.tagline;
             elements.viewProfile.textContent = t.viewProfile;
             elements.viewBlog.textContent = t.viewBlog;
