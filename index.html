@@ -15,6 +15,9 @@
             --accent-blue: #4facfe;
             --accent-pink: #f093fb;
             --accent-cyan: #00d4ff;
+            --liquid-blue: rgba(79, 172, 254, 0.55);
+            --liquid-rose: rgba(240, 147, 251, 0.48);
+            --liquid-cyan: rgba(0, 212, 255, 0.42);
             --bg-primary: #e8ecf7;
             --mica-tint: rgba(255, 255, 255, 0.82);
             --mica-tint-strong: rgba(255, 255, 255, 0.9);
@@ -43,6 +46,9 @@
             --border-color: rgba(148, 163, 184, 0.3);
             --shadow-sm: 0 16px 42px rgba(8, 15, 35, 0.55);
             --shadow-md: 0 46px 94px rgba(8, 15, 35, 0.7);
+            --liquid-blue: rgba(96, 176, 255, 0.48);
+            --liquid-rose: rgba(215, 148, 255, 0.36);
+            --liquid-cyan: rgba(60, 210, 255, 0.36);
         }
 
         * {
@@ -80,6 +86,127 @@
             background: rgba(102, 126, 234, 0.08);
             z-index: -1;
             opacity: 0.55;
+        }
+
+        .liquid-stage {
+            position: fixed;
+            inset: -18vh -18vw;
+            pointer-events: none;
+            z-index: -3;
+            display: block;
+            opacity: 0.9;
+            filter: saturate(135%);
+        }
+
+        .liquid-blob {
+            position: absolute;
+            width: clamp(280px, 42vw, 520px);
+            height: clamp(280px, 42vw, 520px);
+            border-radius: 42% 58% 45% 55% / 58% 44% 56% 42%;
+            background:
+                radial-gradient(circle at 28% 32%, var(--liquid-rose), transparent 65%),
+                radial-gradient(circle at 72% 68%, var(--liquid-blue), transparent 60%),
+                radial-gradient(circle at 50% 50%, var(--liquid-cyan), transparent 66%);
+            mix-blend-mode: lighten;
+            opacity: 0.75;
+            filter: blur(0.6px);
+            animation: liquidFloat 32s ease-in-out infinite;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+
+        .blob-one {
+            top: 12%;
+            left: 6%;
+            animation-duration: 28s;
+        }
+
+        .blob-two {
+            bottom: 10%;
+            right: 8%;
+            animation-duration: 36s;
+            animation-delay: -8s;
+        }
+
+        .blob-three {
+            top: 46%;
+            left: 42%;
+            animation-duration: 40s;
+            animation-delay: -14s;
+        }
+
+        @keyframes liquidFloat {
+            0% {
+                transform: translate3d(-6%, -4%, 0) scale(1);
+            }
+
+            33% {
+                transform: translate3d(4%, 6%, 0) scale(1.08);
+            }
+
+            66% {
+                transform: translate3d(-8%, 4%, 0) scale(0.96);
+            }
+
+            100% {
+                transform: translate3d(-6%, -4%, 0) scale(1);
+            }
+        }
+
+        [data-theme="dark"] .liquid-stage {
+            opacity: 0.75;
+            filter: saturate(155%);
+        }
+
+        [data-theme="dark"] .liquid-blob {
+            mix-blend-mode: screen;
+        }
+
+        @media (max-width: 1080px) {
+            .liquid-blob {
+                width: clamp(240px, 46vw, 420px);
+                height: clamp(240px, 46vw, 420px);
+            }
+        }
+
+        @media (max-width: 720px) {
+            .liquid-stage {
+                inset: -24vh -26vw;
+                opacity: 0.7;
+            }
+
+            .liquid-blob {
+                width: clamp(200px, 58vw, 360px);
+                height: clamp(200px, 58vw, 360px);
+                opacity: 0.6;
+            }
+
+            .blob-three {
+                top: 52%;
+                left: 22%;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .liquid-stage {
+                inset: -28vh -38vw;
+                opacity: 0.6;
+            }
+
+            .liquid-blob {
+                width: clamp(180px, 62vw, 300px);
+                height: clamp(180px, 62vw, 300px);
+            }
+
+            .blob-two {
+                right: 14%;
+                bottom: 18%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .liquid-blob {
+                animation: none;
+            }
         }
 
         a {
@@ -498,6 +625,11 @@
 </head>
 
 <body>
+    <div class="liquid-stage" aria-hidden="true">
+        <span class="liquid-blob blob-one"></span>
+        <span class="liquid-blob blob-two"></span>
+        <span class="liquid-blob blob-three"></span>
+    </div>
     <div class="page-shell">
         <header class="page-header hover-surface">
             <div class="header-main">

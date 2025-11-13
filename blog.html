@@ -16,6 +16,9 @@
             --accent-blue: #4facfe;
             --accent-pink: #f093fb;
             --accent-cyan: #00d4ff;
+            --liquid-blue: rgba(79, 172, 254, 0.5);
+            --liquid-rose: rgba(240, 147, 251, 0.42);
+            --liquid-cyan: rgba(0, 212, 255, 0.36);
             --bg-primary: #e8ecf7;
             --mica-tint: rgba(255, 255, 255, 0.82);
             --mica-tint-strong: rgba(255, 255, 255, 0.9);
@@ -48,6 +51,9 @@
             --border-color: rgba(148, 163, 184, 0.3);
             --shadow-sm: 0 16px 42px rgba(8, 15, 35, 0.55);
             --shadow-md: 0 46px 94px rgba(8, 15, 35, 0.7);
+            --liquid-blue: rgba(96, 176, 255, 0.44);
+            --liquid-rose: rgba(215, 148, 255, 0.34);
+            --liquid-cyan: rgba(60, 210, 255, 0.32);
         }
 
         * {
@@ -85,6 +91,127 @@
             background: rgba(102, 126, 234, 0.08);
             z-index: -1;
             opacity: 0.55;
+        }
+
+        .liquid-stage {
+            position: fixed;
+            inset: -18vh -18vw;
+            pointer-events: none;
+            z-index: -3;
+            display: block;
+            opacity: 0.85;
+            filter: saturate(140%);
+        }
+
+        .liquid-blob {
+            position: absolute;
+            width: clamp(280px, 44vw, 540px);
+            height: clamp(280px, 44vw, 540px);
+            border-radius: 46% 54% 52% 48% / 58% 44% 56% 42%;
+            background:
+                radial-gradient(circle at 24% 30%, var(--liquid-rose), transparent 64%),
+                radial-gradient(circle at 72% 66%, var(--liquid-blue), transparent 58%),
+                radial-gradient(circle at 50% 50%, var(--liquid-cyan), transparent 64%);
+            mix-blend-mode: lighten;
+            opacity: 0.72;
+            filter: blur(0.8px);
+            animation: liquidFloat 34s ease-in-out infinite;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+
+        .blob-one {
+            top: 16%;
+            left: 8%;
+            animation-duration: 29s;
+        }
+
+        .blob-two {
+            bottom: 12%;
+            right: 10%;
+            animation-duration: 37s;
+            animation-delay: -9s;
+        }
+
+        .blob-three {
+            top: 44%;
+            left: 45%;
+            animation-duration: 42s;
+            animation-delay: -15s;
+        }
+
+        @keyframes liquidFloat {
+            0% {
+                transform: translate3d(-6%, -4%, 0) scale(0.98);
+            }
+
+            33% {
+                transform: translate3d(5%, 6%, 0) scale(1.08);
+            }
+
+            66% {
+                transform: translate3d(-7%, 5%, 0) scale(0.94);
+            }
+
+            100% {
+                transform: translate3d(-6%, -4%, 0) scale(0.98);
+            }
+        }
+
+        [data-theme="dark"] .liquid-stage {
+            opacity: 0.72;
+            filter: saturate(155%);
+        }
+
+        [data-theme="dark"] .liquid-blob {
+            mix-blend-mode: screen;
+        }
+
+        @media (max-width: 1080px) {
+            .liquid-blob {
+                width: clamp(240px, 48vw, 420px);
+                height: clamp(240px, 48vw, 420px);
+            }
+        }
+
+        @media (max-width: 720px) {
+            .liquid-stage {
+                inset: -24vh -26vw;
+                opacity: 0.62;
+            }
+
+            .liquid-blob {
+                width: clamp(210px, 60vw, 360px);
+                height: clamp(210px, 60vw, 360px);
+                opacity: 0.58;
+            }
+
+            .blob-three {
+                top: 52%;
+                left: 24%;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .liquid-stage {
+                inset: -28vh -38vw;
+                opacity: 0.56;
+            }
+
+            .liquid-blob {
+                width: clamp(180px, 64vw, 300px);
+                height: clamp(180px, 64vw, 300px);
+            }
+
+            .blob-two {
+                right: 16%;
+                bottom: 20%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .liquid-blob {
+                animation: none;
+            }
         }
 
         body.is-overlay-open {
@@ -790,6 +917,11 @@
 </head>
 
 <body>
+    <div class="liquid-stage" aria-hidden="true">
+        <span class="liquid-blob blob-one"></span>
+        <span class="liquid-blob blob-two"></span>
+        <span class="liquid-blob blob-three"></span>
+    </div>
     <div class="page-shell">
         <header class="page-header">
             <a class="brand" href="index.html">ff66ccff</a>
