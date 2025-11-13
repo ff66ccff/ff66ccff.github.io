@@ -473,12 +473,48 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
             backdrop-filter: blur(28px) saturate(140%);
             transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
             transform: translateY(24px) scale(0.94);
             opacity: 0;
             transition: transform 0.46s cubic-bezier(0.22, 0.7, 0.12, 1), opacity 0.32s ease;
             will-change: transform, opacity;
+        }
+
+        .article-dialog::after,
+        .article-dialog::before {
+            content: "";
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.32s ease;
+        }
+
+        .article-dialog::after {
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.14));
+        }
+
+        .article-dialog::before {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 3px solid rgba(102, 126, 234, 0.32);
+            border-top-color: rgba(102, 126, 234, 0.9);
+            top: 50%;
+            left: 50%;
+            margin-top: -28px;
+            margin-left: -28px;
+        }
+
+        .article-dialog.is-swapping::after {
+            opacity: 1;
+        }
+
+        .article-dialog.is-swapping::before {
+            opacity: 1;
+            animation: overlay-spinner 0.9s linear infinite;
         }
 
         .article-overlay.is-visible .article-dialog {
@@ -494,9 +530,16 @@
         @media (prefers-reduced-motion: reduce) {
 
             .article-overlay,
-            .article-dialog {
+            .article-dialog,
+            .overlay-body,
+            .overlay-header h2,
+            .overlay-meta {
                 transition-duration: 0.01ms !important;
                 transition-delay: 0ms !important;
+            }
+
+            .article-dialog::before {
+                animation: none !important;
             }
         }
 
@@ -513,11 +556,25 @@
             font-size: 1.7rem;
             font-weight: 700;
             color: var(--text-primary);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            will-change: opacity, transform;
+        }
+
+        .overlay-header h2.is-swapping {
+            opacity: 0;
+            transform: translateY(-10px);
         }
 
         .overlay-meta {
             font-size: 0.9rem;
             color: var(--text-muted);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            will-change: opacity, transform;
+        }
+
+        .overlay-meta.is-swapping {
+            opacity: 0;
+            transform: translateY(-6px);
         }
 
         .overlay-toolbar {
@@ -541,6 +598,34 @@
             padding: 0 32px 32px;
             line-height: 1.75;
             color: var(--text-secondary);
+            position: relative;
+            transition: opacity 0.32s ease, transform 0.32s ease;
+            will-change: opacity, transform;
+        }
+
+        .overlay-body::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.1));
+            opacity: 0;
+            transition: opacity 0.32s ease;
+            pointer-events: none;
+        }
+
+        .overlay-body.is-swapping {
+            opacity: 0;
+            transform: translateY(18px);
+        }
+
+        .overlay-body.is-swapping::after {
+            opacity: 1;
+        }
+
+        @keyframes overlay-spinner {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         #overlayContent h1,

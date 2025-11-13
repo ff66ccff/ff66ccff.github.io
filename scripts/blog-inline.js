@@ -125,7 +125,10 @@ const ui = {
     cardRefs: new Map(),
     previewObserver: null,
     sentinelObserver: null,
-    isRendering: false
+    isRendering: false,
+    swapActive: false,
+    swapStartedAt: 0,
+    swapTimer: null
 };
 
 const revealSurfaces = new WeakSet();
@@ -703,32 +706,58 @@ function openPostBySlug(slug, origin) {
 }
 
 function openPost(post, origin) {
+    const overlayVisible = elements.overlay.classList.contains('is-visible');
+
+    if (overlayVisible && state.currentSlug === post.slug) {
+        elements.overlayScroll?.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    }
+
     state.currentSlug = post.slug;
-    elements.overlayTitle.textContent = post.title || post.slug;
-    elements.overlayContent.innerHTML = `<p class="overlay-loading">${i18n[currentLang].loadingArticle}</p>`;
-    updateOverlayMeta();
+
+    const didStartSwap = overlayVisible && startOverlaySwap();
+
+    if (!overlayVisible) {
+        elements.overlayTitle.textContent = post.title || post.slug;
+        if (elements.overlayMeta) {
+            elements.overlayMeta.textContent = buildMetaText(post);
+        }
+        elements.overlayContent.innerHTML = `<p class="overlay-loading">${i18n[currentLang].loadingArticle}</p>`;
+    }
+
     showOverlay(origin);
     updateNavigationButtons();
 
     ensurePostContent(post)
         .then((content) => {
-            elements.overlayTitle.textContent = post.title || post.slug;
-            const html = marked.parse(content, { gfm: true, breaks: true });
-            elements.overlayContent.innerHTML = html;
-            const leadingHeading = elements.overlayContent.querySelector('h1');
-            if (leadingHeading) {
-                const headingText = leadingHeading.textContent.trim().toLowerCase();
-                const titleText = (post.title || post.slug).trim().toLowerCase();
-                if (headingText === titleText) {
-                    leadingHeading.remove();
+            finishOverlaySwap(() => {
+                elements.overlayTitle.textContent = post.title || post.slug;
+                const html = marked.parse(content, { gfm: true, breaks: true });
+                elements.overlayContent.innerHTML = html;
+                const leadingHeading = elements.overlayContent.querySelector('h1');
+                if (leadingHeading) {
+                    const headingText = leadingHeading.textContent.trim().toLowerCase();
+                    const titleText = (post.title || post.slug).trim().toLowerCase();
+                    if (headingText === titleText) {
+                        leadingHeading.remove();
+                    }
                 }
-            }
-            Prism.highlightAllUnder(elements.overlayContent);
-            updateOverlayMeta();
+                Prism.highlightAllUnder(elements.overlayContent);
+                updateOverlayMeta();
+                updateNavigationButtons();
+            });
         })
         .catch(() => {
-            elements.overlayContent.innerHTML = `<p class="overlay-error">${i18n[currentLang].errorArticle}</p>`;
+            finishOverlaySwap(() => {
+                elements.overlayTitle.textContent = post.title || post.slug;
+                elements.overlayContent.innerHTML = `<p class="overlay-error">${i18n[currentLang].errorArticle}</p>`;
+                updateOverlayMeta();
+            });
         });
+
+    if (!didStartSwap) {
+        updateOverlayMeta();
+    }
 
     history.replaceState(null, '', `${window.location.pathname}${window.location.search}#post=${encodeURIComponent(post.slug)}`);
 }
@@ -760,6 +789,86 @@ function updateNavigationButtons() {
 
     elements.prevPost.onclick = prev ? () => openPost(prev) : null;
     elements.nextPost.onclick = next ? () => openPost(next) : null;
+}
+
+function getSwapMinimumDuration() {
+    try {
+        return (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ? 0 : 220;
+    } catch (error) {
+        return 220;
+    }
+}
+
+function startOverlaySwap() {
+    if (!elements.overlay || !elements.overlayScroll) {
+        ui.swapActive = false;
+        return false;
+    }
+    if (!elements.overlay.classList.contains('is-visible')) {
+        ui.swapActive = false;
+        return false;
+    }
+
+    ui.swapActive = true;
+    ui.swapStartedAt = performance.now();
+    clearTimeout(ui.swapTimer);
+
+    const targets = [elements.overlayScroll, elements.overlayTitle, elements.overlayMeta, elements.articleDialog];
+    targets.forEach((node) => {
+        if (node) {
+            node.classList.add('is-swapping');
+        }
+    });
+
+    return true;
+}
+
+function finishOverlaySwap(applyChanges) {
+    const targets = [elements.overlayScroll, elements.overlayTitle, elements.overlayMeta, elements.articleDialog];
+
+    const finalize = () => {
+        if (typeof applyChanges === 'function') {
+            applyChanges();
+        }
+        if (elements.overlayScroll) {
+            elements.overlayScroll.scrollTo({ top: 0, behavior: 'auto' });
+        }
+        requestAnimationFrame(() => {
+            targets.forEach((node) => node?.classList.remove('is-swapping'));
+        });
+        ui.swapActive = false;
+        ui.swapStartedAt = 0;
+        ui.swapTimer = null;
+    };
+
+    if (!ui.swapActive) {
+        finalize();
+        return;
+    }
+
+    const minDuration = getSwapMinimumDuration();
+    if (minDuration === 0) {
+        finalize();
+        return;
+    }
+
+    const elapsed = performance.now() - ui.swapStartedAt;
+    if (elapsed >= minDuration) {
+        finalize();
+        return;
+    }
+
+    clearTimeout(ui.swapTimer);
+    ui.swapTimer = setTimeout(finalize, minDuration - elapsed);
+}
+
+function cancelOverlaySwap() {
+    clearTimeout(ui.swapTimer);
+    ui.swapTimer = null;
+    ui.swapActive = false;
+    ui.swapStartedAt = 0;
+    [elements.overlayScroll, elements.overlayTitle, elements.overlayMeta, elements.articleDialog]
+        .forEach((node) => node?.classList.remove('is-swapping'));
 }
 
 function showOverlay(origin) {
@@ -796,6 +905,7 @@ function closeOverlay() {
     if ((elements.overlay.hidden && !elements.overlay.classList.contains('is-visible')) || elements.overlay.classList.contains('is-leaving')) {
         return;
     }
+    cancelOverlaySwap();
     elements.overlay.classList.add('is-leaving');
     elements.overlay.classList.remove('is-visible');
     const finalize = () => {
