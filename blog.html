@@ -1177,6 +1177,14 @@
             }
         }
 
+        function hasExtraPosts() {
+            if (!state.loaded) {
+                return false;
+            }
+            const source = state.filtered.length ? state.filtered : state.posts;
+            return source.length > 2;
+        }
+
         function updateScrollHint(forceHide = false) {
             if (!elements.postScrollArea || !elements.postScrollHint) {
                 return;
@@ -1188,7 +1196,8 @@
             const area = elements.postScrollArea;
             const overflow = area.scrollHeight - area.clientHeight > 12;
             const nearBottom = area.scrollTop >= (area.scrollHeight - area.clientHeight - 12);
-            elements.postScrollHint.hidden = !(overflow && !nearBottom);
+            const shouldShow = overflow && !nearBottom && hasExtraPosts();
+            elements.postScrollHint.hidden = !shouldShow;
         }
 
         function initScrollHint() {
