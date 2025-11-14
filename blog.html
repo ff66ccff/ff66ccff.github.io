@@ -340,7 +340,7 @@
         .post-list {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
             min-height: 0;
             padding: 6px 0 18px;
         }
@@ -348,8 +348,8 @@
         .post-card {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding: 32px 36px;
+            gap: 14px;
+            padding: 24px 28px;
             background: var(--mica-tint-strong);
             border-radius: 22px;
             border: 1px solid var(--mica-border);
@@ -359,8 +359,8 @@
             backdrop-filter: blur(20px) saturate(140%);
             -webkit-backdrop-filter: blur(20px) saturate(140%);
             width: 100%;
-            min-height: 210px;
-            justify-content: center;
+            min-height: 0;
+            justify-content: flex-start;
             align-items: flex-start;
         }
 
@@ -377,12 +377,11 @@
 
         .post-title {
             margin: 0;
-            font-size: 1.12rem;
+            font-size: 1.08rem;
             font-weight: 600;
             color: var(--primary-color);
             transition: color 0.2s ease;
             line-height: 1.5;
-            padding: 6px 0;
         }
 
         .post-card:hover .post-title {
@@ -399,12 +398,10 @@
         .post-meta {
             margin: 0;
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            flex-wrap: wrap;
+            gap: 8px 24px;
             color: var(--text-muted);
             font-size: 0.85rem;
-            margin-top: auto;
-            padding-top: 4px;
         }
 
         .post-scroll-area {
@@ -416,7 +413,7 @@
             box-shadow: var(--shadow-sm);
             backdrop-filter: blur(20px) saturate(135%);
             -webkit-backdrop-filter: blur(20px) saturate(135%);
-            max-height: clamp(420px, 70vh, 880px);
+            max-height: clamp(520px, 78vh, 960px);
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--primary-color) rgba(255, 255, 255, 0.05);
