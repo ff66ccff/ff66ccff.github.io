@@ -338,9 +338,9 @@
         }
 
         .post-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
         }
 
         .post-card {
@@ -356,6 +356,8 @@
             cursor: pointer;
             backdrop-filter: blur(20px) saturate(140%);
             -webkit-backdrop-filter: blur(20px) saturate(140%);
+            width: 100%;
+            min-height: 0;
         }
 
         .post-card:hover {
@@ -390,8 +392,28 @@
 
         .post-meta {
             margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
             color: var(--text-muted);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .post-meta .meta-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .post-meta .meta-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.01em;
+            min-width: 88px;
+        }
+
+        .post-meta .meta-value {
+            color: var(--text-muted);
         }
 
         .empty-state {
@@ -448,6 +470,34 @@
             font-weight: 600;
         }
 
+        @keyframes overlayBackdropFadeOut {
+            0% {
+                opacity: 1;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+
+            100% {
+                opacity: 0;
+                backdrop-filter: blur(0);
+                -webkit-backdrop-filter: blur(0);
+            }
+        }
+
+        @keyframes overlayDialogFadeOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(36px) scale(0.92);
+                filter: blur(16px);
+            }
+        }
+
         .article-overlay {
             position: fixed;
             inset: 0;
@@ -473,6 +523,7 @@
 
         .article-overlay.is-closing {
             pointer-events: none;
+            animation: overlayBackdropFadeOut 0.52s ease forwards;
         }
 
         .article-dialog {
@@ -491,8 +542,9 @@
             transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
             transform: translateY(28px) scale(0.94);
             opacity: 0;
+            filter: blur(0);
             transition: transform 0.5s cubic-bezier(0.19, 0.7, 0.22, 1), opacity 0.36s ease;
-            will-change: transform, opacity;
+            will-change: transform, opacity, filter;
         }
 
         .article-overlay.is-visible .article-dialog {
@@ -501,8 +553,7 @@
         }
 
         .article-overlay.is-closing .article-dialog {
-            transform: translateY(28px) scale(0.9);
-            opacity: 0;
+            animation: overlayDialogFadeOut 0.52s ease forwards;
         }
 
         @supports (height: 100dvh) {
@@ -524,6 +575,11 @@
             #overlayScroll {
                 transition-duration: 0.01ms !important;
                 transition-delay: 0ms !important;
+            }
+
+            .article-overlay.is-closing,
+            .article-overlay.is-closing .article-dialog {
+                animation: none !important;
             }
         }
 
@@ -704,7 +760,7 @@
 
         @media (max-width: 900px) {
             .post-list {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 16px;
             }
         }
 
@@ -784,6 +840,16 @@
             .overlay-nav {
                 width: 100%;
                 justify-content: space-between;
+            }
+
+            .post-meta .meta-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .post-meta .meta-label {
+                min-width: 0;
             }
         }
     </style>
@@ -960,7 +1026,7 @@
         };
 
         const MOTION_DURATIONS = {
-            overlay: 420,
+            overlay: 520,
             swap: 320
         };
 
@@ -1404,31 +1470,44 @@
                 title.className = 'post-title';
                 title.textContent = displayTitle;
                 card.appendChild(title);
-                if (post.summary) {
-                    const summary = document.createElement('p');
-                    summary.className = 'post-summary';
-                    summary.textContent = post.summary;
-                    card.appendChild(summary);
-                }
 
-                const metaParts = [];
                 const t = i18n[currentLang];
+                const metaRows = [];
 
-                if (post.createdAt && post.updatedAt && isSameDay(post.createdAt, post.updatedAt)) {
-                    metaParts.push(`${t.published}: ${formatDate(post.createdAt)}`);
-                } else {
-                    if (post.createdAt) {
-                        metaParts.push(`${t.published}: ${formatDate(post.createdAt)}`);
-                    }
-                    if (post.updatedAt) {
-                        metaParts.push(`${t.updated}: ${formatDate(post.updatedAt)}`);
+                if (post.createdAt) {
+                    const publishedValue = formatDate(post.createdAt);
+                    if (publishedValue) {
+                        metaRows.push({ label: t.published, value: publishedValue });
                     }
                 }
 
-                if (metaParts.length) {
-                    const meta = document.createElement('p');
+                if (post.updatedAt) {
+                    const updatedValue = formatDate(post.updatedAt);
+                    if (updatedValue) {
+                        metaRows.push({ label: t.updated, value: updatedValue });
+                    }
+                }
+
+                if (metaRows.length) {
+                    const meta = document.createElement('div');
                     meta.className = 'post-meta';
-                    meta.textContent = metaParts.join(' · ');
+
+                    metaRows.forEach(({ label, value }) => {
+                        const row = document.createElement('span');
+                        row.className = 'meta-row';
+
+                        const labelNode = document.createElement('span');
+                        labelNode.className = 'meta-label';
+                        labelNode.textContent = label;
+
+                        const valueNode = document.createElement('span');
+                        valueNode.className = 'meta-value';
+                        valueNode.textContent = value;
+
+                        row.append(labelNode, valueNode);
+                        meta.appendChild(row);
+                    });
+
                     card.appendChild(meta);
                 }
 
