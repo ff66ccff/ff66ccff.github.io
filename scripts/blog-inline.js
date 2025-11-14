@@ -476,7 +476,7 @@ function renderNextPage() {
 
 function createPostCard(post) {
     const card = document.createElement('article');
-    card.className = 'post-card hover-surface glass-shell';
+    card.className = 'post-card hover-surface';
     card.tabIndex = 0;
     card.setAttribute('role', 'button');
     card.dataset.slug = post.slug;

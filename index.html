@@ -15,17 +15,6 @@
             --accent-blue: #4facfe;
             --accent-pink: #f093fb;
             --accent-cyan: #00d4ff;
-            --liquid-blue: rgba(79, 172, 254, 0.55);
-            --liquid-rose: rgba(240, 147, 251, 0.48);
-            --liquid-cyan: rgba(0, 212, 255, 0.42);
-            --aero-base: rgba(255, 255, 255, 0.22);
-            --aero-highlight-strong: rgba(255, 255, 255, 0.82);
-            --aero-highlight-soft: rgba(255, 255, 255, 0.22);
-            --aero-border: rgba(255, 255, 255, 0.58);
-            --aero-border-strong: rgba(255, 255, 255, 0.85);
-            --aero-glow: rgba(79, 172, 254, 0.4);
-            --aero-noise: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAF0lEQVQImWP4////fwYgYGRk+A8GhgYGAB3nA/0p4n5PAAAAAElFTkSuQmCC");
-            --aero-shadow: 0 32px 72px rgba(15, 23, 42, 0.22);
             --bg-primary: #e8ecf7;
             --mica-tint: rgba(255, 255, 255, 0.82);
             --mica-tint-strong: rgba(255, 255, 255, 0.9);
@@ -54,16 +43,6 @@
             --border-color: rgba(148, 163, 184, 0.3);
             --shadow-sm: 0 16px 42px rgba(8, 15, 35, 0.55);
             --shadow-md: 0 46px 94px rgba(8, 15, 35, 0.7);
-            --liquid-blue: rgba(96, 176, 255, 0.48);
-            --liquid-rose: rgba(215, 148, 255, 0.36);
-            --liquid-cyan: rgba(60, 210, 255, 0.36);
-            --aero-base: rgba(9, 16, 30, 0.6);
-            --aero-highlight-strong: rgba(255, 255, 255, 0.46);
-            --aero-highlight-soft: rgba(148, 176, 224, 0.16);
-            --aero-border: rgba(148, 176, 224, 0.38);
-            --aero-border-strong: rgba(255, 255, 255, 0.34);
-            --aero-glow: rgba(115, 178, 255, 0.38);
-            --aero-shadow: 0 38px 96px rgba(3, 6, 18, 0.7);
         }
 
         * {
@@ -103,127 +82,6 @@
             opacity: 0.55;
         }
 
-        .liquid-stage {
-            position: fixed;
-            inset: -18vh -18vw;
-            pointer-events: none;
-            z-index: -3;
-            display: block;
-            opacity: 0.9;
-            filter: saturate(135%);
-        }
-
-        .liquid-blob {
-            position: absolute;
-            width: clamp(280px, 42vw, 520px);
-            height: clamp(280px, 42vw, 520px);
-            border-radius: 42% 58% 45% 55% / 58% 44% 56% 42%;
-            background:
-                radial-gradient(circle at 28% 32%, var(--liquid-rose), transparent 65%),
-                radial-gradient(circle at 72% 68%, var(--liquid-blue), transparent 60%),
-                radial-gradient(circle at 50% 50%, var(--liquid-cyan), transparent 66%);
-            mix-blend-mode: lighten;
-            opacity: 0.75;
-            filter: blur(0.6px);
-            animation: liquidFloat 32s ease-in-out infinite;
-            transform: translate3d(0, 0, 0) scale(1);
-        }
-
-        .blob-one {
-            top: 12%;
-            left: 6%;
-            animation-duration: 28s;
-        }
-
-        .blob-two {
-            bottom: 10%;
-            right: 8%;
-            animation-duration: 36s;
-            animation-delay: -8s;
-        }
-
-        .blob-three {
-            top: 46%;
-            left: 42%;
-            animation-duration: 40s;
-            animation-delay: -14s;
-        }
-
-        @keyframes liquidFloat {
-            0% {
-                transform: translate3d(-6%, -4%, 0) scale(1);
-            }
-
-            33% {
-                transform: translate3d(4%, 6%, 0) scale(1.08);
-            }
-
-            66% {
-                transform: translate3d(-8%, 4%, 0) scale(0.96);
-            }
-
-            100% {
-                transform: translate3d(-6%, -4%, 0) scale(1);
-            }
-        }
-
-        [data-theme="dark"] .liquid-stage {
-            opacity: 0.75;
-            filter: saturate(155%);
-        }
-
-        [data-theme="dark"] .liquid-blob {
-            mix-blend-mode: screen;
-        }
-
-        @media (max-width: 1080px) {
-            .liquid-blob {
-                width: clamp(240px, 46vw, 420px);
-                height: clamp(240px, 46vw, 420px);
-            }
-        }
-
-        @media (max-width: 720px) {
-            .liquid-stage {
-                inset: -24vh -26vw;
-                opacity: 0.7;
-            }
-
-            .liquid-blob {
-                width: clamp(200px, 58vw, 360px);
-                height: clamp(200px, 58vw, 360px);
-                opacity: 0.6;
-            }
-
-            .blob-three {
-                top: 52%;
-                left: 22%;
-            }
-        }
-
-        @media (max-width: 520px) {
-            .liquid-stage {
-                inset: -28vh -38vw;
-                opacity: 0.6;
-            }
-
-            .liquid-blob {
-                width: clamp(180px, 62vw, 300px);
-                height: clamp(180px, 62vw, 300px);
-            }
-
-            .blob-two {
-                right: 14%;
-                bottom: 18%;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .liquid-blob {
-                animation: none;
-            }
-        }
-
         a {
             color: inherit;
             text-decoration: none;
@@ -244,8 +102,6 @@
             border: 1px solid transparent;
             background-clip: padding-box;
             overflow: hidden;
-            isolation: isolate;
-            transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
         }
 
         .hover-surface::before,
@@ -255,33 +111,31 @@
             inset: 0;
             border-radius: inherit;
             pointer-events: none;
-            transition: opacity 0.28s ease, transform 0.35s ease;
-            z-index: -1;
+            transition: opacity 0.18s ease;
         }
 
         .hover-surface::before {
-            background: radial-gradient(320px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-                    rgba(255, 255, 255, 0.5),
-                    transparent 55%);
+            z-index: -2;
+            background: radial-gradient(600px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+                    rgba(255, 255, 255, 0.06),
+                    transparent 40%);
             opacity: 0;
-            mix-blend-mode: screen;
         }
 
         .hover-surface::after {
-            background: radial-gradient(560px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-                    var(--aero-glow),
-                    transparent 68%);
+            z-index: -1;
+            background: radial-gradient(800px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+                    rgba(102, 126, 234, 0.15),
+                    transparent 40%);
             opacity: 0;
-            mix-blend-mode: color-dodge;
         }
 
         .hover-surface.is-active::before {
-            opacity: 0.6;
-            transform: scale(1.04);
+            opacity: 0.5;
         }
 
         .hover-surface.is-active::after {
-            opacity: 0.48;
+            opacity: 0.8;
         }
 
         .page-header {
@@ -551,58 +405,6 @@
             border-color: rgba(102, 126, 234, 0.48);
         }
 
-        .glass-shell {
-            position: relative;
-            border: 1px solid var(--aero-border);
-            border-top-color: var(--aero-border-strong);
-            border-bottom-color: rgba(15, 23, 42, 0.18);
-            background: linear-gradient(135deg, var(--aero-highlight-soft), rgba(255, 255, 255, 0)) var(--aero-base);
-            background-color: var(--aero-base);
-            box-shadow: var(--aero-shadow);
-            backdrop-filter: blur(32px) saturate(170%) contrast(1.05);
-            -webkit-backdrop-filter: blur(32px) saturate(170%) contrast(1.05);
-            overflow: hidden;
-        }
-
-        .glass-shell::before,
-        .glass-shell::after {
-            content: "";
-            position: absolute;
-            inset: -1px;
-            border-radius: inherit;
-            pointer-events: none;
-            z-index: -3;
-        }
-
-        .glass-shell::before {
-            background: radial-gradient(130% 115% at 20% 0%, var(--aero-highlight-strong), transparent 55%),
-                linear-gradient(120deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.05));
-            opacity: 0.9;
-            mix-blend-mode: screen;
-        }
-
-        .glass-shell::after {
-            inset: 0;
-            background-image: var(--aero-noise), linear-gradient(160deg, rgba(255, 255, 255, 0.16), transparent 70%);
-            opacity: 0.28;
-            mix-blend-mode: soft-light;
-        }
-
-        .glass-shell.hover-surface::before,
-        .glass-shell.hover-surface::after {
-            z-index: -2;
-        }
-
-        @supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
-            .glass-shell {
-                background-color: rgba(255, 255, 255, 0.92);
-            }
-
-            [data-theme="dark"] .glass-shell {
-                background-color: rgba(10, 16, 30, 0.9);
-            }
-        }
-
         .theme-toggle {
             top: 28px;
             right: 28px;
@@ -696,26 +498,21 @@
 </head>
 
 <body>
-    <div class="liquid-stage" aria-hidden="true">
-        <span class="liquid-blob blob-one"></span>
-        <span class="liquid-blob blob-two"></span>
-        <span class="liquid-blob blob-three"></span>
-    </div>
     <div class="page-shell">
-        <header class="page-header hover-surface glass-shell">
+        <header class="page-header hover-surface">
             <div class="header-main">
                 <span class="brand">ff66ccff</span>
                 <p class="header-note" id="headerNote">记录代码、音乐与故事，分享我的学习旅程。</p>
             </div>
-            <a class="ghost-link hover-surface glass-shell" href="blog.html" id="blogLink">
+            <a class="ghost-link hover-surface" href="blog.html" id="blogLink">
                 <i class="fas fa-book-open"></i>
                 <span id="viewBlog">进入博客</span>
             </a>
         </header>
 
-        <main class="hero-card hover-surface glass-shell">
+        <main class="hero-card hover-surface">
             <section class="profile-column">
-                <div class="avatar-wrapper hover-surface glass-shell" id="avatarWrapper">
+                <div class="avatar-wrapper hover-surface" id="avatarWrapper">
                     <div class="avatar" id="avatarContainer">
                         <div class="avatar-icon">
                             <i class="fas fa-user"></i>
@@ -727,7 +524,7 @@
                 <p class="subtitle" id="subtitle">四川大学 25级计算机学生</p>
                 <p class="tagline" id="tagline">记录代码、音乐与故事，分享我的学习旅程。</p>
                 <div class="actions-row">
-                    <a class="action-btn hover-surface glass-shell" href="https://github.com/ff66ccff" target="_blank"
+                    <a class="action-btn hover-surface" href="https://github.com/ff66ccff" target="_blank"
                         rel="noopener" id="githubButton">
                         <i class="fab fa-github"></i>
                         <span id="viewProfile">查看我的 GitHub</span>
@@ -736,25 +533,25 @@
             </section>
 
             <section class="details-column">
-                <div class="focus-card hover-surface glass-shell">
+                <div class="focus-card hover-surface">
                     <h2 class="section-title" id="interestsTitle">我的兴趣</h2>
                     <div class="interests-grid">
-                        <article class="interest-card hover-surface glass-shell">
+                        <article class="interest-card hover-surface">
                             <div class="interest-icon"><i class="fas fa-code"></i></div>
                             <div class="interest-title" id="codingTitle">编程</div>
                             <p class="interest-subtitle" id="codingSubtitle">Programming</p>
                         </article>
-                        <article class="interest-card hover-surface glass-shell">
+                        <article class="interest-card hover-surface">
                             <div class="interest-icon"><i class="fas fa-music"></i></div>
                             <div class="interest-title" id="vocaloidTitle">中文 VOCALOID</div>
                             <p class="interest-subtitle" id="vocaloidSubtitle">Chinese Vocaloid</p>
                         </article>
-                        <article class="interest-card hover-surface glass-shell">
+                        <article class="interest-card hover-surface">
                             <div class="interest-icon"><i class="fas fa-rocket"></i></div>
                             <div class="interest-title" id="scifiTitle">科幻小说</div>
                             <p class="interest-subtitle" id="scifiSubtitle">Sci-Fi Novels</p>
                         </article>
-                        <article class="interest-card hover-surface glass-shell">
+                        <article class="interest-card hover-surface">
                             <div class="interest-icon"><i class="fas fa-database"></i></div>
                             <div class="interest-title" id="placeholderTitle">[数据删除]</div>
                             <p class="interest-subtitle" id="placeholderSubtitle">[数据删除]</p>
@@ -765,12 +562,11 @@
         </main>
     </div>
 
-    <button class="control-btn theme-toggle hover-surface glass-shell" id="themeToggle" type="button" title="切换主题">
+    <button class="control-btn theme-toggle" id="themeToggle" type="button" title="切换主题">
         <i class="fas fa-moon"></i>
     </button>
 
-    <button class="control-btn language-toggle hover-surface glass-shell" id="languageToggle" type="button"
-        title="切换语言">
+    <button class="control-btn language-toggle" id="languageToggle" type="button" title="切换语言">
         <span>中</span>
     </button>
 
