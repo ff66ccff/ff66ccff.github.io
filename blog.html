@@ -347,8 +347,8 @@
         .post-card {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            padding: 22px 24px;
+            gap: 18px;
+            padding: 28px 32px;
             background: var(--mica-tint-strong);
             border-radius: 22px;
             border: 1px solid var(--mica-border);
@@ -358,7 +358,8 @@
             backdrop-filter: blur(20px) saturate(140%);
             -webkit-backdrop-filter: blur(20px) saturate(140%);
             width: 100%;
-            min-height: 0;
+            min-height: 170px;
+            justify-content: center;
         }
 
         .post-card:hover {
@@ -378,6 +379,8 @@
             font-weight: 600;
             color: var(--primary-color);
             transition: color 0.2s ease;
+            line-height: 1.4;
+            padding: 4px 0 2px;
         }
 
         .post-card:hover .post-title {
