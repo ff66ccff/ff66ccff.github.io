@@ -19,6 +19,14 @@
             --liquid-blue: rgba(79, 172, 254, 0.5);
             --liquid-rose: rgba(240, 147, 251, 0.42);
             --liquid-cyan: rgba(0, 212, 255, 0.36);
+            --aero-base: rgba(255, 255, 255, 0.22);
+            --aero-highlight-strong: rgba(255, 255, 255, 0.82);
+            --aero-highlight-soft: rgba(255, 255, 255, 0.22);
+            --aero-border: rgba(255, 255, 255, 0.58);
+            --aero-border-strong: rgba(255, 255, 255, 0.85);
+            --aero-glow: rgba(79, 172, 254, 0.38);
+            --aero-noise: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAF0lEQVQImWP4////fwYgYGRk+A8GhgYGAB3nA/0p4n5PAAAAAElFTkSuQmCC");
+            --aero-shadow: 0 32px 72px rgba(15, 23, 42, 0.24);
             --bg-primary: #e8ecf7;
             --mica-tint: rgba(255, 255, 255, 0.82);
             --mica-tint-strong: rgba(255, 255, 255, 0.9);
@@ -54,6 +62,13 @@
             --liquid-blue: rgba(96, 176, 255, 0.44);
             --liquid-rose: rgba(215, 148, 255, 0.34);
             --liquid-cyan: rgba(60, 210, 255, 0.32);
+            --aero-base: rgba(9, 16, 30, 0.6);
+            --aero-highlight-strong: rgba(255, 255, 255, 0.42);
+            --aero-highlight-soft: rgba(148, 176, 224, 0.14);
+            --aero-border: rgba(148, 176, 224, 0.36);
+            --aero-border-strong: rgba(255, 255, 255, 0.3);
+            --aero-glow: rgba(115, 178, 255, 0.35);
+            --aero-shadow: 0 38px 96px rgba(3, 6, 18, 0.72);
         }
 
         * {
@@ -239,6 +254,8 @@
             border: 1px solid transparent;
             background-clip: padding-box;
             overflow: hidden;
+            isolation: isolate;
+            transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
         }
 
         .hover-surface::before,
@@ -248,31 +265,33 @@
             inset: 0;
             border-radius: inherit;
             pointer-events: none;
-            transition: opacity 0.18s ease;
+            transition: opacity 0.28s ease, transform 0.35s ease;
+            z-index: -1;
         }
 
         .hover-surface::before {
-            z-index: -2;
-            background: radial-gradient(600px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-                    rgba(255, 255, 255, 0.06),
-                    transparent 40%);
+            background: radial-gradient(320px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+                    rgba(255, 255, 255, 0.5),
+                    transparent 55%);
             opacity: 0;
+            mix-blend-mode: screen;
         }
 
         .hover-surface::after {
-            z-index: -1;
-            background: radial-gradient(800px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-                    rgba(102, 126, 234, 0.15),
-                    transparent 40%);
+            background: radial-gradient(560px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+                    var(--aero-glow),
+                    transparent 68%);
             opacity: 0;
+            mix-blend-mode: color-dodge;
         }
 
         .hover-surface.is-active::before {
-            opacity: 0.5;
+            opacity: 0.6;
+            transform: scale(1.04);
         }
 
         .hover-surface.is-active::after {
-            opacity: 0.8;
+            opacity: 0.48;
         }
 
         .page-header {
@@ -558,6 +577,58 @@
             transform: translateY(-3px);
             box-shadow: var(--shadow-md);
             border-color: rgba(102, 126, 234, 0.48);
+        }
+
+        .glass-shell {
+            position: relative;
+            border: 1px solid var(--aero-border);
+            border-top-color: var(--aero-border-strong);
+            border-bottom-color: rgba(15, 23, 42, 0.18);
+            background: linear-gradient(135deg, var(--aero-highlight-soft), rgba(255, 255, 255, 0)) var(--aero-base);
+            background-color: var(--aero-base);
+            box-shadow: var(--aero-shadow);
+            backdrop-filter: blur(32px) saturate(170%) contrast(1.05);
+            -webkit-backdrop-filter: blur(32px) saturate(170%) contrast(1.05);
+            overflow: hidden;
+        }
+
+        .glass-shell::before,
+        .glass-shell::after {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: -3;
+        }
+
+        .glass-shell::before {
+            background: radial-gradient(130% 115% at 20% 0%, var(--aero-highlight-strong), transparent 55%),
+                linear-gradient(120deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.05));
+            opacity: 0.9;
+            mix-blend-mode: screen;
+        }
+
+        .glass-shell::after {
+            inset: 0;
+            background-image: var(--aero-noise), linear-gradient(160deg, rgba(255, 255, 255, 0.16), transparent 70%);
+            opacity: 0.28;
+            mix-blend-mode: soft-light;
+        }
+
+        .glass-shell.hover-surface::before,
+        .glass-shell.hover-surface::after {
+            z-index: -2;
+        }
+
+        @supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
+            .glass-shell {
+                background-color: rgba(255, 255, 255, 0.92);
+            }
+
+            [data-theme="dark"] .glass-shell {
+                background-color: rgba(10, 16, 30, 0.9);
+            }
         }
 
         .theme-toggle {
@@ -923,22 +994,22 @@
         <span class="liquid-blob blob-three"></span>
     </div>
     <div class="page-shell">
-        <header class="page-header">
+        <header class="page-header hover-surface glass-shell">
             <a class="brand" href="index.html">ff66ccff</a>
             <div class="header-actions">
-                <a class="ghost-link" href="index.html" id="backHomeLink">
+                <a class="ghost-link hover-surface glass-shell" href="index.html" id="backHomeLink">
                     <i class="fas fa-arrow-left"></i>
                     <span id="backHomeLabel">返回首页</span>
                 </a>
             </div>
         </header>
 
-        <main class="content-card hover-surface">
+        <main class="content-card hover-surface glass-shell">
             <div class="panel-header">
                 <h1 id="blogTitle">博客</h1>
                 <p id="blogSubtitle">记录代码、音乐和故事</p>
             </div>
-            <div class="search-row hover-surface">
+            <div class="search-row hover-surface glass-shell">
                 <i class="fas fa-search"></i>
                 <input type="search" id="searchInput" placeholder="搜索文章标题或内容" aria-label="搜索文章">
             </div>
@@ -947,40 +1018,41 @@
         </main>
     </div>
 
-    <div class="control-btn theme-toggle" id="themeToggle" title="切换主题">
+    <div class="control-btn theme-toggle hover-surface glass-shell" id="themeToggle" title="切换主题">
         <i class="fas fa-moon"></i>
     </div>
 
-    <div class="control-btn language-toggle" id="languageToggle" title="切换语言">
+    <div class="control-btn language-toggle hover-surface glass-shell" id="languageToggle" title="切换语言">
         <span>中</span>
     </div>
 
     <div class="article-overlay" id="articleOverlay" hidden>
-        <div class="article-dialog" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
+        <div class="article-dialog hover-surface glass-shell" role="dialog" aria-modal="true"
+            aria-labelledby="overlayTitle">
             <header class="overlay-header">
                 <div>
                     <h2 id="overlayTitle">文章标题</h2>
                     <div class="overlay-meta" id="overlayMeta"></div>
                 </div>
-                <button class="icon-btn" id="closeOverlay" type="button" title="关闭">
+                <button class="icon-btn hover-surface glass-shell" id="closeOverlay" type="button" title="关闭">
                     <i class="fas fa-times"></i>
                 </button>
             </header>
             <div class="overlay-toolbar">
-                <button class="ghost-btn" id="scrollTopBtn" type="button">
+                <button class="ghost-btn hover-surface glass-shell" id="scrollTopBtn" type="button">
                     <i class="fas fa-arrow-up"></i>
                     <span id="scrollTopLabel">回到开头</span>
                 </button>
-                <button class="ghost-btn" id="scrollBottomBtn" type="button">
+                <button class="ghost-btn hover-surface glass-shell" id="scrollBottomBtn" type="button">
                     <i class="fas fa-arrow-down"></i>
                     <span id="scrollBottomLabel">前往结尾</span>
                 </button>
                 <div class="overlay-nav">
-                    <button class="ghost-btn" id="prevPost" type="button">
+                    <button class="ghost-btn hover-surface glass-shell" id="prevPost" type="button">
                         <i class="fas fa-chevron-left"></i>
                         <span id="prevPostLabel">上一篇</span>
                     </button>
-                    <button class="ghost-btn" id="nextPost" type="button">
+                    <button class="ghost-btn hover-surface glass-shell" id="nextPost" type="button">
                         <span id="nextPostLabel">下一篇</span>
                         <i class="fas fa-chevron-right"></i>
                     </button>
@@ -1516,7 +1588,7 @@
             hideEmptyState();
             list.forEach((post) => {
                 const card = document.createElement('article');
-                card.className = 'post-card hover-surface';
+                card.className = 'post-card hover-surface glass-shell';
                 card.tabIndex = 0;
                 card.setAttribute('role', 'button');
                 const displayTitle = post.title || post.slug;
