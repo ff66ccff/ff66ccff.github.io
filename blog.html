@@ -1233,6 +1233,22 @@
             }
         }
 
+        function isSameTimestamp(date1String, date2String) {
+            if (!date1String || !date2String) {
+                return false;
+            }
+            try {
+                const date1 = new Date(date1String);
+                const date2 = new Date(date2String);
+                if (Number.isNaN(date1.getTime()) || Number.isNaN(date2.getTime())) {
+                    return date1String === date2String;
+                }
+                return date1.getTime() === date2.getTime();
+            } catch (error) {
+                return date1String === date2String;
+            }
+        }
+
         function parseFrontMatter(markdown) {
             const frontMatterPattern = /^---\s*[\r\n]+([\s\S]*?)\s*---\s*[\r\n]*/;
             const match = markdown.match(frontMatterPattern);
@@ -1351,15 +1367,12 @@
             const t = i18n[currentLang];
             const parts = [];
 
-            if (post.createdAt && post.updatedAt && isSameDay(post.createdAt, post.updatedAt)) {
+            const sameTimestamp = isSameTimestamp(post.createdAt, post.updatedAt);
+            if (post.createdAt) {
                 parts.push(`${t.published}: ${formatDate(post.createdAt)}`);
-            } else {
-                if (post.createdAt) {
-                    parts.push(`${t.published}: ${formatDate(post.createdAt)}`);
-                }
-                if (post.updatedAt) {
-                    parts.push(`${t.updated}: ${formatDate(post.updatedAt)}`);
-                }
+            }
+            if (post.updatedAt && !sameTimestamp) {
+                parts.push(`${t.updated}: ${formatDate(post.updatedAt)}`);
             }
 
             elements.overlayMeta.textContent = parts.join(' · ');
@@ -1473,6 +1486,7 @@
 
                 const t = i18n[currentLang];
                 const metaRows = [];
+                const sameTimestamp = isSameTimestamp(post.createdAt, post.updatedAt);
 
                 if (post.createdAt) {
                     const publishedValue = formatDate(post.createdAt);
@@ -1481,7 +1495,7 @@
                     }
                 }
 
-                if (post.updatedAt) {
+                if (post.updatedAt && !sameTimestamp) {
                     const updatedValue = formatDate(post.updatedAt);
                     if (updatedValue) {
                         metaRows.push({ label: t.updated, value: updatedValue });
@@ -1750,12 +1764,12 @@
             const exitDuration = playOverlayContentExitAnimation(reduceMotion);
 
             elements.overlay.classList.add('is-closing');
-            elements.overlay.classList.remove('is-visible');
 
             const finalize = () => {
                 resetSwapState();
                 elements.overlay.hidden = true;
                 elements.overlay.classList.remove('is-closing');
+                elements.overlay.classList.remove('is-visible');
                 if (elements.articleDialog) {
                     elements.articleDialog.style.removeProperty('--origin-x');
                     elements.articleDialog.style.removeProperty('--origin-y');
