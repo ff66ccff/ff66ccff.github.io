@@ -1767,11 +1767,12 @@
             const published = post.createdAt ? formatDate(post.createdAt) : '';
             const updated = post.updatedAt ? formatDate(post.updatedAt) : '';
             const sameDay = post.createdAt && post.updatedAt && isSameDay(post.createdAt, post.updatedAt);
+            const suffix = currentLang === 'zh' ? '：' : ':';
             if (published) {
-                entries.push({ label: t.published, value: published });
+                entries.push({ label: `${t.published}${suffix}`, value: published });
             }
             if (updated && !sameDay) {
-                entries.push({ label: t.updated, value: updated });
+                entries.push({ label: `${t.updated}${suffix}`, value: updated });
             }
             return entries;
         }
@@ -2028,19 +2029,7 @@
                 if (metaEntries.length) {
                     const meta = document.createElement('div');
                     meta.className = 'post-meta';
-                    metaEntries.forEach((entry) => {
-                        const row = document.createElement('div');
-                        row.className = 'meta-row';
-                        const label = document.createElement('span');
-                        label.className = 'meta-label';
-                        label.textContent = entry.label;
-                        const value = document.createElement('span');
-                        value.className = 'meta-value';
-                        value.textContent = entry.value;
-                        row.appendChild(label);
-                        row.appendChild(value);
-                        meta.appendChild(row);
-                    });
+                    meta.innerHTML = metaEntries.map((entry) => `\n                        <div class="meta-row">\n                            <span class="meta-label">${entry.label}</span>\n                            <span class="meta-value">${entry.value}</span>\n                        </div>`).join('');
                     card.appendChild(meta);
                 }
 
