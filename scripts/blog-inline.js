@@ -187,13 +187,12 @@ function formatDate(dateString) {
         return '';
     }
     try {
-        const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
-        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        const date = new Date(dateString);
-        if (Number.isNaN(date.getTime())) {
+        const d = new Date(dateString);
+        if (Number.isNaN(d.getTime())) {
             return dateString;
         }
-        return new Intl.DateTimeFormat(locale, options).format(date);
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     } catch (error) {
         return dateString;
     }
