@@ -10,6 +10,10 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         :root {
             --primary-color: #667eea;
             --secondary-color: #764ba2;
@@ -218,12 +222,13 @@
         }
 
         .panel-header h1 {
-            margin: 0 0 16px 0;
-            font-size: 2.5rem;
+            margin: 40px 0 24px 0;
+            font-size: clamp(32px, 4.5vw, 40px);
             font-weight: 800;
             color: var(--primary-color);
-            padding-bottom: 16px;
-            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+            line-height: 1.08;
         }
 
         .panel-header p {
@@ -352,7 +357,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            padding: 28px 32px;
+            padding: clamp(18px, 2.2vw, 32px) clamp(18px, 2.6vw, 32px);
             background: var(--mica-tint-strong);
             border-radius: 22px;
             border: 1px solid var(--mica-border);
@@ -380,8 +385,8 @@
 
         .post-title {
             margin: 0;
-            font-size: 1.15rem;
-            font-weight: 600;
+            font-size: clamp(1rem, 2.2vw, 1.15rem);
+            font-weight: 700;
             color: var(--primary-color);
             transition: color 0.2s ease;
             line-height: 1.6;
@@ -1096,10 +1101,19 @@
 </head>
 
 <body>
+    <div id="pageTop" aria-hidden="true"></div>
     <div class="page-shell">
         <header class="page-header">
             <a class="brand" href="index.html">ff66ccff</a>
             <div class="header-actions">
+                <a class="ghost-link" href="#pageTop" id="pageTopLink">
+                    <i class="fas fa-arrow-up"></i>
+                    <span id="pageTopLabel">回到开头</span>
+                </a>
+                <a class="ghost-link" href="#pageBottom" id="pageBottomLink">
+                    <i class="fas fa-arrow-down"></i>
+                    <span id="pageBottomLabel">前往结尾</span>
+                </a>
                 <a class="ghost-link" href="index.html" id="backHomeLink">
                     <i class="fas fa-arrow-left"></i>
                     <span id="backHomeLabel">返回首页</span>
@@ -1126,6 +1140,8 @@
             </div>
         </main>
     </div>
+
+    <div id="pageBottom" aria-hidden="true"></div>
 
     <div class="control-btn theme-toggle" id="themeToggle" title="切换主题">
         <i class="fas fa-moon"></i>
@@ -1187,10 +1203,10 @@
         </button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script>
         const i18n = {
             zh: {
