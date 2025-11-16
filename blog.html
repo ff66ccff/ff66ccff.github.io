@@ -417,6 +417,36 @@
             padding: 4px 0;
         }
 
+        .post-title-row {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .post-timestamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .post-timestamp__label {
+            display: inline-block;
+        }
+
+        .post-timestamp__value {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .post-timestamp i {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
         .post-card:hover .post-title {
             color: var(--accent-blue);
         }
@@ -2019,26 +2049,61 @@
                     }
                 });
 
+                const header = document.createElement('div');
+                header.className = 'post-title-row';
+
                 const title = document.createElement('h2');
                 title.className = 'post-title';
                 title.textContent = displayTitle;
-                card.appendChild(title);
+                header.appendChild(title);
 
-                // Debug: log post data
-                console.log('Post data:', {
-                    title: post.title,
-                    createdAt: post.createdAt,
-                    updatedAt: post.updatedAt
-                });
-
+                const separator = currentLang === 'zh' ? '：' : ': ';
                 const metaEntries = buildPostMetaEntries(post);
-                console.log('Meta entries:', metaEntries);
+                let timestampLabel = '';
+                let timestampValue = '';
+                let timestampDate = '';
+
+                if (post?.createdAt) {
+                    timestampLabel = i18n[currentLang].published;
+                    timestampValue = formatDate(post.createdAt);
+                    timestampDate = post.createdAt;
+                } else if (post?.updatedAt) {
+                    timestampLabel = i18n[currentLang].updated;
+                    timestampValue = formatDate(post.updatedAt);
+                    timestampDate = post.updatedAt;
+                }
+
+                if (timestampValue) {
+                    const timestampWrapper = document.createElement('div');
+                    timestampWrapper.className = 'post-timestamp';
+
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-calendar-alt';
+                    icon.setAttribute('aria-hidden', 'true');
+
+                    const labelSpan = document.createElement('span');
+                    labelSpan.className = 'post-timestamp__label';
+                    labelSpan.textContent = `${timestampLabel}${separator}`;
+
+                    const timeEl = document.createElement('time');
+                    timeEl.className = 'post-timestamp__value';
+                    timeEl.dateTime = timestampDate;
+                    timeEl.textContent = timestampValue;
+
+                    timestampWrapper.append(icon, labelSpan, timeEl);
+                    header.appendChild(timestampWrapper);
+
+                    const removeIndex = metaEntries.findIndex((entry) => entry.label === timestampLabel && entry.value === timestampValue);
+                    if (removeIndex !== -1) {
+                        metaEntries.splice(removeIndex, 1);
+                    }
+                }
+
+                card.appendChild(header);
 
                 if (metaEntries.length) {
                     const meta = document.createElement('div');
                     meta.className = 'post-meta';
-                    meta.style.color = 'red'; // Debug: make it visible
-                    const separator = currentLang === 'zh' ? '：' : ': ';
                     metaEntries.forEach((entry) => {
                         const row = document.createElement('div');
                         row.className = 'meta-row';
@@ -2046,8 +2111,6 @@
                         meta.appendChild(row);
                     });
                     card.appendChild(meta);
-                } else {
-                    console.warn('No meta entries for post:', post.title);
                 }
 
                 elements.postList.appendChild(card);
