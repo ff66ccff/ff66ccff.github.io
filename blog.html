@@ -214,20 +214,20 @@
         .panel-header {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 0;
         }
 
         .panel-header h1 {
-            margin: 0 0 24px 0;
+            margin: 0 0 16px 0;
             font-size: 2.5rem;
             font-weight: 800;
             color: var(--primary-color);
-            padding-bottom: 20px;
+            padding-bottom: 16px;
             border-bottom: 2px solid rgba(102, 126, 234, 0.2);
         }
 
         .panel-header p {
-            margin: 0;
+            margin: 16px 0 0 0;
             color: var(--text-muted);
             font-size: 0.98rem;
         }
@@ -1049,8 +1049,12 @@
         @media (max-width: 520px) {
             .panel-header h1 {
                 font-size: 2rem;
-                margin-bottom: 20px;
-                padding-bottom: 16px;
+                margin-bottom: 12px;
+                padding-bottom: 12px;
+            }
+
+            .panel-header p {
+                margin-top: 12px;
             }
 
             .ghost-link {
