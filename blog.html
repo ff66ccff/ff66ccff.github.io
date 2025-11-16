@@ -218,10 +218,12 @@
         }
 
         .panel-header h1 {
-            margin: 0;
-            font-size: 2.1rem;
-            font-weight: 700;
+            margin: 0 0 24px 0;
+            font-size: 2.5rem;
+            font-weight: 800;
             color: var(--primary-color);
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
         }
 
         .panel-header p {
@@ -537,6 +539,45 @@
         .language-toggle span {
             font-size: 0.96rem;
             font-weight: 600;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: calc(32px + var(--safe-area-bottom));
+            right: calc(28px + var(--safe-area-right));
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--mica-border);
+            background: var(--mica-tint-strong);
+            color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
+            z-index: 999;
+            backdrop-filter: blur(20px) saturate(145%);
+            -webkit-backdrop-filter: blur(20px) saturate(145%);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.35);
+        }
+
+        .back-to-top i {
+            font-size: 1.2rem;
         }
 
         @keyframes overlayBackdropFadeOut {
@@ -996,11 +1037,20 @@
                 top: calc(18px + var(--safe-area-top));
                 left: calc(18px + var(--safe-area-left));
             }
+
+            .back-to-top {
+                width: 48px;
+                height: 48px;
+                bottom: calc(24px + var(--safe-area-bottom));
+                right: calc(18px + var(--safe-area-right));
+            }
         }
 
         @media (max-width: 520px) {
             .panel-header h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
+                margin-bottom: 20px;
+                padding-bottom: 16px;
             }
 
             .ghost-link {
@@ -1081,6 +1131,10 @@
         <span>中</span>
     </div>
 
+    <button class="back-to-top" id="backToTop" type="button" title="回到顶部" aria-label="回到顶部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <div class="article-overlay" id="articleOverlay" hidden>
         <div class="article-dialog" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
             <header class="overlay-header">
@@ -1157,7 +1211,9 @@
                 pageTitle: "博客 - ff66ccff",
                 published: "发布于",
                 updated: "更新于",
-                imagePreview: "图片预览"
+                imagePreview: "图片预览",
+                backToTopTitle: "回到顶部",
+                backToTopLabel: "回到顶部"
             },
             en: {
                 blogTitle: "Blog",
@@ -1181,7 +1237,9 @@
                 pageTitle: "Blog - ff66ccff",
                 published: "Published",
                 updated: "Updated",
-                imagePreview: "Image preview"
+                imagePreview: "Image preview",
+                backToTopTitle: "Back to Top",
+                backToTopLabel: "Back to Top"
             }
         };
 
@@ -1216,7 +1274,8 @@
             imageLightbox: document.getElementById('imageLightbox'),
             imageLightboxImg: document.getElementById('lightboxImage'),
             imageLightboxCaption: document.getElementById('lightboxCaption'),
-            imageLightboxClose: document.getElementById('imageLightboxClose')
+            imageLightboxClose: document.getElementById('imageLightboxClose'),
+            backToTop: document.getElementById('backToTop')
         };
 
         const POSTS_DIR = 'posts';
@@ -1813,6 +1872,10 @@
             if (elements.postScrollHintLabel) {
                 elements.postScrollHintLabel.textContent = t.scrollHint;
             }
+            if (elements.backToTop) {
+                elements.backToTop.title = t.backToTopTitle;
+                elements.backToTop.setAttribute('aria-label', t.backToTopLabel);
+            }
             updateEmptyStateText();
             updateOverlayMeta();
             prepareOverlayMedia();
@@ -2302,6 +2365,32 @@
 
         window.addEventListener('hashchange', handleHashNavigation);
 
+        function initBackToTop() {
+            if (!elements.backToTop) {
+                return;
+            }
+
+            const toggleVisibility = () => {
+                if (window.pageYOffset > 400) {
+                    elements.backToTop.classList.add('visible');
+                } else {
+                    elements.backToTop.classList.remove('visible');
+                }
+            };
+
+            const scrollToTop = () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            };
+
+            window.addEventListener('scroll', toggleVisibility, { passive: true });
+            elements.backToTop.addEventListener('click', scrollToTop);
+
+            toggleVisibility();
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             initLanguage();
             initLanguageToggle();
@@ -2309,6 +2398,7 @@
             initImageLightbox();
             refreshRevealSurfaces();
             initScrollHint();
+            initBackToTop();
             loadPosts();
             handleHashNavigation();
         });
