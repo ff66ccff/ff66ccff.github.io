@@ -2024,10 +2024,20 @@
                 title.textContent = displayTitle;
                 card.appendChild(title);
 
+                // Debug: log post data
+                console.log('Post data:', {
+                    title: post.title,
+                    createdAt: post.createdAt,
+                    updatedAt: post.updatedAt
+                });
+
                 const metaEntries = buildPostMetaEntries(post);
+                console.log('Meta entries:', metaEntries);
+
                 if (metaEntries.length) {
                     const meta = document.createElement('div');
                     meta.className = 'post-meta';
+                    meta.style.color = 'red'; // Debug: make it visible
                     const separator = currentLang === 'zh' ? '：' : ': ';
                     metaEntries.forEach((entry) => {
                         const row = document.createElement('div');
@@ -2036,6 +2046,8 @@
                         meta.appendChild(row);
                     });
                     card.appendChild(meta);
+                } else {
+                    console.warn('No meta entries for post:', post.title);
                 }
 
                 elements.postList.appendChild(card);
