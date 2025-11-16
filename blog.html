@@ -1739,7 +1739,7 @@
                     return dateString;
                 }
                 const pad = (n) => String(n).padStart(2, '0');
-                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
             } catch (error) {
                 return dateString;
             }
@@ -1767,12 +1767,11 @@
             const published = post.createdAt ? formatDate(post.createdAt) : '';
             const updated = post.updatedAt ? formatDate(post.updatedAt) : '';
             const sameDay = post.createdAt && post.updatedAt && isSameDay(post.createdAt, post.updatedAt);
-            const suffix = currentLang === 'zh' ? '：' : ':';
             if (published) {
-                entries.push({ label: `${t.published}${suffix}`, value: published });
+                entries.push({ label: t.published, value: published });
             }
             if (updated && !sameDay) {
-                entries.push({ label: `${t.updated}${suffix}`, value: updated });
+                entries.push({ label: t.updated, value: updated });
             }
             return entries;
         }
@@ -2029,7 +2028,13 @@
                 if (metaEntries.length) {
                     const meta = document.createElement('div');
                     meta.className = 'post-meta';
-                    meta.innerHTML = metaEntries.map((entry) => `\n                        <div class="meta-row">\n                            <span class="meta-label">${entry.label}</span>\n                            <span class="meta-value">${entry.value}</span>\n                        </div>`).join('');
+                    const separator = currentLang === 'zh' ? '：' : ': ';
+                    metaEntries.forEach((entry) => {
+                        const row = document.createElement('div');
+                        row.className = 'meta-row';
+                        row.innerHTML = `<span class="meta-label">${entry.label}${separator}</span><span class="meta-value">${entry.value}</span>`;
+                        meta.appendChild(row);
+                    });
                     card.appendChild(meta);
                 }
 
