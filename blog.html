@@ -430,6 +430,9 @@
 
         .post-meta {
             margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
             color: var(--text-muted);
             font-size: 0.88rem;
             line-height: 1.5;
@@ -1755,25 +1758,32 @@
             }
         }
 
-        function buildPostMetaLine(post) {
+        function buildPostMetaEntries(post) {
             if (!post) {
-                return '';
+                return [];
             }
+            const entries = [];
             const t = i18n[currentLang];
             const published = post.createdAt ? formatDate(post.createdAt) : '';
             const updated = post.updatedAt ? formatDate(post.updatedAt) : '';
-            const separator = currentLang === 'zh' ? '：' : ': ';
-            const joiner = currentLang === 'zh' ? ' · ' : ' · ';
-            if (published && updated && !isSameDay(post.createdAt, post.updatedAt)) {
-                return `${t.published}${separator}${published}${joiner}${t.updated}${separator}${updated}`;
-            }
+            const sameDay = post.createdAt && post.updatedAt && isSameDay(post.createdAt, post.updatedAt);
             if (published) {
-                return `${t.published}${separator}${published}`;
+                entries.push({ label: t.published, value: published });
             }
-            if (updated) {
-                return `${t.updated}${separator}${updated}`;
+            if (updated && !sameDay) {
+                entries.push({ label: t.updated, value: updated });
             }
-            return '';
+            return entries;
+        }
+
+        function buildPostMetaLine(post) {
+            const entries = buildPostMetaEntries(post);
+            if (!entries.length) {
+                return '';
+            }
+            const separator = currentLang === 'zh' ? '：' : ': ';
+            const joiner = ' · ';
+            return entries.map((entry) => `${entry.label}${separator}${entry.value}`).join(joiner);
         }
 
         function parseFrontMatter(markdown) {
@@ -2014,11 +2024,23 @@
                 title.textContent = displayTitle;
                 card.appendChild(title);
 
-                const metaText = buildPostMetaLine(post);
-                if (metaText) {
-                    const meta = document.createElement('p');
+                const metaEntries = buildPostMetaEntries(post);
+                if (metaEntries.length) {
+                    const meta = document.createElement('div');
                     meta.className = 'post-meta';
-                    meta.textContent = metaText;
+                    metaEntries.forEach((entry) => {
+                        const row = document.createElement('div');
+                        row.className = 'meta-row';
+                        const label = document.createElement('span');
+                        label.className = 'meta-label';
+                        label.textContent = entry.label;
+                        const value = document.createElement('span');
+                        value.className = 'meta-value';
+                        value.textContent = entry.value;
+                        row.appendChild(label);
+                        row.appendChild(value);
+                        meta.appendChild(row);
+                    });
                     card.appendChild(meta);
                 }
 
