@@ -175,9 +175,24 @@
         }
 
         .header-actions {
+            position: fixed;
+            top: clamp(120px, 12vh, 220px);
+            right: clamp(16px, 6vw, 96px);
             display: flex;
-            align-items: center;
-            gap: 12px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 14px;
+            padding: 12px;
+            border-radius: 24px;
+            background: var(--mica-tint-strong);
+            border: 1px solid var(--mica-border);
+            box-shadow: var(--shadow-md);
+            z-index: 1200;
+        }
+
+        .header-actions .ghost-link {
+            width: 100%;
+            justify-content: flex-start;
         }
 
         .ghost-link {
@@ -207,6 +222,7 @@
             border-radius: 28px;
             border: 1px solid var(--mica-border);
             padding: 36px;
+            padding-right: clamp(72px, 12vw, 200px);
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
@@ -276,7 +292,6 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 8px;
-            min-height: 36px;
         }
 
         .stat-pill {
@@ -406,11 +421,9 @@
 
         .post-meta {
             margin: 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 24px;
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.88rem;
+            line-height: 1.5;
         }
 
         .post-scroll-area {
@@ -651,6 +664,7 @@
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
+            position: relative;
             overflow: hidden;
             backdrop-filter: blur(28px) saturate(140%);
             -webkit-backdrop-filter: blur(28px) saturate(140%);
@@ -753,24 +767,40 @@
         }
 
         .overlay-toolbar {
+            position: absolute;
+            top: clamp(110px, 12vh, 200px);
+            right: clamp(18px, 6vw, 96px);
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
             gap: 12px;
-            padding: 0 28px 18px;
-            flex-wrap: wrap;
+            padding: 18px;
+            border-radius: 26px;
+            background: var(--mica-tint);
+            border: 1px solid var(--mica-border);
+            box-shadow: var(--shadow-sm);
+            min-width: 170px;
+        }
+
+        .overlay-toolbar .ghost-btn {
+            width: 100%;
+            justify-content: center;
         }
 
         .overlay-nav {
             display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .overlay-header {
+            padding-right: clamp(140px, 22vw, 260px);
         }
 
         .overlay-body {
             flex: 1;
             overflow-y: auto;
-            padding: 0 32px 32px;
+            padding: 0 32px 32px 32px;
+            padding-right: clamp(140px, 22vw, 260px);
             line-height: 1.75;
             color: var(--text-secondary);
             position: relative;
@@ -983,6 +1013,53 @@
         @media (max-width: 900px) {
             .post-list {
                 gap: 16px;
+            }
+
+            .content-card {
+                padding-right: 32px;
+            }
+
+            .header-actions {
+                position: static;
+                flex-direction: row;
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                padding: 0;
+            }
+
+            .header-actions .ghost-link {
+                width: auto;
+                justify-content: center;
+            }
+
+            .overlay-toolbar {
+                position: static;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 28px 18px;
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                min-width: 0;
+            }
+
+            .overlay-toolbar .ghost-btn {
+                width: auto;
+            }
+
+            .overlay-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .overlay-header {
+                padding-right: 32px;
+            }
+
+            .overlay-body {
+                padding-right: 32px;
             }
         }
 
@@ -1720,20 +1797,23 @@
             }
         }
 
-        function isSameTimestamp(date1String, date2String) {
-            if (!date1String || !date2String) {
-                return false;
+        function buildPostMetaLine(post) {
+            if (!post) {
+                return '';
             }
-            try {
-                const date1 = new Date(date1String);
-                const date2 = new Date(date2String);
-                if (Number.isNaN(date1.getTime()) || Number.isNaN(date2.getTime())) {
-                    return date1String === date2String;
-                }
-                return date1.getTime() === date2.getTime();
-            } catch (error) {
-                return date1String === date2String;
+            const t = i18n[currentLang];
+            const published = post.createdAt ? formatDate(post.createdAt) : '';
+            const updated = post.updatedAt ? formatDate(post.updatedAt) : '';
+            if (published && updated && !isSameDay(post.createdAt, post.updatedAt)) {
+                return `${t.published}: ${published} · ${t.updated}: ${updated}`;
             }
+            if (published) {
+                return `${t.published}: ${published}`;
+            }
+            if (updated) {
+                return `${t.updated}: ${updated}`;
+            }
+            return '';
         }
 
         function parseFrontMatter(markdown) {
@@ -1849,22 +1929,7 @@
 
         function updateOverlayMeta() {
             const post = getCurrentPost();
-            if (!post) {
-                elements.overlayMeta.textContent = '';
-                return;
-            }
-            const t = i18n[currentLang];
-            const parts = [];
-
-            const sameTimestamp = isSameTimestamp(post.createdAt, post.updatedAt);
-            if (post.createdAt) {
-                parts.push(`${t.published}: ${formatDate(post.createdAt)}`);
-            }
-            if (post.updatedAt && !sameTimestamp) {
-                parts.push(`${t.updated}: ${formatDate(post.updatedAt)}`);
-            }
-
-            elements.overlayMeta.textContent = parts.join(' · ');
+            elements.overlayMeta.textContent = buildPostMetaLine(post);
         }
 
         function setLanguage(lang) {
@@ -1989,44 +2054,11 @@
                 title.textContent = displayTitle;
                 card.appendChild(title);
 
-                const t = i18n[currentLang];
-                const metaRows = [];
-                const sameTimestamp = isSameTimestamp(post.createdAt, post.updatedAt);
-
-                if (post.createdAt) {
-                    const publishedValue = formatDate(post.createdAt);
-                    if (publishedValue) {
-                        metaRows.push({ label: t.published, value: publishedValue });
-                    }
-                }
-
-                if (post.updatedAt && !sameTimestamp) {
-                    const updatedValue = formatDate(post.updatedAt);
-                    if (updatedValue) {
-                        metaRows.push({ label: t.updated, value: updatedValue });
-                    }
-                }
-
-                if (metaRows.length) {
-                    const meta = document.createElement('div');
+                const metaText = buildPostMetaLine(post);
+                if (metaText) {
+                    const meta = document.createElement('p');
                     meta.className = 'post-meta';
-
-                    metaRows.forEach(({ label, value }) => {
-                        const row = document.createElement('span');
-                        row.className = 'meta-row';
-
-                        const labelNode = document.createElement('span');
-                        labelNode.className = 'meta-label';
-                        labelNode.textContent = label;
-
-                        const valueNode = document.createElement('span');
-                        valueNode.className = 'meta-value';
-                        valueNode.textContent = value;
-
-                        row.append(labelNode, valueNode);
-                        meta.appendChild(row);
-                    });
-
+                    meta.textContent = metaText;
                     card.appendChild(meta);
                 }
 
