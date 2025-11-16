@@ -26,6 +26,10 @@
             --border-color: rgba(15, 23, 42, 0.12);
             --shadow-sm: 0 12px 32px rgba(15, 23, 42, 0.14);
             --shadow-md: 0 36px 76px rgba(15, 23, 42, 0.18);
+            --overlay-backdrop: rgba(15, 23, 42, 0.55);
+            --transition-fast: 0.24s ease;
+            --transition-medium: 0.32s ease;
+            --transition-slow: 0.44s ease;
             --font-family: 'Segoe UI Variable Display', 'Segoe UI', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
         }
 
@@ -42,6 +46,7 @@
             --border-color: rgba(148, 163, 184, 0.3);
             --shadow-sm: 0 16px 42px rgba(8, 15, 35, 0.55);
             --shadow-md: 0 46px 94px rgba(8, 15, 35, 0.7);
+            --overlay-backdrop: rgba(6, 12, 24, 0.72);
         }
 
         * {
@@ -55,7 +60,7 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             padding: 40px 24px 72px;
-            transition: background 0.4s ease, color 0.4s ease;
+            transition: background var(--transition-medium), color var(--transition-medium);
             position: relative;
             overflow-x: hidden;
         }
@@ -109,18 +114,18 @@
             inset: 0;
             border-radius: inherit;
             pointer-events: none;
-            transition: opacity 0.18s ease;
+            transition: opacity var(--transition-fast);
         }
 
         .hover-surface::before {
             z-index: -2;
-            background: radial-gradient(600px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(255, 255, 255, 0.06), transparent 40%);
+            background: radial-gradient(600px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(255, 255, 255, 0.06), transparent 42%);
             opacity: 0;
         }
 
         .hover-surface::after {
             z-index: -1;
-            background: radial-gradient(800px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(102, 126, 234, 0.15), transparent 40%);
+            background: radial-gradient(820px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(102, 126, 234, 0.16), transparent 44%);
             opacity: 0;
         }
 
@@ -129,7 +134,7 @@
         }
 
         .hover-surface.is-active::after {
-            opacity: 0.8;
+            opacity: 0.82;
         }
 
         .page-header {
@@ -175,7 +180,7 @@
             background: rgba(102, 126, 234, 0.12);
             border: 1px solid rgba(102, 126, 234, 0.32);
             box-shadow: var(--shadow-sm);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
             backdrop-filter: blur(18px) saturate(135%);
         }
 
@@ -259,17 +264,18 @@
             border: 1px solid var(--mica-border);
             box-shadow: var(--shadow-sm);
             cursor: pointer;
-            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-        }
-
-        [data-theme="dark"] .post-card {
-            background: rgba(17, 27, 47, 0.86);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+            transform-origin: center;
         }
 
         .post-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
             border-color: rgba(102, 126, 234, 0.42);
+        }
+
+        [data-theme="dark"] .post-card {
+            background: rgba(17, 27, 47, 0.86);
         }
 
         .post-title-row {
@@ -327,12 +333,12 @@
             inset: 0;
             display: grid;
             place-items: center;
-            background: rgba(15, 23, 42, 0.55);
+            background: var(--overlay-backdrop);
             backdrop-filter: blur(12px);
             padding: clamp(30px, 4vw, 80px);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.28s ease;
+            transition: opacity var(--transition-medium);
             z-index: 1200;
         }
 
@@ -351,25 +357,72 @@
             display: grid;
             grid-template-rows: auto 1fr;
             overflow: hidden;
+            transform-origin: center;
+            transform: scale(0.96);
+            opacity: 0;
+            transition: transform var(--transition-medium), opacity var(--transition-medium);
+        }
+
+        .overlay[aria-hidden="false"] .overlay-dialog {
+            transform: scale(1);
+            opacity: 1;
         }
 
         .overlay-header {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             gap: 16px;
             padding: clamp(22px, 2.4vw, 28px);
             border-bottom: 1px solid var(--mica-border);
         }
 
-        .overlay-header h2 {
+        .overlay-heading {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1 1 auto;
+        }
+
+        .overlay-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .overlay-nav button {
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(102, 126, 234, 0.32);
+            background: rgba(102, 126, 234, 0.14);
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .overlay-nav button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .overlay-nav button:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .overlay-title {
             margin: 0;
             font-size: 1.24rem;
             line-height: 1.5;
         }
 
         .overlay-meta {
-            margin-top: 8px;
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
@@ -383,7 +436,7 @@
             background: transparent;
             color: var(--text-muted);
             cursor: pointer;
-            transition: color 0.2s ease;
+            transition: color var(--transition-fast);
         }
 
         .overlay-close:hover {
@@ -395,9 +448,26 @@
             overflow-y: auto;
         }
 
+        .overlay-body.fade-out {
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .overlay-body.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         #overlayContent img {
             max-width: 100%;
             border-radius: 18px;
+            cursor: zoom-in;
+            transition: transform var(--transition-fast);
+        }
+
+        #overlayContent img:hover {
+            transform: scale(1.01);
         }
 
         #overlayContent pre {
@@ -419,7 +489,7 @@
             color: var(--text-primary);
             box-shadow: var(--shadow-sm);
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
             z-index: 1400;
             backdrop-filter: blur(18px) saturate(140%);
         }
@@ -443,6 +513,65 @@
         .language-toggle span {
             font-size: 0.96rem;
             font-weight: 600;
+        }
+
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background: rgba(0, 0, 0, 0.72);
+            padding: clamp(24px, 4vw, 80px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-medium);
+            z-index: 1600;
+        }
+
+        .lightbox.is-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox figure {
+            margin: 0;
+            max-width: min(1024px, 94vw);
+            max-height: min(94vh, 960px);
+            display: grid;
+            gap: 12px;
+        }
+
+        .lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 20px;
+        }
+
+        .lightbox figcaption {
+            color: #f8fafc;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .lightbox button {
+            position: absolute;
+            top: clamp(16px, 3vw, 32px);
+            right: clamp(16px, 3vw, 32px);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(15, 23, 42, 0.72);
+            color: #f8fafc;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform var(--transition-fast);
+        }
+
+        .lightbox button:hover {
+            transform: scale(1.05);
         }
 
         @media (max-width: 1080px) {
@@ -469,6 +598,10 @@
 
             .posts-panel {
                 padding: 26px 22px;
+            }
+
+            .overlay-nav button span {
+                display: none;
             }
 
             .control-btn {
@@ -535,9 +668,19 @@
     <div id="articleOverlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
         <div class="overlay-dialog">
             <header class="overlay-header">
-                <div>
-                    <h2 id="overlayTitle">文章标题</h2>
+                <div class="overlay-heading">
+                    <h2 id="overlayTitle" class="overlay-title">文章标题</h2>
                     <div id="overlayMeta" class="overlay-meta"></div>
+                </div>
+                <div class="overlay-nav">
+                    <button id="prevPost" type="button">
+                        <i class="fas fa-chevron-left"></i>
+                        <span id="prevLabel">上一篇</span>
+                    </button>
+                    <button id="nextPost" type="button">
+                        <span id="nextLabel">下一篇</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
                 <button id="overlayClose" class="overlay-close" type="button" aria-label="关闭">
                     <i class="fas fa-times" aria-hidden="true"></i>
@@ -556,6 +699,16 @@
     <button class="control-btn language-toggle" id="languageToggle" type="button" title="切换语言" aria-label="切换语言">
         <span id="languageBadge">中</span>
     </button>
+
+    <div id="imageLightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="图片预览">
+        <figure>
+            <img id="lightboxImage" alt="">
+            <figcaption id="lightboxCaption" hidden></figcaption>
+        </figure>
+        <button id="lightboxClose" type="button" aria-label="关闭图片">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
 
     <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -582,9 +735,17 @@
                 overlayContent: document.getElementById('overlayContent'),
                 overlayBody: document.getElementById('overlayBody'),
                 overlayClose: document.getElementById('overlayClose'),
+                prevPost: document.getElementById('prevPost'),
+                nextPost: document.getElementById('nextPost'),
                 themeToggle: document.getElementById('themeToggle'),
                 languageToggle: document.getElementById('languageToggle'),
-                languageBadge: document.getElementById('languageBadge')
+                languageBadge: document.getElementById('languageBadge'),
+                prevLabel: document.getElementById('prevLabel'),
+                nextLabel: document.getElementById('nextLabel'),
+                lightbox: document.getElementById('imageLightbox'),
+                lightboxImage: document.getElementById('lightboxImage'),
+                lightboxCaption: document.getElementById('lightboxCaption'),
+                lightboxClose: document.getElementById('lightboxClose')
             };
 
             const i18n = {
@@ -603,7 +764,11 @@
                     close: '关闭',
                     langToggle: '中',
                     themeTitle: '切换主题',
-                    langTitle: '切换语言'
+                    langTitle: '切换语言',
+                    prev: '上一篇',
+                    next: '下一篇',
+                    lightboxLabel: '图片预览',
+                    lightboxClose: '关闭图片'
                 },
                 en: {
                     pageTitle: 'Blog - ff66ccff',
@@ -620,7 +785,11 @@
                     close: 'Close',
                     langToggle: 'EN',
                     themeTitle: 'Toggle Theme',
-                    langTitle: 'Switch Language'
+                    langTitle: 'Switch Language',
+                    prev: 'Previous',
+                    next: 'Next',
+                    lightboxLabel: 'Image preview',
+                    lightboxClose: 'Close image'
                 }
             };
 
@@ -628,7 +797,8 @@
                 posts: [],
                 filtered: [],
                 lang: 'zh',
-                current: null
+                current: null,
+                isAnimating: false
             };
 
             const hoverSurfaces = new WeakSet();
@@ -753,17 +923,18 @@
                 }
                 clearEmptyState();
                 const fragment = document.createDocumentFragment();
-                posts.forEach((post) => {
+                posts.forEach((post, index) => {
                     const card = document.createElement('article');
                     card.className = 'post-card hover-surface';
                     card.tabIndex = 0;
                     card.setAttribute('role', 'button');
                     card.setAttribute('aria-label', post.title);
-                    card.addEventListener('click', () => openPost(post));
+                    card.dataset.index = String(index);
+                    card.addEventListener('click', (event) => openPost(post, event));
                     card.addEventListener('keydown', (event) => {
                         if (event.key === 'Enter' || event.key === ' ') {
                             event.preventDefault();
-                            openPost(post);
+                            openPost(post, event);
                         }
                     });
 
@@ -808,22 +979,143 @@
                 refreshHoverSurfaces();
             }
 
-            function openPost(post) {
+            function animateOverlayContent(callback) {
+                if (!elements.overlayBody) {
+                    callback();
+                    return;
+                }
+                elements.overlayBody.classList.remove('fade-in');
+                elements.overlayBody.classList.add('fade-out');
+                setTimeout(() => {
+                    callback();
+                    elements.overlayBody.classList.remove('fade-out');
+                    elements.overlayBody.classList.add('fade-in');
+                }, 180);
+            }
+
+            function highlightImages() {
+                const images = elements.overlayContent.querySelectorAll('img');
+                images.forEach((img) => {
+                    img.addEventListener('click', () => openLightbox(img));
+                    img.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            openLightbox(img);
+                        }
+                    });
+                    img.tabIndex = 0;
+                    img.setAttribute('role', 'button');
+                    img.setAttribute('aria-label', i18n[state.lang].lightboxLabel);
+                });
+            }
+
+            function openLightbox(image) {
+                if (!image || !elements.lightbox || !elements.lightboxImage) {
+                    return;
+                }
+                elements.lightboxImage.src = image.src;
+                const captionText = image.alt || '';
+                if (captionText) {
+                    elements.lightboxCaption.textContent = captionText;
+                    elements.lightboxCaption.hidden = false;
+                } else {
+                    elements.lightboxCaption.hidden = true;
+                }
+                elements.lightbox.setAttribute('aria-hidden', 'false');
+                elements.lightbox.classList.add('is-visible');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeLightbox() {
+                if (!elements.lightbox) {
+                    return;
+                }
+                elements.lightbox.classList.remove('is-visible');
+                elements.lightbox.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = state.current ? 'hidden' : '';
+                elements.lightboxImage.src = '';
+                elements.lightboxCaption.textContent = '';
+            }
+
+            function openOverlay() {
+                if (state.isAnimating) {
+                    return;
+                }
+                state.isAnimating = true;
+                elements.overlay.setAttribute('aria-hidden', 'false');
+                elements.overlayBody.classList.add('fade-in');
+                elements.overlayBody.scrollTop = 0;
+                document.body.style.overflow = 'hidden';
+                setTimeout(() => {
+                    state.isAnimating = false;
+                }, 320);
+            }
+
+            function closeOverlay() {
+                if (state.isAnimating) {
+                    return;
+                }
+                state.isAnimating = true;
+                elements.overlayBody.classList.remove('fade-in');
+                elements.overlayBody.classList.add('fade-out');
+                setTimeout(() => {
+                    elements.overlay.setAttribute('aria-hidden', 'true');
+                    elements.overlayBody.classList.remove('fade-out');
+                    elements.overlayContent.innerHTML = '';
+                    state.current = null;
+                    document.body.style.overflow = '';
+                    state.isAnimating = false;
+                }, 220);
+            }
+
+            function updateNavButtons() {
+                if (!state.current) {
+                    elements.prevPost.disabled = true;
+                    elements.nextPost.disabled = true;
+                    return;
+                }
+                const list = state.filtered.length ? state.filtered : state.posts;
+                const index = list.findIndex((item) => item.slug === state.current.slug);
+                const prev = index > 0 ? list[index - 1] : null;
+                const next = index >= 0 && index < list.length - 1 ? list[index + 1] : null;
+                elements.prevPost.disabled = !prev;
+                elements.nextPost.disabled = !next;
+                elements.prevPost.onclick = prev ? () => switchPost(prev) : null;
+                elements.nextPost.onclick = next ? () => switchPost(next) : null;
+            }
+
+            function switchPost(post) {
+                if (!post) {
+                    return;
+                }
+                animateOverlayContent(() => {
+                    state.current = post;
+                    elements.overlayTitle.textContent = post.title;
+                    elements.overlayContent.innerHTML = marked.parse(post.content, { gfm: true, breaks: true });
+                    Prism.highlightAllUnder(elements.overlayContent);
+                    updateOverlayMeta(post);
+                    highlightImages();
+                    updateNavButtons();
+                });
+            }
+
+            function openPost(post, originEvent) {
                 state.current = post;
                 elements.overlayTitle.textContent = post.title;
                 elements.overlayContent.innerHTML = marked.parse(post.content, { gfm: true, breaks: true });
                 Prism.highlightAllUnder(elements.overlayContent);
                 updateOverlayMeta(post);
-                elements.overlay.setAttribute('aria-hidden', 'false');
-                elements.overlayBody.scrollTop = 0;
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeOverlay() {
-                state.current = null;
-                elements.overlay.setAttribute('aria-hidden', 'true');
-                document.body.style.overflow = '';
-                elements.overlayContent.innerHTML = '';
+                highlightImages();
+                updateNavButtons();
+                if (originEvent && originEvent.currentTarget) {
+                    const card = originEvent.currentTarget;
+                    card.style.transform = 'scale(0.98)';
+                    card.style.transition = 'transform 0.2s ease';
+                    requestAnimationFrame(() => {
+                        card.style.transform = '';
+                    });
+                }
+                openOverlay();
             }
 
             async function fetchWithFallback(url, fallbackUrl) {
@@ -940,6 +1232,10 @@
                 elements.themeToggle.setAttribute('aria-label', dict.themeTitle);
                 elements.languageToggle.title = dict.langTitle;
                 elements.languageToggle.setAttribute('aria-label', dict.langTitle);
+                elements.prevLabel.textContent = dict.prev;
+                elements.nextLabel.textContent = dict.next;
+                elements.lightbox?.setAttribute('aria-label', dict.lightboxLabel);
+                elements.lightboxClose?.setAttribute('aria-label', dict.lightboxClose);
                 if (!elements.emptyState.hidden && elements.emptyState.dataset.state) {
                     elements.emptyState.textContent = dict[elements.emptyState.dataset.state] || '';
                 }
@@ -949,6 +1245,7 @@
                 } else {
                     elements.overlayClose.setAttribute('aria-label', dict.close);
                 }
+                highlightImages();
             }
 
             function setLanguage(lang) {
@@ -1027,10 +1324,33 @@
             elements.overlayClose.addEventListener('click', () => closeOverlay());
 
             document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape' && elements.overlay.getAttribute('aria-hidden') === 'false') {
-                    closeOverlay();
+                if (event.key === 'Escape') {
+                    if (elements.lightbox.classList.contains('is-visible')) {
+                        closeLightbox();
+                        return;
+                    }
+                    if (elements.overlay.getAttribute('aria-hidden') === 'false') {
+                        closeOverlay();
+                    }
+                }
+                if (event.key === 'ArrowLeft' && state.current) {
+                    elements.prevPost.click();
+                }
+                if (event.key === 'ArrowRight' && state.current) {
+                    elements.nextPost.click();
                 }
             });
+
+            elements.prevPost.addEventListener('click', () => elements.prevPost.onclick && elements.prevPost.onclick());
+            elements.nextPost.addEventListener('click', () => elements.nextPost.onclick && elements.nextPost.onclick());
+
+            elements.lightbox.addEventListener('click', (event) => {
+                if (event.target === elements.lightbox) {
+                    closeLightbox();
+                }
+            });
+
+            elements.lightboxClose.addEventListener('click', () => closeLightbox());
 
             refreshHoverSurfaces();
             initTheme();
