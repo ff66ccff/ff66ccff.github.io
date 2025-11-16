@@ -1262,8 +1262,8 @@
                 langTitle: "切换语言",
                 overlayTitle: "文章全文",
                 pageTitle: "博客 - ff66ccff",
-                published: "发布于",
-                updated: "更新于",
+                published: "发布时间",
+                updated: "最后修改时间",
                 imagePreview: "图片预览",
                 backToTopTitle: "回到顶部",
                 backToTopLabel: "回到顶部"
@@ -1289,7 +1289,7 @@
                 overlayTitle: "Full article",
                 pageTitle: "Blog - ff66ccff",
                 published: "Published",
-                updated: "Updated",
+                updated: "Last updated",
                 imagePreview: "Image preview",
                 backToTopTitle: "Back to Top",
                 backToTopLabel: "Back to Top"
@@ -1736,7 +1736,7 @@
                     return dateString;
                 }
                 const pad = (n) => String(n).padStart(2, '0');
-                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
             } catch (error) {
                 return dateString;
             }
@@ -1762,14 +1762,16 @@
             const t = i18n[currentLang];
             const published = post.createdAt ? formatDate(post.createdAt) : '';
             const updated = post.updatedAt ? formatDate(post.updatedAt) : '';
+            const separator = currentLang === 'zh' ? '：' : ': ';
+            const joiner = currentLang === 'zh' ? ' · ' : ' · ';
             if (published && updated && !isSameDay(post.createdAt, post.updatedAt)) {
-                return `${t.published}: ${published} · ${t.updated}: ${updated}`;
+                return `${t.published}${separator}${published}${joiner}${t.updated}${separator}${updated}`;
             }
             if (published) {
-                return `${t.published}: ${published}`;
+                return `${t.published}${separator}${published}`;
             }
             if (updated) {
-                return `${t.updated}: ${updated}`;
+                return `${t.updated}${separator}${updated}`;
             }
             return '';
         }
