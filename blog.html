@@ -174,9 +174,9 @@
             color: var(--primary-color);
         }
 
-        .header-actions {
+        .floating-actions {
             position: fixed;
-            top: clamp(120px, 12vh, 220px);
+            top: clamp(120px, 15vh, 240px);
             right: clamp(16px, 6vw, 96px);
             display: flex;
             flex-direction: column;
@@ -187,12 +187,21 @@
             background: var(--mica-tint-strong);
             border: 1px solid var(--mica-border);
             box-shadow: var(--shadow-md);
-            z-index: 1200;
+            z-index: 2200;
         }
 
-        .header-actions .ghost-link {
+        .floating-actions .ghost-link,
+        .floating-actions .ghost-btn {
             width: 100%;
             justify-content: flex-start;
+        }
+
+        .floating-actions[hidden] {
+            display: none;
+        }
+
+        .floating-overlay {
+            z-index: 2300;
         }
 
         .ghost-link {
@@ -766,41 +775,16 @@
             transform: translateY(0);
         }
 
-        .overlay-toolbar {
-            position: absolute;
-            top: clamp(110px, 12vh, 200px);
-            right: clamp(18px, 6vw, 96px);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding: 18px;
-            border-radius: 26px;
-            background: var(--mica-tint);
-            border: 1px solid var(--mica-border);
-            box-shadow: var(--shadow-sm);
-            min-width: 170px;
-        }
-
-        .overlay-toolbar .ghost-btn {
-            width: 100%;
-            justify-content: center;
-        }
-
         .overlay-nav {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        .overlay-header {
-            padding-right: clamp(140px, 22vw, 260px);
-        }
-
         .overlay-body {
             flex: 1;
             overflow-y: auto;
-            padding: 0 32px 32px 32px;
-            padding-right: clamp(140px, 22vw, 260px);
+            padding: 0 32px 32px;
             line-height: 1.75;
             color: var(--text-secondary);
             position: relative;
@@ -1015,51 +999,22 @@
                 gap: 16px;
             }
 
-            .content-card {
-                padding-right: 32px;
-            }
-
-            .header-actions {
+            .floating-actions {
                 position: static;
                 flex-direction: row;
+                justify-content: center;
+                align-items: center;
                 background: transparent;
                 border: none;
                 box-shadow: none;
                 padding: 0;
+                margin-bottom: 16px;
             }
 
-            .header-actions .ghost-link {
+            .floating-actions .ghost-link,
+            .floating-actions .ghost-btn {
                 width: auto;
                 justify-content: center;
-            }
-
-            .overlay-toolbar {
-                position: static;
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 28px 18px;
-                background: transparent;
-                border: none;
-                box-shadow: none;
-                min-width: 0;
-            }
-
-            .overlay-toolbar .ghost-btn {
-                width: auto;
-            }
-
-            .overlay-nav {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-
-            .overlay-header {
-                padding-right: 32px;
-            }
-
-            .overlay-body {
-                padding-right: 32px;
             }
         }
 
@@ -1093,7 +1048,6 @@
             }
 
             .overlay-header,
-            .overlay-toolbar,
             .overlay-body {
                 padding-left: 20px;
                 padding-right: 20px;
@@ -1182,21 +1136,22 @@
     <div class="page-shell">
         <header class="page-header">
             <a class="brand" href="index.html">ff66ccff</a>
-            <div class="header-actions">
-                <a class="ghost-link" href="#pageTop" id="pageTopLink">
-                    <i class="fas fa-arrow-up"></i>
-                    <span id="pageTopLabel">回到开头</span>
-                </a>
-                <a class="ghost-link" href="#pageBottom" id="pageBottomLink">
-                    <i class="fas fa-arrow-down"></i>
-                    <span id="pageBottomLabel">前往结尾</span>
-                </a>
-                <a class="ghost-link" href="index.html" id="backHomeLink">
-                    <i class="fas fa-arrow-left"></i>
-                    <span id="backHomeLabel">返回首页</span>
-                </a>
-            </div>
         </header>
+
+        <div class="floating-actions" id="pageActions">
+            <a class="ghost-link" href="#pageTop" id="pageTopLink">
+                <i class="fas fa-arrow-up"></i>
+                <span id="pageTopLabel">回到开头</span>
+            </a>
+            <a class="ghost-link" href="#pageBottom" id="pageBottomLink">
+                <i class="fas fa-arrow-down"></i>
+                <span id="pageBottomLabel">前往结尾</span>
+            </a>
+            <a class="ghost-link" href="index.html" id="backHomeLink">
+                <i class="fas fa-arrow-left"></i>
+                <span id="backHomeLabel">返回首页</span>
+            </a>
+        </div>
 
         <main class="content-card hover-surface">
             <div class="panel-header">
@@ -1243,29 +1198,30 @@
                     <i class="fas fa-times"></i>
                 </button>
             </header>
-            <div class="overlay-toolbar">
-                <button class="ghost-btn" id="scrollTopBtn" type="button">
-                    <i class="fas fa-arrow-up"></i>
-                    <span id="scrollTopLabel">回到开头</span>
-                </button>
-                <button class="ghost-btn" id="scrollBottomBtn" type="button">
-                    <i class="fas fa-arrow-down"></i>
-                    <span id="scrollBottomLabel">前往结尾</span>
-                </button>
-                <div class="overlay-nav">
-                    <button class="ghost-btn" id="prevPost" type="button">
-                        <i class="fas fa-chevron-left"></i>
-                        <span id="prevPostLabel">上一篇</span>
-                    </button>
-                    <button class="ghost-btn" id="nextPost" type="button">
-                        <span id="nextPostLabel">下一篇</span>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
             <div class="overlay-body" id="overlayScroll">
                 <article id="overlayContent"></article>
             </div>
+        </div>
+    </div>
+
+    <div class="floating-actions floating-overlay" id="overlayActions" hidden>
+        <button class="ghost-btn" id="scrollTopBtn" type="button">
+            <i class="fas fa-arrow-up"></i>
+            <span id="scrollTopLabel">回到开头</span>
+        </button>
+        <button class="ghost-btn" id="scrollBottomBtn" type="button">
+            <i class="fas fa-arrow-down"></i>
+            <span id="scrollBottomLabel">前往结尾</span>
+        </button>
+        <div class="overlay-nav">
+            <button class="ghost-btn" id="prevPost" type="button">
+                <i class="fas fa-chevron-left"></i>
+                <span id="prevPostLabel">上一篇</span>
+            </button>
+            <button class="ghost-btn" id="nextPost" type="button">
+                <span id="nextPostLabel">下一篇</span>
+                <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
     </div>
 
@@ -1350,6 +1306,7 @@
             blogSubtitle: document.getElementById('blogSubtitle'),
             backHomeLabel: document.getElementById('backHomeLabel'),
             backHomeLink: document.getElementById('backHomeLink'),
+            pageActions: document.getElementById('pageActions'),
             overlay: document.getElementById('articleOverlay'),
             articleDialog: document.querySelector('.article-dialog'),
             overlayTitle: document.getElementById('overlayTitle'),
@@ -1361,6 +1318,7 @@
             scrollBottomBtn: document.getElementById('scrollBottomBtn'),
             prevPost: document.getElementById('prevPost'),
             nextPost: document.getElementById('nextPost'),
+            overlayControls: document.getElementById('overlayActions'),
             scrollTopLabel: document.getElementById('scrollTopLabel'),
             scrollBottomLabel: document.getElementById('scrollBottomLabel'),
             prevPostLabel: document.getElementById('prevPostLabel'),
@@ -2254,6 +2212,12 @@
             elements.overlay.classList.remove('is-closing');
             elements.overlay.hidden = false;
             document.body.classList.add('is-overlay-open');
+            if (elements.overlayControls) {
+                elements.overlayControls.hidden = false;
+            }
+            if (elements.pageActions) {
+                elements.pageActions.hidden = true;
+            }
 
             if (origin && elements.articleDialog) {
                 const dialogRect = elements.articleDialog.getBoundingClientRect();
@@ -2290,6 +2254,12 @@
             if (!elements.overlay.classList.contains('is-visible') && elements.overlay.hidden) {
                 clearTimeout(motion.overlayTimer);
                 motion.overlayTimer = null;
+                if (elements.overlayControls) {
+                    elements.overlayControls.hidden = true;
+                }
+                if (elements.pageActions) {
+                    elements.pageActions.hidden = false;
+                }
                 resetSwapState();
                 state.currentIndex = -1;
                 history.replaceState(null, '', window.location.pathname + window.location.search);
@@ -2303,12 +2273,24 @@
             const exitDuration = playOverlayContentExitAnimation(reduceMotion);
 
             elements.overlay.classList.add('is-closing');
+            if (elements.overlayControls) {
+                elements.overlayControls.hidden = true;
+            }
+            if (elements.pageActions) {
+                elements.pageActions.hidden = false;
+            }
 
             const finalize = () => {
                 resetSwapState();
                 elements.overlay.hidden = true;
                 elements.overlay.classList.remove('is-closing');
                 elements.overlay.classList.remove('is-visible');
+                if (elements.overlayControls) {
+                    elements.overlayControls.hidden = true;
+                }
+                if (elements.pageActions) {
+                    elements.pageActions.hidden = false;
+                }
                 if (elements.articleDialog) {
                     elements.articleDialog.style.removeProperty('--origin-x');
                     elements.articleDialog.style.removeProperty('--origin-y');
