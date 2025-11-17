@@ -142,6 +142,11 @@
                 transition: none;
             }
 
+            body::before,
+            body::after {
+                display: none;
+            }
+
             .hover-surface::before,
             .hover-surface::after {
                 display: none;
@@ -169,6 +174,17 @@
             .overlay-nav button,
             .pagination button {
                 transition: none;
+            }
+
+            .page-header,
+            .posts-panel,
+            .ghost-link,
+            .control-btn,
+            .overlay,
+            .lightbox,
+            .search-row {
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
             }
         }
 
