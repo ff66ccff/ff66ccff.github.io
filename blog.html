@@ -321,6 +321,54 @@
             font-size: 0.88rem;
         }
 
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 6px;
+            margin-top: 6px;
+        }
+
+        .pagination-info {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+        }
+
+        .pagination-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pagination button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(102, 126, 234, 0.32);
+            background: rgba(102, 126, 234, 0.14);
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .pagination button:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
         .empty-state {
             text-align: center;
             padding: 40px 0;
@@ -521,7 +569,7 @@
             display: grid;
             place-items: center;
             background: rgba(0, 0, 0, 0.72);
-            padding: clamp(24px, 4vw, 80px);
+            padding: clamp(16px, 5vw, 80px);
             opacity: 0;
             pointer-events: none;
             transition: opacity var(--transition-medium);
@@ -539,12 +587,18 @@
             max-height: min(94vh, 960px);
             display: grid;
             gap: 12px;
+            cursor: grab;
+            touch-action: none;
         }
 
         .lightbox img {
             max-width: 100%;
             max-height: 100%;
             border-radius: 20px;
+            user-select: none;
+            touch-action: none;
+            transition: transform 0.22s ease;
+            will-change: transform;
         }
 
         .lightbox figcaption {
@@ -582,6 +636,10 @@
             .posts-panel {
                 padding: 30px 28px;
             }
+
+            .overlay-dialog {
+                width: min(760px, 96vw);
+            }
         }
 
         @media (max-width: 720px) {
@@ -598,6 +656,12 @@
 
             .posts-panel {
                 padding: 26px 22px;
+            }
+
+            .overlay-dialog {
+                width: 100%;
+                max-height: calc(100vh - 32px);
+                border-radius: 22px;
             }
 
             .overlay-nav button span {
@@ -619,6 +683,20 @@
                 top: 18px;
                 left: 18px;
             }
+
+            .pagination {
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .pagination-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .pagination button {
+                flex: 1 1 auto;
+            }
         }
 
         @media (max-width: 520px) {
@@ -633,6 +711,29 @@
 
             .post-title {
                 font-size: 1.08rem;
+            }
+
+            .search-row {
+                padding: 12px 14px;
+            }
+
+            .pagination-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .pagination button {
+                width: 100%;
+            }
+
+            .lightbox figure {
+                max-width: 100%;
+                gap: 8px;
+            }
+
+            .lightbox button {
+                width: 44px;
+                height: 44px;
             }
         }
     </style>
@@ -653,14 +754,29 @@
 
         <main class="posts-panel hover-surface">
             <div class="panel-header">
-                <h1 id="blogTitle">博客</h1>
-                <p id="blogSubtitle">记录代码、音乐和故事</p>
+                <div>
+                    <h1 id="blogTitle">博客</h1>
+                    <p id="blogSubtitle">记录代码、音乐和故事</p>
+                </div>
             </div>
             <label class="search-row hover-surface" for="searchInput">
                 <i class="fas fa-search" aria-hidden="true"></i>
                 <input id="searchInput" type="search" placeholder="搜索文章标题或内容" aria-label="搜索文章">
             </label>
             <section id="postList" class="post-grid" aria-live="polite"></section>
+            <nav id="paginationControls" class="pagination" aria-label="文章分页" hidden>
+                <div class="pagination-info" id="paginationInfo"></div>
+                <div class="pagination-actions">
+                    <button id="paginationPrev" type="button">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                        <span id="paginationPrevLabel">上一页</span>
+                    </button>
+                    <button id="paginationNext" type="button">
+                        <span id="paginationNextLabel">下一页</span>
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </nav>
             <div id="emptyState" class="empty-state" hidden>文章加载中，请稍候...</div>
         </main>
     </div>
@@ -729,6 +845,12 @@
                 search: document.getElementById('searchInput'),
                 postList: document.getElementById('postList'),
                 emptyState: document.getElementById('emptyState'),
+                pagination: document.getElementById('paginationControls'),
+                paginationInfo: document.getElementById('paginationInfo'),
+                paginationPrev: document.getElementById('paginationPrev'),
+                paginationNext: document.getElementById('paginationNext'),
+                paginationPrevLabel: document.getElementById('paginationPrevLabel'),
+                paginationNextLabel: document.getElementById('paginationNextLabel'),
                 overlay: document.getElementById('articleOverlay'),
                 overlayTitle: document.getElementById('overlayTitle'),
                 overlayMeta: document.getElementById('overlayMeta'),
@@ -743,6 +865,7 @@
                 prevLabel: document.getElementById('prevLabel'),
                 nextLabel: document.getElementById('nextLabel'),
                 lightbox: document.getElementById('imageLightbox'),
+                lightboxFigure: document.querySelector('#imageLightbox figure'),
                 lightboxImage: document.getElementById('lightboxImage'),
                 lightboxCaption: document.getElementById('lightboxCaption'),
                 lightboxClose: document.getElementById('lightboxClose')
@@ -768,7 +891,10 @@
                     prev: '上一篇',
                     next: '下一篇',
                     lightboxLabel: '图片预览',
-                    lightboxClose: '关闭图片'
+                    lightboxClose: '关闭图片',
+                    paginationAria: '文章分页',
+                    paginationPrev: '上一页',
+                    paginationNext: '下一页'
                 },
                 en: {
                     pageTitle: 'Blog - ff66ccff',
@@ -789,7 +915,10 @@
                     prev: 'Previous',
                     next: 'Next',
                     lightboxLabel: 'Image preview',
-                    lightboxClose: 'Close image'
+                    lightboxClose: 'Close image',
+                    paginationAria: 'Posts pagination',
+                    paginationPrev: 'Previous Page',
+                    paginationNext: 'Next Page'
                 }
             };
 
@@ -798,10 +927,20 @@
                 filtered: [],
                 lang: 'zh',
                 current: null,
-                isAnimating: false
+                isAnimating: false,
+                page: 1,
+                pageSize: 6
             };
 
             const hoverSurfaces = new WeakSet();
+            const lightboxDrag = {
+                active: false,
+                pointerId: null,
+                startX: 0,
+                startY: 0,
+                x: 0,
+                y: 0
+            };
 
             function bindHoverSurface(node) {
                 if (!node || hoverSurfaces.has(node)) {
@@ -888,17 +1027,21 @@
                 return first.length > 160 ? `${first.slice(0, 160)}...` : first;
             }
 
-            function buildMetaLine(post) {
+            function buildMetaLine(post, options = {}) {
+                const { includePublished = true } = options;
                 const dict = i18n[state.lang];
-                const published = post.createdAt ? `${dict.published}: ${formatDateDisplay(post.createdAt)}` : '';
-                const updated = post.updatedAt && post.updatedAt !== post.createdAt
-                    ? `${dict.updated}: ${formatDateDisplay(post.updatedAt)}`
-                    : '';
-                return [published, updated].filter(Boolean).join(' · ');
+                const parts = [];
+                if (includePublished && post.createdAt) {
+                    parts.push(`${dict.published}: ${formatDateDisplay(post.createdAt)}`);
+                }
+                if (post.updatedAt && post.updatedAt !== post.createdAt) {
+                    parts.push(`${dict.updated}: ${formatDateDisplay(post.updatedAt)}`);
+                }
+                return parts.join(' · ');
             }
 
             function updateOverlayMeta(post) {
-                elements.overlayMeta.textContent = buildMetaLine(post);
+                elements.overlayMeta.textContent = buildMetaLine(post, { includePublished: true });
             }
 
             function clearEmptyState() {
@@ -913,23 +1056,40 @@
                 elements.emptyState.dataset.state = key;
                 elements.emptyState.hidden = false;
                 elements.postList.innerHTML = '';
+                if (elements.pagination) {
+                    elements.pagination.hidden = true;
+                    if (elements.paginationInfo) {
+                        elements.paginationInfo.textContent = '';
+                    }
+                }
             }
 
             function renderPostList(posts) {
                 elements.postList.innerHTML = '';
-                if (!posts.length) {
+                const total = posts.length;
+                if (!total) {
+                    state.page = 1;
                     updateEmptyState('empty');
                     return;
                 }
                 clearEmptyState();
+                const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+                if (state.page > totalPages) {
+                    state.page = totalPages;
+                }
+                if (state.page < 1) {
+                    state.page = 1;
+                }
+                const startIndex = (state.page - 1) * state.pageSize;
+                const pageItems = posts.slice(startIndex, startIndex + state.pageSize);
                 const fragment = document.createDocumentFragment();
-                posts.forEach((post, index) => {
+                pageItems.forEach((post, offset) => {
                     const card = document.createElement('article');
                     card.className = 'post-card hover-surface';
                     card.tabIndex = 0;
                     card.setAttribute('role', 'button');
                     card.setAttribute('aria-label', post.title);
-                    card.dataset.index = String(index);
+                    card.dataset.index = String(startIndex + offset);
                     card.addEventListener('click', (event) => openPost(post, event));
                     card.addEventListener('keydown', (event) => {
                         if (event.key === 'Enter' || event.key === ' ') {
@@ -965,7 +1125,7 @@
                         card.appendChild(summary);
                     }
 
-                    const metaLine = buildMetaLine(post);
+                    const metaLine = buildMetaLine(post, { includePublished: false });
                     if (metaLine) {
                         const meta = document.createElement('div');
                         meta.className = 'post-meta';
@@ -976,7 +1136,60 @@
                     fragment.appendChild(card);
                 });
                 elements.postList.appendChild(fragment);
+                updatePaginationControls(total, startIndex, pageItems.length);
                 refreshHoverSurfaces();
+            }
+
+            function formatPaginationInfo(totalCount, startDisplay, endDisplay) {
+                if (state.lang === 'zh') {
+                    return `第 ${startDisplay}-${endDisplay} 篇，共 ${totalCount} 篇`;
+                }
+                return `Showing ${startDisplay}-${endDisplay} of ${totalCount} posts`;
+            }
+
+            function updatePaginationControls(totalCount, startIndex, visibleCount) {
+                if (!elements.pagination || !elements.paginationInfo || !elements.paginationPrev || !elements.paginationNext) {
+                    return;
+                }
+                const totalPages = Math.max(1, Math.ceil(totalCount / state.pageSize));
+                if (totalPages <= 1) {
+                    elements.pagination.hidden = true;
+                    elements.paginationInfo.textContent = '';
+                    return;
+                }
+                if (!visibleCount) {
+                    elements.pagination.hidden = false;
+                    elements.paginationInfo.textContent = '';
+                    elements.paginationPrev.disabled = true;
+                    elements.paginationNext.disabled = totalPages <= 1;
+                    elements.paginationPrev.setAttribute('aria-disabled', 'true');
+                    elements.paginationNext.setAttribute('aria-disabled', elements.paginationNext.disabled ? 'true' : 'false');
+                    return;
+                }
+                elements.pagination.hidden = false;
+                const currentPage = state.page;
+                const startDisplay = startIndex + 1;
+                const endDisplay = Math.min(totalCount, startIndex + visibleCount);
+                elements.paginationInfo.textContent = formatPaginationInfo(totalCount, startDisplay, endDisplay);
+                const isPrevDisabled = currentPage <= 1;
+                const isNextDisabled = currentPage >= totalPages;
+                elements.paginationPrev.disabled = isPrevDisabled;
+                elements.paginationNext.disabled = isNextDisabled;
+                elements.paginationPrev.setAttribute('aria-disabled', isPrevDisabled ? 'true' : 'false');
+                elements.paginationNext.setAttribute('aria-disabled', isNextDisabled ? 'true' : 'false');
+            }
+
+            function goToPage(targetPage) {
+                const totalPages = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
+                const clamped = Math.min(Math.max(1, targetPage), totalPages);
+                if (clamped === state.page) {
+                    return;
+                }
+                state.page = clamped;
+                renderPostList(state.filtered);
+                if (elements.postList && typeof elements.postList.scrollIntoView === 'function') {
+                    elements.postList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             }
 
             function animateOverlayContent(callback) {
@@ -1009,11 +1222,121 @@
                 });
             }
 
+            function applyLightboxTransform() {
+                if (!elements.lightboxImage) {
+                    return;
+                }
+                elements.lightboxImage.style.transform = `translate3d(${lightboxDrag.x}px, ${lightboxDrag.y}px, 0)`;
+            }
+
+            function resetLightboxPosition(options = {}) {
+                const { instant = false } = options;
+                lightboxDrag.active = false;
+                lightboxDrag.pointerId = null;
+                lightboxDrag.startX = 0;
+                lightboxDrag.startY = 0;
+                lightboxDrag.x = 0;
+                lightboxDrag.y = 0;
+                if (elements.lightboxImage) {
+                    if (instant) {
+                        elements.lightboxImage.style.transition = 'none';
+                        elements.lightboxImage.style.transform = 'translate3d(0, 0, 0)';
+                        requestAnimationFrame(() => {
+                            if (elements.lightboxImage) {
+                                elements.lightboxImage.style.transition = '';
+                            }
+                        });
+                    } else {
+                        elements.lightboxImage.style.transition = 'transform 0.22s ease';
+                        elements.lightboxImage.style.transform = 'translate3d(0, 0, 0)';
+                        setTimeout(() => {
+                            if (elements.lightboxImage) {
+                                elements.lightboxImage.style.transition = '';
+                            }
+                        }, 220);
+                    }
+                }
+                if (elements.lightboxFigure) {
+                    elements.lightboxFigure.style.cursor = 'grab';
+                }
+            }
+
+            function initLightboxDrag() {
+                const figure = elements.lightboxFigure;
+                if (!figure || !elements.lightboxImage || !elements.lightbox) {
+                    return;
+                }
+                figure.style.cursor = 'grab';
+
+                const releaseCapture = () => {
+                    if (typeof figure.hasPointerCapture === 'function' && typeof figure.releasePointerCapture === 'function' && lightboxDrag.pointerId !== null && figure.hasPointerCapture(lightboxDrag.pointerId)) {
+                        figure.releasePointerCapture(lightboxDrag.pointerId);
+                    }
+                };
+
+                figure.addEventListener('pointerdown', (event) => {
+                    if (!elements.lightbox.classList.contains('is-visible')) {
+                        return;
+                    }
+                    if (typeof event.button === 'number' && event.button !== 0) {
+                        return;
+                    }
+                    event.preventDefault();
+                    lightboxDrag.active = true;
+                    lightboxDrag.pointerId = event.pointerId;
+                    lightboxDrag.startX = event.clientX - lightboxDrag.x;
+                    lightboxDrag.startY = event.clientY - lightboxDrag.y;
+                    elements.lightboxImage.style.transition = 'none';
+                    if (typeof figure.setPointerCapture === 'function') {
+                        figure.setPointerCapture(event.pointerId);
+                    }
+                    figure.style.cursor = 'grabbing';
+                });
+
+                figure.addEventListener('pointermove', (event) => {
+                    if (!lightboxDrag.active || event.pointerId !== lightboxDrag.pointerId) {
+                        return;
+                    }
+                    const limitX = Math.max(40, (elements.lightbox.clientWidth || window.innerWidth) * 0.35);
+                    const limitY = Math.max(40, (elements.lightbox.clientHeight || window.innerHeight) * 0.35);
+                    const rawX = event.clientX - lightboxDrag.startX;
+                    const rawY = event.clientY - lightboxDrag.startY;
+                    lightboxDrag.x = Math.max(-limitX, Math.min(limitX, rawX));
+                    lightboxDrag.y = Math.max(-limitY, Math.min(limitY, rawY));
+                    applyLightboxTransform();
+                });
+
+                const endDrag = (event) => {
+                    if (!lightboxDrag.active || (event && event.pointerId !== lightboxDrag.pointerId)) {
+                        return;
+                    }
+                    lightboxDrag.active = false;
+                    figure.style.cursor = 'grab';
+                    releaseCapture();
+                    lightboxDrag.pointerId = null;
+                };
+
+                figure.addEventListener('pointerup', endDrag);
+                figure.addEventListener('pointercancel', (event) => {
+                    endDrag(event);
+                    resetLightboxPosition();
+                });
+
+                figure.addEventListener('dblclick', () => resetLightboxPosition());
+
+                window.addEventListener('resize', () => {
+                    if (elements.lightbox.classList.contains('is-visible')) {
+                        resetLightboxPosition({ instant: true });
+                    }
+                });
+            }
+
             function openLightbox(image) {
                 if (!image || !elements.lightbox || !elements.lightboxImage) {
                     return;
                 }
                 elements.lightboxImage.src = image.src;
+                elements.lightboxImage.alt = image.alt || '';
                 const captionText = image.alt || '';
                 if (captionText) {
                     elements.lightboxCaption.textContent = captionText;
@@ -1023,6 +1346,7 @@
                 }
                 elements.lightbox.setAttribute('aria-hidden', 'false');
                 elements.lightbox.classList.add('is-visible');
+                resetLightboxPosition({ instant: true });
                 document.body.style.overflow = 'hidden';
             }
 
@@ -1034,7 +1358,9 @@
                 elements.lightbox.setAttribute('aria-hidden', 'true');
                 document.body.style.overflow = state.current ? 'hidden' : '';
                 elements.lightboxImage.src = '';
+                elements.lightboxImage.alt = '';
                 elements.lightboxCaption.textContent = '';
+                resetLightboxPosition({ instant: true });
             }
 
             function openOverlay() {
@@ -1201,7 +1527,7 @@
                             summary: entry.summary || attributes.summary || extractSummary(content),
                             createdAt,
                             updatedAt,
-                            displayDate: createdAt || updatedAt
+                            displayDate: updatedAt || createdAt
                         };
                     }));
                     posts.sort((a, b) => {
@@ -1211,6 +1537,7 @@
                     });
                     state.posts = posts;
                     state.filtered = [...posts];
+                    state.page = 1;
                     renderPostList(state.filtered);
                 } catch (error) {
                     console.error(error);
@@ -1234,6 +1561,21 @@
                 elements.languageToggle.setAttribute('aria-label', dict.langTitle);
                 elements.prevLabel.textContent = dict.prev;
                 elements.nextLabel.textContent = dict.next;
+                elements.pagination?.setAttribute('aria-label', dict.paginationAria);
+                if (elements.paginationPrevLabel) {
+                    elements.paginationPrevLabel.textContent = dict.paginationPrev;
+                }
+                if (elements.paginationNextLabel) {
+                    elements.paginationNextLabel.textContent = dict.paginationNext;
+                }
+                if (elements.paginationPrev) {
+                    elements.paginationPrev.setAttribute('aria-label', dict.paginationPrev);
+                    elements.paginationPrev.title = dict.paginationPrev;
+                }
+                if (elements.paginationNext) {
+                    elements.paginationNext.setAttribute('aria-label', dict.paginationNext);
+                    elements.paginationNext.title = dict.paginationNext;
+                }
                 elements.lightbox?.setAttribute('aria-label', dict.lightboxLabel);
                 elements.lightboxClose?.setAttribute('aria-label', dict.lightboxClose);
                 if (!elements.emptyState.hidden && elements.emptyState.dataset.state) {
@@ -1252,7 +1594,9 @@
                 state.lang = lang;
                 localStorage.setItem('language', lang);
                 applyLanguageContent(lang);
-                renderPostList(state.filtered);
+                if (state.posts.length) {
+                    renderPostList(state.filtered);
+                }
             }
 
             function initLanguage() {
@@ -1312,8 +1656,12 @@
                         return haystack.includes(keyword);
                     });
                 }
+                state.page = 1;
                 renderPostList(state.filtered);
             });
+
+            elements.paginationPrev?.addEventListener('click', () => goToPage(state.page - 1));
+            elements.paginationNext?.addEventListener('click', () => goToPage(state.page + 1));
 
             elements.overlay.addEventListener('click', (event) => {
                 if (event.target === elements.overlay) {
@@ -1352,6 +1700,7 @@
 
             elements.lightboxClose.addEventListener('click', () => closeLightbox());
 
+            initLightboxDrag();
             refreshHoverSurfaces();
             initTheme();
             initLanguage();
