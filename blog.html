@@ -137,6 +137,41 @@
             opacity: 0.82;
         }
 
+        @media (hover: none) and (pointer: coarse) {
+            body {
+                transition: none;
+            }
+
+            .hover-surface::before,
+            .hover-surface::after {
+                display: none;
+            }
+
+            .hover-surface {
+                transition: none;
+            }
+
+            .ghost-link:hover,
+            .post-card:hover,
+            .control-btn:hover,
+            .overlay-nav button:not(:disabled):hover,
+            .pagination button:not(:disabled):hover {
+                transform: none;
+            }
+
+            .lightbox figure {
+                cursor: default;
+            }
+
+            .ghost-link,
+            .post-card,
+            .control-btn,
+            .overlay-nav button,
+            .pagination button {
+                transition: none;
+            }
+        }
+
         .page-header {
             display: flex;
             align-items: center;
@@ -941,9 +976,24 @@
                 x: 0,
                 y: 0
             };
+            const supportsHover = window.matchMedia ? window.matchMedia('(hover: hover)').matches : false;
+            const lightboxZoom = {
+                scale: 1,
+                min: 1,
+                max: 4,
+                startScale: 1,
+                initialDistance: 0,
+                pointerCache: new Map(),
+                lastCenter: null
+            };
+            let wheelZoomTimeout = null;
 
             function bindHoverSurface(node) {
                 if (!node || hoverSurfaces.has(node)) {
+                    return;
+                }
+                if (!supportsHover) {
+                    hoverSurfaces.add(node);
                     return;
                 }
                 const activate = () => node.classList.add('is-active');
@@ -978,6 +1028,32 @@
 
             function refreshHoverSurfaces() {
                 document.querySelectorAll('.hover-surface').forEach(bindHoverSurface);
+            }
+
+            function clamp(value, min, max) {
+                return Math.min(Math.max(value, min), max);
+            }
+
+            function getLightboxLimits(scale = lightboxZoom.scale) {
+                const containerWidth = elements.lightbox?.clientWidth || window.innerWidth;
+                const containerHeight = elements.lightbox?.clientHeight || window.innerHeight;
+                const baseLimitX = Math.max(40, containerWidth * 0.35);
+                const baseLimitY = Math.max(40, containerHeight * 0.35);
+                if (scale <= 1) {
+                    return { limitX: baseLimitX, limitY: baseLimitY };
+                }
+                const extraX = (containerWidth * (scale - 1)) / 1.8;
+                const extraY = (containerHeight * (scale - 1)) / 1.8;
+                return {
+                    limitX: Math.max(baseLimitX, baseLimitX + extraX),
+                    limitY: Math.max(baseLimitY, baseLimitY + extraY)
+                };
+            }
+
+            function clampLightboxTranslation() {
+                const { limitX, limitY } = getLightboxLimits();
+                lightboxDrag.x = clamp(lightboxDrag.x, -limitX, limitX);
+                lightboxDrag.y = clamp(lightboxDrag.y, -limitY, limitY);
             }
 
             function formatDateIso(value) {
@@ -1226,7 +1302,7 @@
                 if (!elements.lightboxImage) {
                     return;
                 }
-                elements.lightboxImage.style.transform = `translate3d(${lightboxDrag.x}px, ${lightboxDrag.y}px, 0)`;
+                elements.lightboxImage.style.transform = `translate3d(${lightboxDrag.x}px, ${lightboxDrag.y}px, 0) scale(${lightboxZoom.scale})`;
             }
 
             function resetLightboxPosition(options = {}) {
@@ -1237,10 +1313,20 @@
                 lightboxDrag.startY = 0;
                 lightboxDrag.x = 0;
                 lightboxDrag.y = 0;
+                lightboxZoom.scale = 1;
+                lightboxZoom.pointerCache.clear();
+                lightboxZoom.initialDistance = 0;
+                lightboxZoom.startScale = 1;
+                lightboxZoom.lastCenter = null;
+                if (wheelZoomTimeout) {
+                    clearTimeout(wheelZoomTimeout);
+                    wheelZoomTimeout = null;
+                }
                 if (elements.lightboxImage) {
                     if (instant) {
                         elements.lightboxImage.style.transition = 'none';
-                        elements.lightboxImage.style.transform = 'translate3d(0, 0, 0)';
+                        elements.lightboxImage.style.transform = 'translate3d(0, 0, 0) scale(1)';
+                        elements.lightboxImage.style.transformOrigin = '50% 50%';
                         requestAnimationFrame(() => {
                             if (elements.lightboxImage) {
                                 elements.lightboxImage.style.transition = '';
@@ -1248,7 +1334,8 @@
                         });
                     } else {
                         elements.lightboxImage.style.transition = 'transform 0.22s ease';
-                        elements.lightboxImage.style.transform = 'translate3d(0, 0, 0)';
+                        elements.lightboxImage.style.transform = 'translate3d(0, 0, 0) scale(1)';
+                        elements.lightboxImage.style.transformOrigin = '50% 50%';
                         setTimeout(() => {
                             if (elements.lightboxImage) {
                                 elements.lightboxImage.style.transition = '';
@@ -1257,7 +1344,7 @@
                     }
                 }
                 if (elements.lightboxFigure) {
-                    elements.lightboxFigure.style.cursor = 'grab';
+                    elements.lightboxFigure.style.cursor = supportsHover ? 'grab' : 'default';
                 }
             }
 
@@ -1266,12 +1353,123 @@
                 if (!figure || !elements.lightboxImage || !elements.lightbox) {
                     return;
                 }
-                figure.style.cursor = 'grab';
+                figure.style.cursor = supportsHover ? 'grab' : 'default';
 
-                const releaseCapture = () => {
-                    if (typeof figure.hasPointerCapture === 'function' && typeof figure.releasePointerCapture === 'function' && lightboxDrag.pointerId !== null && figure.hasPointerCapture(lightboxDrag.pointerId)) {
-                        figure.releasePointerCapture(lightboxDrag.pointerId);
+                const updateCursor = () => {
+                    if (!supportsHover) {
+                        return;
                     }
+                    figure.style.cursor = lightboxZoom.pointerCache.size ? 'grabbing' : 'grab';
+                };
+
+                const releasePointerCapture = (pointerId) => {
+                    if (typeof figure.hasPointerCapture === 'function' && typeof figure.releasePointerCapture === 'function' && figure.hasPointerCapture(pointerId)) {
+                        figure.releasePointerCapture(pointerId);
+                    }
+                };
+
+                const updatePointerCache = (event) => {
+                    lightboxZoom.pointerCache.set(event.pointerId, {
+                        id: event.pointerId,
+                        x: event.clientX,
+                        y: event.clientY
+                    });
+                };
+
+                const getPointerArray = () => {
+                    const values = [];
+                    for (const value of lightboxZoom.pointerCache.values()) {
+                        values.push(value);
+                        if (values.length === 2) {
+                            break;
+                        }
+                    }
+                    return values;
+                };
+
+                const setTransformOriginFromPointers = (pointers) => {
+                    if (!elements.lightboxImage || pointers.length < 2) {
+                        return;
+                    }
+                    const rect = elements.lightboxImage.getBoundingClientRect();
+                    if (!rect.width || !rect.height) {
+                        return;
+                    }
+                    const midX = (pointers[0].x + pointers[1].x) / 2;
+                    const midY = (pointers[0].y + pointers[1].y) / 2;
+                    const originX = ((midX - rect.left) / rect.width) * 100;
+                    const originY = ((midY - rect.top) / rect.height) * 100;
+                    elements.lightboxImage.style.transformOrigin = `${clamp(originX, 0, 100)}% ${clamp(originY, 0, 100)}%`;
+                };
+
+                const startPinch = () => {
+                    const pointers = getPointerArray();
+                    if (pointers.length < 2) {
+                        return;
+                    }
+                    lightboxDrag.active = false;
+                    lightboxDrag.pointerId = null;
+                    lightboxZoom.startScale = lightboxZoom.scale;
+                    lightboxZoom.initialDistance = Math.hypot(pointers[0].x - pointers[1].x, pointers[0].y - pointers[1].y);
+                    lightboxZoom.lastCenter = {
+                        x: (pointers[0].x + pointers[1].x) / 2,
+                        y: (pointers[0].y + pointers[1].y) / 2
+                    };
+                    setTransformOriginFromPointers(pointers);
+                };
+
+                const handlePinch = () => {
+                    const pointers = getPointerArray();
+                    if (pointers.length < 2) {
+                        return;
+                    }
+                    const center = {
+                        x: (pointers[0].x + pointers[1].x) / 2,
+                        y: (pointers[0].y + pointers[1].y) / 2
+                    };
+                    if (lightboxZoom.lastCenter) {
+                        lightboxDrag.x += center.x - lightboxZoom.lastCenter.x;
+                        lightboxDrag.y += center.y - lightboxZoom.lastCenter.y;
+                    }
+                    lightboxZoom.lastCenter = center;
+                    const distance = Math.hypot(pointers[0].x - pointers[1].x, pointers[0].y - pointers[1].y);
+                    if (!lightboxZoom.initialDistance) {
+                        lightboxZoom.initialDistance = distance;
+                    }
+                    const nextScale = clamp(lightboxZoom.startScale * (distance / lightboxZoom.initialDistance), lightboxZoom.min, lightboxZoom.max);
+                    if (Math.abs(nextScale - lightboxZoom.scale) > 0.002) {
+                        lightboxZoom.scale = nextScale;
+                    }
+                    setTransformOriginFromPointers(pointers);
+                    clampLightboxTranslation();
+                    applyLightboxTransform();
+                };
+
+                const handlePointerUp = (event) => {
+                    releasePointerCapture(event.pointerId);
+                    lightboxZoom.pointerCache.delete(event.pointerId);
+                    if (lightboxDrag.active && event.pointerId === lightboxDrag.pointerId) {
+                        lightboxDrag.active = false;
+                        lightboxDrag.pointerId = null;
+                    }
+                    if (lightboxZoom.pointerCache.size < 2) {
+                        lightboxZoom.initialDistance = 0;
+                        lightboxZoom.startScale = lightboxZoom.scale;
+                        lightboxZoom.lastCenter = null;
+                    }
+                    if (lightboxZoom.pointerCache.size === 1) {
+                        const [remaining] = getPointerArray();
+                        lightboxDrag.active = true;
+                        lightboxDrag.pointerId = remaining.id;
+                        lightboxDrag.startX = remaining.x - lightboxDrag.x;
+                        lightboxDrag.startY = remaining.y - lightboxDrag.y;
+                        if (typeof figure.setPointerCapture === 'function') {
+                            figure.setPointerCapture(remaining.id);
+                        }
+                    } else if (!lightboxZoom.pointerCache.size) {
+                        elements.lightboxImage.style.transition = '';
+                    }
+                    updateCursor();
                 };
 
                 figure.addEventListener('pointerdown', (event) => {
@@ -1282,44 +1480,56 @@
                         return;
                     }
                     event.preventDefault();
-                    lightboxDrag.active = true;
-                    lightboxDrag.pointerId = event.pointerId;
-                    lightboxDrag.startX = event.clientX - lightboxDrag.x;
-                    lightboxDrag.startY = event.clientY - lightboxDrag.y;
                     elements.lightboxImage.style.transition = 'none';
+                    updatePointerCache(event);
+                    if (lightboxZoom.pointerCache.size > 2) {
+                        releasePointerCapture(event.pointerId);
+                        lightboxZoom.pointerCache.delete(event.pointerId);
+                        return;
+                    }
                     if (typeof figure.setPointerCapture === 'function') {
                         figure.setPointerCapture(event.pointerId);
                     }
-                    figure.style.cursor = 'grabbing';
+                    if (lightboxZoom.pointerCache.size === 1) {
+                        lightboxDrag.active = true;
+                        lightboxDrag.pointerId = event.pointerId;
+                        lightboxDrag.startX = event.clientX - lightboxDrag.x;
+                        lightboxDrag.startY = event.clientY - lightboxDrag.y;
+                    } else if (lightboxZoom.pointerCache.size === 2) {
+                        startPinch();
+                    }
+                    updateCursor();
                 });
 
                 figure.addEventListener('pointermove', (event) => {
+                    if (!elements.lightbox.classList.contains('is-visible')) {
+                        return;
+                    }
+                    const pointer = lightboxZoom.pointerCache.get(event.pointerId);
+                    if (pointer) {
+                        pointer.x = event.clientX;
+                        pointer.y = event.clientY;
+                    }
+                    if (lightboxZoom.pointerCache.size >= 2) {
+                        handlePinch();
+                        return;
+                    }
                     if (!lightboxDrag.active || event.pointerId !== lightboxDrag.pointerId) {
                         return;
                     }
-                    const limitX = Math.max(40, (elements.lightbox.clientWidth || window.innerWidth) * 0.35);
-                    const limitY = Math.max(40, (elements.lightbox.clientHeight || window.innerHeight) * 0.35);
+                    const { limitX, limitY } = getLightboxLimits();
                     const rawX = event.clientX - lightboxDrag.startX;
                     const rawY = event.clientY - lightboxDrag.startY;
-                    lightboxDrag.x = Math.max(-limitX, Math.min(limitX, rawX));
-                    lightboxDrag.y = Math.max(-limitY, Math.min(limitY, rawY));
+                    lightboxDrag.x = clamp(rawX, -limitX, limitX);
+                    lightboxDrag.y = clamp(rawY, -limitY, limitY);
                     applyLightboxTransform();
                 });
 
-                const endDrag = (event) => {
-                    if (!lightboxDrag.active || (event && event.pointerId !== lightboxDrag.pointerId)) {
-                        return;
-                    }
-                    lightboxDrag.active = false;
-                    figure.style.cursor = 'grab';
-                    releaseCapture();
-                    lightboxDrag.pointerId = null;
-                };
-
-                figure.addEventListener('pointerup', endDrag);
+                figure.addEventListener('pointerup', handlePointerUp);
                 figure.addEventListener('pointercancel', (event) => {
-                    endDrag(event);
-                    resetLightboxPosition();
+                    handlePointerUp(event);
+                    clampLightboxTranslation();
+                    applyLightboxTransform();
                 });
 
                 figure.addEventListener('dblclick', () => resetLightboxPosition());
@@ -1329,6 +1539,40 @@
                         resetLightboxPosition({ instant: true });
                     }
                 });
+
+                const handleWheel = (event) => {
+                    if (!elements.lightbox.classList.contains('is-visible')) {
+                        return;
+                    }
+                    event.preventDefault();
+                    const step = event.deltaY > 0 ? -0.2 : 0.2;
+                    const nextScale = clamp(lightboxZoom.scale + step, lightboxZoom.min, lightboxZoom.max);
+                    if (nextScale === lightboxZoom.scale) {
+                        return;
+                    }
+                    const rect = elements.lightboxImage.getBoundingClientRect();
+                    if (!rect.width || !rect.height) {
+                        return;
+                    }
+                    const originX = ((event.clientX - rect.left) / rect.width) * 100;
+                    const originY = ((event.clientY - rect.top) / rect.height) * 100;
+                    elements.lightboxImage.style.transformOrigin = `${clamp(originX, 0, 100)}% ${clamp(originY, 0, 100)}%`;
+                    lightboxZoom.scale = nextScale;
+                    clampLightboxTranslation();
+                    elements.lightboxImage.style.transition = 'transform 0.18s ease';
+                    applyLightboxTransform();
+                    if (wheelZoomTimeout) {
+                        clearTimeout(wheelZoomTimeout);
+                    }
+                    wheelZoomTimeout = setTimeout(() => {
+                        if (elements.lightboxImage) {
+                            elements.lightboxImage.style.transition = '';
+                        }
+                        wheelZoomTimeout = null;
+                    }, 180);
+                };
+
+                elements.lightboxImage.addEventListener('wheel', handleWheel, { passive: false });
             }
 
             function openLightbox(image) {
@@ -1433,7 +1677,7 @@
                 updateOverlayMeta(post);
                 highlightImages();
                 updateNavButtons();
-                if (originEvent && originEvent.currentTarget) {
+                if (supportsHover && originEvent && originEvent.currentTarget) {
                     const card = originEvent.currentTarget;
                     card.style.transform = 'scale(0.98)';
                     card.style.transition = 'transform 0.2s ease';
@@ -1473,7 +1717,7 @@
                     return markdown;
                 }
                 const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const pattern = new RegExp(`^#\s+${escaped}\s*\n?`, 'i');
+                const pattern = new RegExp(`^#\\s+${escaped}\\s*\\n?`, 'i');
                 return markdown.replace(pattern, '').trim();
             }
 
