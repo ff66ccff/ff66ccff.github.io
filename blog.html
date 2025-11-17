@@ -137,7 +137,57 @@
             opacity: 0.82;
         }
 
-        @media (hover: none) and (pointer: coarse) {
+        html.no-hover body {
+            transition: none;
+        }
+
+        html.no-hover body::before,
+        html.no-hover body::after {
+            display: none;
+        }
+
+        html.no-hover .hover-surface::before,
+        html.no-hover .hover-surface::after {
+            display: none;
+        }
+
+        html.no-hover .hover-surface {
+            transition: none;
+        }
+
+        html.no-hover .ghost-link:hover,
+        html.no-hover .post-card:hover,
+        html.no-hover .control-btn:hover,
+        html.no-hover .overlay-nav button:not(:disabled):hover,
+        html.no-hover .pagination button:not(:disabled):hover {
+            transform: none;
+        }
+
+        html.no-hover .lightbox figure {
+            cursor: default;
+        }
+
+        html.no-hover .ghost-link,
+        html.no-hover .post-card,
+        html.no-hover .control-btn,
+        html.no-hover .overlay-nav button,
+        html.no-hover .pagination button {
+            transition: none;
+        }
+
+        html.no-hover .page-header,
+        html.no-hover .posts-panel,
+        html.no-hover .ghost-link,
+        html.no-hover .control-btn,
+        html.no-hover .overlay,
+        html.no-hover .lightbox,
+        html.no-hover .search-row {
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        @media (hover: none),
+        (pointer: coarse) {
             body {
                 transition: none;
             }
@@ -992,7 +1042,36 @@
                 x: 0,
                 y: 0
             };
-            const supportsHover = window.matchMedia ? window.matchMedia('(hover: hover)').matches : false;
+            const hoverMedia = window.matchMedia ? window.matchMedia('(hover: hover) and (pointer: fine)') : null;
+            let supportsHover = hoverMedia ? hoverMedia.matches : !('ontouchstart' in window);
+            if (supportsHover) {
+                document.documentElement.classList.remove('no-hover');
+            } else {
+                document.documentElement.classList.add('no-hover');
+            }
+            if (hoverMedia && typeof hoverMedia.addEventListener === 'function') {
+                hoverMedia.addEventListener('change', (event) => {
+                    supportsHover = event.matches;
+                    if (supportsHover) {
+                        document.documentElement.classList.remove('no-hover');
+                        refreshHoverSurfaces();
+                    } else {
+                        document.documentElement.classList.add('no-hover');
+                        document.querySelectorAll('.hover-surface.is-active').forEach((surface) => surface.classList.remove('is-active'));
+                    }
+                });
+            } else if (hoverMedia && typeof hoverMedia.addListener === 'function') {
+                hoverMedia.addListener((event) => {
+                    supportsHover = event.matches;
+                    if (supportsHover) {
+                        document.documentElement.classList.remove('no-hover');
+                        refreshHoverSurfaces();
+                    } else {
+                        document.documentElement.classList.add('no-hover');
+                        document.querySelectorAll('.hover-surface.is-active').forEach((surface) => surface.classList.remove('is-active'));
+                    }
+                });
+            }
             const lightboxZoom = {
                 scale: 1,
                 min: 1,
@@ -1009,7 +1088,6 @@
                     return;
                 }
                 if (!supportsHover) {
-                    hoverSurfaces.add(node);
                     return;
                 }
                 const activate = () => node.classList.add('is-active');
@@ -1229,7 +1307,9 @@
                 });
                 elements.postList.appendChild(fragment);
                 updatePaginationControls(total, startIndex, pageItems.length);
-                refreshHoverSurfaces();
+                if (supportsHover) {
+                    refreshHoverSurfaces();
+                }
             }
 
             function formatPaginationInfo(totalCount, startDisplay, endDisplay) {
@@ -1961,7 +2041,9 @@
             elements.lightboxClose.addEventListener('click', () => closeLightbox());
 
             initLightboxDrag();
-            refreshHoverSurfaces();
+            if (supportsHover) {
+                refreshHoverSurfaces();
+            }
             initTheme();
             initLanguage();
             initLanguageToggle();
