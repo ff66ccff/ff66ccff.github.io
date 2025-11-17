@@ -105,12 +105,27 @@ postFiles.forEach((fileName) => {
     const published = first || frontMatter.published || null;
     const updated = last || frontMatter.updated || published || null;
 
+    // simple summary extractor: strip code blocks and basic markdown, take first paragraph
+    function extractSummary(text) {
+        if (!text) return '';
+        const withoutCode = text.replace(/```[\s\S]*?```/g, '');
+        const withoutInline = withoutCode.replace(/`[^`]+`/g, '');
+        const withoutTags = withoutInline.replace(/<[^>]+>/g, '');
+        const lines = withoutTags.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        if (!lines.length) return '';
+        const first = lines[0];
+        return first.length > 160 ? `${first.slice(0, 160)}...` : first;
+    }
+
+    const summary = extractSummary(body).trim() || (frontMatter.summary ? String(frontMatter.summary).trim() : '');
+
     metadataEntries.push({
         slug,
         filename: fileName,
         title,
         published,
-        updated
+        updated,
+        summary
     });
 });
 
@@ -142,4 +157,24 @@ try {
 if (existingMetadata !== metadataJson) {
     fs.writeFileSync(metadataPath, metadataJson, 'utf8');
     console.log('Updated posts metadata manifest.');
+}
+
+// Also write a lightweight search index to speed up client-side search
+try {
+    const searchIndex = metadataEntries.map((entry) => ({
+        slug: entry.slug,
+        title: entry.title,
+        summary: entry.summary || '',
+        filename: entry.filename
+    }));
+    const searchPath = path.join(postsDir, 'search-index.json');
+    const searchJson = `${JSON.stringify({ generatedAt: new Date().toISOString(), items: searchIndex }, null, 2)}\n`;
+    let existingSearch = '';
+    try { existingSearch = fs.readFileSync(searchPath, 'utf8'); } catch (e) { /* ignore */ }
+    if (existingSearch !== searchJson) {
+        fs.writeFileSync(searchPath, searchJson, 'utf8');
+        console.log('Wrote posts/search-index.json for client search.');
+    }
+} catch (error) {
+    console.warn('Unable to write search-index.json:', error && error.message);
 }

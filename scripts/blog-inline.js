@@ -102,8 +102,33 @@ const METADATA_URL = `${POSTS_DIR}/metadata.json`;
 const REPO_OWNER = 'ff66ccff';
 const REPO_NAME = 'ff66ccff.github.io';
 const CDN_BRANCH = 'main';
+// CDN base and manifest. We add a CDN version token to help control cache invalidation.
 const CDN_BASE = `https://cdn.jsdelivr.net/gh/${REPO_OWNER}/${REPO_NAME}@${CDN_BRANCH}`;
 const CDN_MANIFEST_URL = `https://data.jsdelivr.com/v1/package/gh/${REPO_OWNER}/${REPO_NAME}@${CDN_BRANCH}`;
+
+// Prefer a build-time injected version (e.g. via bundler or GH Actions), fall back to URL param or timestamp.
+const CDN_VERSION = (typeof __CDN_VERSION__ !== 'undefined' && __CDN_VERSION__) || (new URLSearchParams(location.search).get('cdn_v')) || String(Date.now());
+
+const CACHE_STRATEGIES = {
+    manifest: { cache: 'reload', header: 'public, max-age=300' },
+    content: { cache: 'default', header: 'public, max-age=3600' },
+    static: { cache: 'force-cache', header: 'public, max-age=86400' }
+};
+
+function fetchWithCache(url, type = 'content') {
+    const opts = CACHE_STRATEGIES[type] || CACHE_STRATEGIES.content;
+    const headers = { 'Cache-Control': opts.header };
+    try {
+        const parsed = new URL(url, location.href);
+        if (parsed.hostname && parsed.hostname.includes('cdn.jsdelivr.net') && !parsed.searchParams.has('v')) {
+            parsed.searchParams.set('v', CDN_VERSION);
+            url = parsed.toString();
+        }
+    } catch (e) {
+        // ignore
+    }
+    return fetch(url, { cache: opts.cache, headers });
+}
 
 let currentLang = 'zh';
 let pendingSlug = null;
@@ -632,7 +657,7 @@ async function ensurePostContent(post) {
         return post.loadingPromise;
     }
 
-    post.loadingPromise = fetch(post.fetchUrl, { cache: 'no-store' })
+    post.loadingPromise = fetchWithCache(post.fetchUrl, 'content')
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`Failed to fetch ${post.fetchUrl}`);
@@ -969,7 +994,7 @@ function handleHashNavigation() {
 
 async function fetchLocalMetadataEntries() {
     try {
-        const response = await fetch(METADATA_URL, { cache: 'no-store' });
+        const response = await fetchWithCache(METADATA_URL, 'manifest');
         if (!response.ok) {
             return null;
         }
@@ -995,7 +1020,7 @@ async function fetchLocalMetadataEntries() {
 }
 
 async function fetchCdnManifestEntries() {
-    const response = await fetch(CDN_MANIFEST_URL, { cache: 'no-store' });
+    const response = await fetchWithCache(CDN_MANIFEST_URL, 'manifest');
     if (!response.ok) {
         throw new Error('Failed to fetch CDN posts manifest');
     }
