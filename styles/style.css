@@ -46,6 +46,27 @@ body {
     line-height: 1.6;
     transition: background-color 0.3s, color 0.3s;
     padding-bottom: 40px;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Bing Wallpaper Background */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN') no-repeat center center fixed;
+    background-size: cover;
+    filter: blur(10px) brightness(0.9);
+    z-index: -1;
+    opacity: 0.6;
+}
+
+[data-theme="dark"] body::before {
+    opacity: 0.3;
 }
 
 a {
@@ -160,7 +181,7 @@ img {
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 20px;
+    margin: 0 auto 20px;
     border: 4px solid var(--bg-card);
     box-shadow: var(--shadow);
 }

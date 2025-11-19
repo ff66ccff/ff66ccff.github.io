@@ -241,6 +241,7 @@ async function loadPost(identifier) {
     els.pagination.classList.add('hidden');
     els.articleView.classList.add('hidden');
     if (els.searchContainer) els.searchContainer.classList.add('hidden');
+    if (els.blogSidebar) els.blogSidebar.classList.add('hidden');
 
     try {
         // Find post by slug or filename
