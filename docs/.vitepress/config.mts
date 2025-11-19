@@ -8,7 +8,7 @@ export default defineConfig({
 
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
-        logo: '/avatar.png', // You'll need to move your avatar here later
+        logo: '/avatar.jpg',
 
         nav: [
             { text: 'Home', link: '/' },

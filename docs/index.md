@@ -6,7 +6,7 @@ hero:
   text: "ID is Pink, but Soul is Blue"
   tagline: "SCU CS 25 | Vocaloid & Sci-Fi"
   image:
-    src: /avatar.png
+    src: /avatar.jpg
     alt: FF66CC Avatar
   actions:
     - theme: brand
