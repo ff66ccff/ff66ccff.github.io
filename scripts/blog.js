@@ -20,7 +20,11 @@ const els = {
     pagination: document.getElementById('pagination'),
     archiveList: document.getElementById('archiveList'),
     blogSidebar: document.querySelector('.blog-sidebar'),
-    searchContainer: document.querySelector('.search-container')
+    searchContainer: document.querySelector('.search-container'),
+    blogLayout: document.querySelector('.blog-layout'),
+    scrollButtons: document.getElementById('scrollButtons'),
+    scrollTopBtn: document.getElementById('scrollTopBtn'),
+    scrollBottomBtn: document.getElementById('scrollBottomBtn')
 };
 
 // State
@@ -97,6 +101,8 @@ function renderPostList() {
     els.pagination.classList.remove('hidden');
     if (els.blogSidebar) els.blogSidebar.classList.remove('hidden');
     if (els.searchContainer) els.searchContainer.classList.remove('hidden');
+    if (els.blogLayout) els.blogLayout.classList.remove('article-view');
+    if (els.scrollButtons) els.scrollButtons.classList.add('hidden');
 
     els.postList.innerHTML = '';
 
@@ -242,6 +248,8 @@ async function loadPost(identifier) {
     els.articleView.classList.add('hidden');
     if (els.searchContainer) els.searchContainer.classList.add('hidden');
     if (els.blogSidebar) els.blogSidebar.classList.add('hidden');
+    if (els.blogLayout) els.blogLayout.classList.add('article-view');
+    if (els.scrollButtons) els.scrollButtons.classList.remove('hidden');
 
     try {
         // Find post by slug or filename
@@ -351,6 +359,18 @@ els.lightbox.onclick = (e) => {
         els.lightbox.classList.remove('active');
     }
 };
+
+if (els.scrollTopBtn) {
+    els.scrollTopBtn.onclick = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+}
+
+if (els.scrollBottomBtn) {
+    els.scrollBottomBtn.onclick = () => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    };
+}
 
 window.addEventListener('popstate', () => {
     const params = new URLSearchParams(window.location.search);
