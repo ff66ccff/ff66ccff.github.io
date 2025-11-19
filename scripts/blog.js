@@ -166,7 +166,9 @@ function setupImages() {
         img.style.cursor = 'zoom-in';
         img.onclick = () => {
             els.lightboxImg.src = img.src;
+            els.lightboxImg.classList.remove('zoomed');
             els.lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
         };
     });
 }
@@ -174,10 +176,26 @@ function setupImages() {
 // Event Listeners
 els.backBtn.onclick = renderPostList;
 
+function closeLightbox() {
+    els.lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+        els.lightboxImg.classList.remove('zoomed');
+        els.lightboxImg.src = '';
+    }, 300);
+}
+
+els.lightboxClose.onclick = closeLightbox;
+
 els.lightbox.onclick = (e) => {
-    if (e.target !== els.lightboxImg) {
-        els.lightbox.classList.remove('active');
+    if (e.target === els.lightbox || e.target.classList.contains('lightbox-content-wrapper')) {
+        closeLightbox();
     }
+};
+
+els.lightboxImg.onclick = (e) => {
+    e.stopPropagation();
+    els.lightboxImg.classList.toggle('zoomed');
 };
 
 window.addEventListener('popstate', () => {
