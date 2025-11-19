@@ -10,8 +10,8 @@
 </head>
 
 <body>
-    <div class="container">
-        <header class="site-header">
+    <div class="hero-container">
+        <header class="site-header transparent">
             <a href="index.html" class="brand">ff66ccff</a>
             <nav class="nav-links">
                 <a href="index.html" class="nav-link active">首页</a>
@@ -23,26 +23,25 @@
             </nav>
         </header>
 
-        <main class="profile-section">
-            <img src="avatar.jpg" alt="ff66ccff" class="avatar">
-            <h1 class="profile-name">ff66ccff</h1>
-            <p class="profile-bio">
-                记录代码、音乐与故事，分享我的学习旅程。<br>
-                四川大学 25级计算机学生
-            </p>
-
-            <div class="social-links">
-                <a href="https://github.com/ff66ccff" target="_blank" class="btn btn-icon" title="GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
+        <main class="hero-content">
+            <div class="hero-avatar-wrapper">
+                <img src="avatar.jpg" alt="ff66ccff" class="hero-avatar">
+                <div class="hero-badge">极个别同志</div>
+            </div>
+            <div class="hero-text">
+                <h1 class="hero-greeting">你好，我是 <span class="highlight">ff66ccff</span></h1>
+                <p class="hero-subtitle">一名计算机科学与技术专业学生</p>
+                <p class="hero-description">追风赶月莫停留，平芜尽处是春山。</p>
+                <div class="hero-actions">
+                    <a href="blog.html" class="btn btn-primary btn-lg">查看我的文章</a>
+                    <a href="https://github.com/ff66ccff" target="_blank" class="btn btn-outline btn-lg">联系我</a>
+                </div>
             </div>
         </main>
 
-        <section class="card">
-            <h2>关于我</h2>
-            <p>热爱编程，喜欢折腾新技术。同时也对音乐（特别是中文 VOCALOID）和科幻小说情有独钟。</p>
-            <p>这里是我存放思考和笔记的地方。</p>
-        </section>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
     </div>
     <script src="scripts/theme.js"></script>
 </body>

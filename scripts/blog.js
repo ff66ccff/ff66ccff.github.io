@@ -12,19 +12,30 @@ const els = {
     postNav: document.getElementById('postNav'),
     prevPost: document.getElementById('prevPost'),
     nextPost: document.getElementById('nextPost'),
-    lightbox: document.getElementById('lightbox'),
-    lightboxImg: document.getElementById('lightboxImg'),
-    lightboxClose: document.querySelector('.lightbox-close')
+    lightbox: null, // Removed custom lightbox
 };
 
 // State
 let posts = [];
 let currentPostIndex = -1;
+let zoom = null; // medium-zoom instance
 
 // Initialize
 async function init() {
     try {
+        // Set Bing Wallpaper
+        document.body.style.backgroundImage = `url('https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundAttachment = 'fixed';
+        document.body.style.backgroundPosition = 'center';
+
+        // Add overlay for opacity effect (handled in CSS via pseudo-element or background-blend-mode, 
+        // but here we can just ensure the body background is set. 
+        // The user asked for "add some opacity", usually meaning the image is dimmed so text is readable.
+        // We will handle the dimming in CSS on the body::before or similar, or just use a dark overlay on the content containers.)
+
         // Handle routing based on URL query params
+
         const params = new URLSearchParams(window.location.search);
         const postSlug = params.get('p');
 
@@ -159,44 +170,23 @@ function setupNavigation(currentIndex) {
     }
 }
 
-// Setup Lightbox for Images
+// Setup Lightbox for Images (using medium-zoom)
 function setupImages() {
     const images = els.articleContent.querySelectorAll('img');
-    images.forEach(img => {
-        img.style.cursor = 'zoom-in';
-        img.onclick = () => {
-            els.lightboxImg.src = img.src;
-            els.lightboxImg.classList.remove('zoomed');
-            els.lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
+
+    if (zoom) {
+        zoom.detach();
+    }
+
+    zoom = mediumZoom(images, {
+        margin: 24,
+        background: 'rgba(0, 0, 0, 0.9)',
+        scrollOffset: 0,
     });
 }
 
 // Event Listeners
 els.backBtn.onclick = renderPostList;
-
-function closeLightbox() {
-    els.lightbox.classList.remove('active');
-    document.body.style.overflow = '';
-    setTimeout(() => {
-        els.lightboxImg.classList.remove('zoomed');
-        els.lightboxImg.src = '';
-    }, 300);
-}
-
-els.lightboxClose.onclick = closeLightbox;
-
-els.lightbox.onclick = (e) => {
-    if (e.target === els.lightbox || e.target.classList.contains('lightbox-content-wrapper')) {
-        closeLightbox();
-    }
-};
-
-els.lightboxImg.onclick = (e) => {
-    e.stopPropagation();
-    els.lightboxImg.classList.toggle('zoomed');
-};
 
 window.addEventListener('popstate', () => {
     const params = new URLSearchParams(window.location.search);
