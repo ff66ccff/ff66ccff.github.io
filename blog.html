@@ -5,299 +5,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>博客 - ff66ccff</title>
+    <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="styles/main.css">
-    <style>
-        body {
-            padding: 40px 24px 72px;
-            background: var(--bg-color);
-            color: var(--text-color);
-        }
-
-        .posts-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            padding: 34px 36px;
-            border-radius: 32px;
-            background: var(--mica-tint-strong);
-            border: 1px solid var(--mica-border);
-            box-shadow: var(--shadow-md);
-            backdrop-filter: blur(30px) saturate(150%);
-            min-height: 60vh;
-        }
-
-        .posts-head {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 18px;
-            align-items: center;
-        }
-
-        .posts-head h1 {
-            margin: 0;
-            font-size: 1.8rem;
-        }
-
-        .posts-head p {
-            margin: 4px 0 0;
-            color: var(--text-secondary);
-        }
-
-        .search-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 18px;
-            border: 1px solid var(--mica-border);
-            background: rgba(255, 255, 255, 0.75);
-            box-shadow: var(--shadow-sm);
-            min-width: 240px;
-        }
-
-        [data-theme="dark"] .search-row {
-            background: rgba(17, 27, 47, 0.82);
-        }
-
-        .search-row input {
-            border: none;
-            background: transparent;
-            color: inherit;
-            outline: none;
-            width: 100%;
-            font-size: 1rem;
-        }
-
-        .post-count {
-            margin: 0;
-            color: var(--text-muted);
-            font-size: 0.92rem;
-        }
-
-        .post-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 18px;
-        }
-
-        .pagination-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .pagination-controls button {
-            padding: 10px 18px;
-            border-radius: 18px;
-            border: 1px solid var(--mica-border);
-            background: var(--mica-tint);
-            color: var(--text-primary);
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-
-        .pagination-controls button:hover:not(:disabled) {
-            transform: translateY(-2px);
-        }
-
-        .pagination-controls button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .pagination-controls span {
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .post-card {
-            padding: 22px;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid var(--mica-border);
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .post-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        [data-theme="dark"] .post-card {
-            background: rgba(17, 27, 47, 0.85);
-        }
-
-        .post-card h2 {
-            margin: 0;
-            font-size: 1.1rem;
-            color: var(--primary-color);
-        }
-
-        .post-card time {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 32px 0;
-            color: var(--text-muted);
-        }
-
-        .post-content {
-            padding: 28px;
-            border-radius: 28px;
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid var(--mica-border);
-            box-shadow: var(--shadow-md);
-        }
-
-        [data-theme="dark"] .post-content {
-            background: rgba(17, 27, 47, 0.88);
-        }
-
-        .post-content h2 {
-            margin-top: 0;
-        }
-
-        .post-meta {
-            margin: 6px 0 0;
-            color: var(--text-muted);
-            font-size: 0.92rem;
-        }
-
-        #blogContent img {
-            max-width: 100%;
-            border-radius: 16px;
-        }
-
-        #blogContent pre {
-            padding: 16px;
-            background: rgba(15, 23, 42, 0.85);
-            border-radius: 16px;
-            overflow-x: auto;
-            color: #f8fafc;
-        }
-
-        .post-actions {
-            display: flex;
-            justify-content: flex-start;
-            margin-bottom: 18px;
-        }
-
-        .post-actions .ghost-link {
-            gap: 8px;
-        }
-
-        @media (max-width: 720px) {
-            body {
-                padding: 28px 16px 56px;
-            }
-
-            .posts-panel {
-                padding: 24px;
-            }
-
-            .post-card {
-                padding: 18px;
-            }
-        }
-    </style>
 </head>
 
 <body>
-    <div class="page-shell">
-        <header class="page-header hover-surface">
-            <div class="header-main">
-                <span class="brand">ff66ccff</span>
-                <p class="header-note" id="headerNote">记录代码、音乐与故事，分享我的学习旅程。</p>
-            </div>
-            <a class="ghost-link hover-surface" href="index.html" id="backHomeLink">
-                <i class="fas fa-house"></i>
-                <span id="backHomeLabel">返回首页</span>
-            </a>
+    <div class="container">
+        <header class="site-header">
+            <a href="index.html" class="brand">ff66ccff</a>
+            <nav class="nav-links">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="blog.html" class="nav-link active">博客</a>
+                <a href="https://github.com/ff66ccff" target="_blank" class="nav-link">GitHub</a>
+                <button id="theme-toggle" class="btn btn-icon" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </nav>
         </header>
 
-        <main class="posts-panel hover-surface">
-            <div class="posts-head">
-                <div>
-                    <h1 id="blogTitle">博客</h1>
-                    <p id="blogSubtitle">记录代码、音乐和故事</p>
-                </div>
-                <label class="search-row hover-surface" for="searchInput">
-                    <i class="fas fa-search" aria-hidden="true"></i>
-                    <input type="search" id="searchInput" placeholder="搜索文章标题" autocomplete="off">
-                </label>
+        <main id="app">
+            <!-- Loading State -->
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i> 加载中...
             </div>
-            <p class="post-count" id="postStats"></p>
 
-            <section id="listSection">
-                <div id="blogList" class="post-grid" aria-live="polite"></div>
-                <p id="emptyState" class="empty-state" hidden>文章加载中，请稍候...</p>
-                <div id="paginationControls" class="pagination-controls" hidden>
-                    <button id="prevPage" type="button">Prev</button>
-                    <span id="pageInfo">1 / 1</span>
-                    <button id="nextPage" type="button">Next</button>
-                </div>
-            </section>
+            <!-- Post List View -->
+            <div id="postList" class="post-list hidden">
+                <!-- Posts will be injected here -->
+            </div>
 
-            <section id="articleSection" hidden>
-                <div class="post-actions">
-                    <button id="backToList" class="ghost-link" type="button">
-                        <i class="fas fa-arrow-left"></i>
-                        <span id="backToListLabel">返回列表</span>
+            <!-- Article View -->
+            <article id="articleView" class="article-container hidden">
+                <header class="article-header">
+                    <button id="backBtn" class="btn" style="margin-bottom: 20px;">
+                        <i class="fas fa-arrow-left"></i> 返回列表
                     </button>
-                </div>
-                <article class="post-content hover-surface">
-                    <header>
-                        <h2 id="articleTitle">文章标题</h2>
-                        <p id="articleMeta" class="post-meta"></p>
-                    </header>
-                    <div id="blogContent"></div>
-                    <nav id="postNavigation" class="post-navigation" hidden>
-                        <button id="prevPostBtn" class="nav-btn prev" type="button">
-                            <span class="nav-label">Previous</span>
-                            <span class="nav-title"></span>
-                        </button>
-                        <button id="nextPostBtn" class="nav-btn next" type="button">
-                            <span class="nav-label">Next</span>
-                            <span class="nav-title"></span>
-                        </button>
-                    </nav>
-                </article>
-            </section>
+                    <h1 id="articleTitle" class="article-title"></h1>
+                    <div id="articleMeta" class="article-meta"></div>
+                </header>
+                <div id="articleContent" class="markdown-body"></div>
+
+                <nav id="postNav" class="post-nav hidden">
+                    <a id="prevPost" class="post-nav-btn prev">
+                        <span class="post-nav-label">上一篇</span>
+                        <span class="post-nav-title"></span>
+                    </a>
+                    <a id="nextPost" class="post-nav-btn next">
+                        <span class="post-nav-label">下一篇</span>
+                        <span class="post-nav-title"></span>
+                    </a>
+                </nav>
+            </article>
         </main>
     </div>
 
-    <div id="lightbox" class="lightbox" hidden>
-        <div class="lightbox-content">
-            <img id="lightboxImg" src="" alt="Full size view">
-            <button id="lightboxClose" class="lightbox-close" type="button" aria-label="Close">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <button class="lightbox-close">&times;</button>
+        <img id="lightboxImg" src="" alt="">
     </div>
 
-    <button class="control-btn theme-toggle" id="themeToggle" type="button" title="切换主题" aria-label="切换主题">
-        <i class="fas fa-moon"></i>
-    </button>
-
-    <button class="control-btn language-toggle" id="languageToggle" type="button" title="切换语言" aria-label="切换语言">
-        <span id="languageBadge">中</span>
-    </button>
-
+    <script src="scripts/theme.js"></script>
     <script type="module" src="scripts/blog.js"></script>
 </body>
 
