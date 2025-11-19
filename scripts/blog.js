@@ -25,7 +25,13 @@ const elements = {
     pagination: document.getElementById('paginationControls'),
     prevPage: document.getElementById('prevPage'),
     nextPage: document.getElementById('nextPage'),
-    pageInfo: document.getElementById('pageInfo')
+    pageInfo: document.getElementById('pageInfo'),
+    postNavigation: document.getElementById('postNavigation'),
+    prevPostBtn: document.getElementById('prevPostBtn'),
+    nextPostBtn: document.getElementById('nextPostBtn'),
+    lightbox: document.getElementById('lightbox'),
+    lightboxImg: document.getElementById('lightboxImg'),
+    lightboxClose: document.getElementById('lightboxClose')
 };
 
 const state = {
@@ -349,9 +355,15 @@ async function openPost(postPath, title = '', pushHistory = false) {
         elements.articleTitle.textContent = title || postPath;
         elements.blogContent.innerHTML = `<p>${t.loadingArticle}</p>`;
         const raw = await fetchPostContent(postPath);
-        const html = marked.parse(raw, { mangle: false, headerIds: false });
+
+        // Remove Front Matter
+        const contentWithoutFrontMatter = raw.replace(/^---[\s\S]*?---\s*/, '');
+
+        const html = marked.parse(contentWithoutFrontMatter, { mangle: false, headerIds: false });
         elements.blogContent.innerHTML = html;
         updateArticleMeta();
+        updatePostNavigation(postPath);
+        setupImageLightbox();
     } catch (error) {
         console.error(error);
         elements.blogContent.innerHTML = `<p>${t.errorArticle}</p>`;
@@ -363,6 +375,80 @@ async function openPost(postPath, title = '', pushHistory = false) {
     } else {
         history.replaceState({ post: postPath }, '', url);
     }
+}
+
+function updatePostNavigation(currentPath) {
+    if (!elements.postNavigation) return;
+
+    const currentIndex = state.posts.findIndex(p => p.path === currentPath);
+    if (currentIndex === -1) {
+        elements.postNavigation.hidden = true;
+        return;
+    }
+
+    // In a typical blog list (newest first):
+    // Previous (Newer) = index - 1
+    // Next (Older) = index + 1
+    const newerPost = state.posts[currentIndex - 1];
+    const olderPost = state.posts[currentIndex + 1];
+
+    const t = getTranslations('blog', state.lang);
+
+    if (olderPost) {
+        elements.nextPostBtn.hidden = false;
+        elements.nextPostBtn.querySelector('.nav-label').textContent = t.nextPost || 'Next';
+        elements.nextPostBtn.querySelector('.nav-title').textContent = olderPost.title;
+        elements.nextPostBtn.onclick = () => openPost(olderPost.path, olderPost.title, true);
+    } else {
+        elements.nextPostBtn.hidden = true;
+    }
+
+    if (newerPost) {
+        elements.prevPostBtn.hidden = false;
+        elements.prevPostBtn.querySelector('.nav-label').textContent = t.prevPost || 'Previous';
+        elements.prevPostBtn.querySelector('.nav-title').textContent = newerPost.title;
+        elements.prevPostBtn.onclick = () => openPost(newerPost.path, newerPost.title, true);
+    } else {
+        elements.prevPostBtn.hidden = true;
+    }
+
+    elements.postNavigation.hidden = !olderPost && !newerPost;
+}
+
+function setupImageLightbox() {
+    const images = elements.blogContent.querySelectorAll('img');
+    images.forEach(img => {
+        img.addEventListener('click', () => {
+            if (elements.lightbox && elements.lightboxImg) {
+                elements.lightboxImg.src = img.src;
+                elements.lightboxImg.alt = img.alt;
+                elements.lightbox.hidden = false;
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+}
+
+function initLightbox() {
+    if (!elements.lightbox) return;
+
+    const close = () => {
+        elements.lightbox.hidden = true;
+        document.body.style.overflow = '';
+        if (elements.lightboxImg) elements.lightboxImg.src = '';
+    };
+
+    elements.lightbox.addEventListener('click', (e) => {
+        if (e.target === elements.lightbox || e.target === elements.lightboxClose || e.target.closest('.lightbox-close')) {
+            close();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !elements.lightbox.hidden) {
+            close();
+        }
+    });
 }
 
 function showList(pushHistory = false) {
@@ -418,6 +504,7 @@ async function start() {
     initSearch();
     initPaginationControls();
     initNavigation();
+    initLightbox();
     await fetchPosts();
     handleRouteChange(true);
 }

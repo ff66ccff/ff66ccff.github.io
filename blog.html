@@ -266,9 +266,28 @@
                         <p id="articleMeta" class="post-meta"></p>
                     </header>
                     <div id="blogContent"></div>
+                    <nav id="postNavigation" class="post-navigation" hidden>
+                        <button id="prevPostBtn" class="nav-btn prev" type="button">
+                            <span class="nav-label">Previous</span>
+                            <span class="nav-title"></span>
+                        </button>
+                        <button id="nextPostBtn" class="nav-btn next" type="button">
+                            <span class="nav-label">Next</span>
+                            <span class="nav-title"></span>
+                        </button>
+                    </nav>
                 </article>
             </section>
         </main>
+    </div>
+
+    <div id="lightbox" class="lightbox" hidden>
+        <div class="lightbox-content">
+            <img id="lightboxImg" src="" alt="Full size view">
+            <button id="lightboxClose" class="lightbox-close" type="button" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     </div>
 
     <button class="control-btn theme-toggle" id="themeToggle" type="button" title="切换主题" aria-label="切换主题">
