@@ -2,7 +2,7 @@
     "name": "ff66ccff-blog",
     "version": "1.0.0",
     "description": "Personal website of ff66ccff",
-    "main": "index.js",
+    "type": "module",
     "scripts": {
         "docs:dev": "vitepress dev docs",
         "docs:build": "vitepress build docs",

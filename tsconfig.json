@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "target": "esnext",
+        "strict": true,
+        "jsx": "preserve",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "types": [
+            "vitepress/client"
+        ]
+    },
+    "include": [
+        "docs/**/*.ts",
+        "docs/**/*.vue",
+        "docs/**/*.md"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
