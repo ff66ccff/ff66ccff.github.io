@@ -5,302 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>博客 - ff66ccff</title>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" as="style"
-        onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    </noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-blue: #4facfe;
-            --accent-pink: #f093fb;
-            --accent-cyan: #00d4ff;
-            --bg-primary: #e8ecf7;
-            --mica-tint: rgba(255, 255, 255, 0.82);
-            --mica-tint-strong: rgba(255, 255, 255, 0.9);
-            --mica-noise: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(102, 126, 234, 0.16));
-            --mica-border: rgba(255, 255, 255, 0.62);
-            --reveal-glow: rgba(255, 255, 255, 0.72);
-            --text-primary: #1f2937;
-            --text-secondary: #475569;
-            --text-muted: #6b7280;
-            --border-color: rgba(15, 23, 42, 0.12);
-            --shadow-sm: 0 12px 32px rgba(15, 23, 42, 0.14);
-            --shadow-md: 0 36px 76px rgba(15, 23, 42, 0.18);
-            --overlay-backdrop: rgba(15, 23, 42, 0.55);
-            --transition-fast: 0.24s ease;
-            --transition-medium: 0.32s ease;
-            --transition-slow: 0.44s ease;
-            --font-family: 'Segoe UI Variable Display', 'Segoe UI', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
-            --safe-top: env(safe-area-inset-top, 0px);
-            --safe-right: env(safe-area-inset-right, 0px);
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-            --safe-left: env(safe-area-inset-left, 0px);
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #0d1528;
-            --mica-tint: rgba(20, 29, 46, 0.82);
-            --mica-tint-strong: rgba(24, 34, 56, 0.9);
-            --mica-noise: linear-gradient(135deg, rgba(16, 26, 44, 0.65), rgba(102, 126, 234, 0.22));
-            --mica-border: rgba(148, 163, 184, 0.28);
-            --reveal-glow: rgba(148, 176, 224, 0.68);
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5f5;
-            --text-muted: #94a3b8;
-            --border-color: rgba(148, 163, 184, 0.3);
-            --shadow-sm: 0 16px 42px rgba(8, 15, 35, 0.55);
-            --shadow-md: 0 46px 94px rgba(8, 15, 35, 0.7);
-            --overlay-backdrop: rgba(6, 12, 24, 0.72);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: var(--font-family);
+            padding: 40px 24px 72px;
             background: var(--bg-primary);
             color: var(--text-primary);
-            padding: calc(40px + var(--safe-top)) calc(24px + var(--safe-right)) calc(72px + var(--safe-bottom)) calc(24px + var(--safe-left));
-            transition: background var(--transition-medium), color var(--transition-medium);
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before,
-        body::after {
-            content: "";
-            position: fixed;
-            inset: -40vh -40vw;
-            pointer-events: none;
-            z-index: -2;
-        }
-
-        body::before {
-            background: var(--mica-noise);
-            filter: blur(72px) saturate(120%);
-            opacity: 0.95;
-        }
-
-        body::after {
-            background: rgba(102, 126, 234, 0.08);
-            z-index: -1;
-            opacity: 0.55;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .page-shell {
-            width: 100%;
-            max-width: 1080px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
-        }
-
-        .hover-surface {
-            position: relative;
-            border: 1px solid transparent;
-            background-clip: padding-box;
-            overflow: hidden;
-        }
-
-        .hover-surface::before,
-        .hover-surface::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            pointer-events: none;
-            transition: opacity var(--transition-fast);
-        }
-
-        .hover-surface::before {
-            z-index: -2;
-            background: radial-gradient(600px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(255, 255, 255, 0.06), transparent 42%);
-            opacity: 0;
-        }
-
-        .hover-surface::after {
-            z-index: -1;
-            background: radial-gradient(820px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(102, 126, 234, 0.16), transparent 44%);
-            opacity: 0;
-        }
-
-        .hover-surface.is-active::before {
-            opacity: 0.5;
-        }
-
-        .hover-surface.is-active::after {
-            opacity: 0.82;
-        }
-
-        html.no-hover body {
-            transition: none;
-        }
-
-        html.no-hover body::before,
-        html.no-hover body::after {
-            display: none;
-        }
-
-        html.no-hover .hover-surface::before,
-        html.no-hover .hover-surface::after {
-            display: none;
-        }
-
-        html.no-hover .hover-surface {
-            transition: none;
-        }
-
-        html.no-hover .ghost-link:hover,
-        html.no-hover .post-card:hover,
-        html.no-hover .control-btn:hover,
-        html.no-hover .overlay-nav button:not(:disabled):hover,
-        html.no-hover .pagination button:not(:disabled):hover {
-            transform: none;
-        }
-
-        html.no-hover .lightbox figure {
-            cursor: default;
-        }
-
-        html.no-hover .ghost-link,
-        html.no-hover .post-card,
-        html.no-hover .control-btn,
-        html.no-hover .overlay-nav button,
-        html.no-hover .pagination button {
-            transition: none;
-        }
-
-        html.no-hover .page-header,
-        html.no-hover .posts-panel,
-        html.no-hover .ghost-link,
-        html.no-hover .control-btn,
-        html.no-hover .overlay,
-        html.no-hover .lightbox,
-        html.no-hover .search-row {
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-        }
-
-        @media (hover: none),
-        (pointer: coarse) {
-            body {
-                transition: none;
-            }
-
-            body::before,
-            body::after {
-                display: none;
-            }
-
-            .hover-surface::before,
-            .hover-surface::after {
-                display: none;
-            }
-
-            .hover-surface {
-                transition: none;
-            }
-
-            .ghost-link:hover,
-            .post-card:hover,
-            .control-btn:hover,
-            .overlay-nav button:not(:disabled):hover,
-            .pagination button:not(:disabled):hover {
-                transform: none;
-            }
-
-            .lightbox figure {
-                cursor: default;
-            }
-
-            .ghost-link,
-            .post-card,
-            .control-btn,
-            .overlay-nav button,
-            .pagination button {
-                transition: none;
-            }
-
-            .page-header,
-            .posts-panel,
-            .ghost-link,
-            .control-btn,
-            .overlay,
-            .lightbox,
-            .search-row {
-                backdrop-filter: none;
-                -webkit-backdrop-filter: none;
-            }
-        }
-
-        .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            padding: 24px 30px;
-            border-radius: 28px;
-            background: var(--mica-tint);
-            border: 1px solid var(--mica-border);
-            box-shadow: var(--shadow-sm);
-            backdrop-filter: blur(26px) saturate(150%);
-        }
-
-        .header-main {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .brand {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            color: var(--primary-color);
-        }
-
-        .header-note {
-            margin: 0;
-            font-size: 0.96rem;
-            color: var(--text-muted);
-        }
-
-        .ghost-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 22px;
-            border-radius: 18px;
-            font-weight: 600;
-            color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.12);
-            border: 1px solid rgba(102, 126, 234, 0.32);
-            box-shadow: var(--shadow-sm);
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
-            backdrop-filter: blur(18px) saturate(135%);
-        }
-
-        .ghost-link:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            border-color: rgba(102, 126, 234, 0.48);
         }
 
         .posts-panel {
@@ -313,555 +26,159 @@
             border: 1px solid var(--mica-border);
             box-shadow: var(--shadow-md);
             backdrop-filter: blur(30px) saturate(150%);
+            min-height: 60vh;
         }
 
-        .overlay-heading {
+        .posts-head {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1 1 auto;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 18px;
+            align-items: center;
         }
 
-        .overlay-nav {
+        .posts-head h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .posts-head p {
+            margin: 4px 0 0;
+            color: var(--text-secondary);
+        }
+
+        .search-row {
             display: flex;
             align-items: center;
             gap: 12px;
-        }
-
-        .overlay-nav button {
-            padding: 10px 16px;
-            border-radius: 14px;
-            border: 1px solid rgba(102, 126, 234, 0.32);
-            background: rgba(102, 126, 234, 0.14);
-            color: var(--primary-color);
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+            padding: 12px 16px;
+            border-radius: 18px;
+            border: 1px solid var(--mica-border);
+            background: rgba(255, 255, 255, 0.75);
+            box-shadow: var(--shadow-sm);
+            min-width: 240px;
         }
 
         [data-theme="dark"] .search-row {
             background: rgba(17, 27, 47, 0.82);
         }
 
-        .search-row i {
-            color: var(--text-muted);
-        }
-
         .search-row input {
-            flex: 1;
-            font-size: 1rem;
             border: none;
             background: transparent;
             color: inherit;
             outline: none;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .post-count {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.92rem;
         }
 
         .post-grid {
             display: grid;
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
         }
 
         .post-card {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            padding: clamp(20px, 2.6vw, 28px);
-            border-radius: 26px;
-            background: rgba(255, 255, 255, 0.9);
+            padding: 22px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.92);
             border: 1px solid var(--mica-border);
             box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             cursor: pointer;
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
-            transform-origin: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .post-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
-            border-color: rgba(102, 126, 234, 0.42);
         }
 
         [data-theme="dark"] .post-card {
-            background: rgba(17, 27, 47, 0.86);
+            background: rgba(17, 27, 47, 0.85);
         }
 
-        .post-title-row {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .post-title {
+        .post-card h2 {
             margin: 0;
-            font-size: clamp(1.05rem, 2.4vw, 1.32rem);
-            font-weight: 700;
+            font-size: 1.1rem;
             color: var(--primary-color);
         }
 
-        .post-time {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.94rem;
+        .post-card time {
+            font-size: 0.9rem;
             color: var(--text-muted);
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
-        .post-time time {
-            font-variant-numeric: tabular-nums;
-        }
-
-        .post-summary {
-            margin: 0;
-            color: var(--text-secondary);
-            line-height: 1.65;
-        }
-
-        .post-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px 18px;
-            color: var(--text-muted);
-            font-size: 0.88rem;
-        }
-
-        .pagination {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding-top: 6px;
-            margin-top: 6px;
-        }
-
-        .pagination-info {
-            font-size: 0.92rem;
-            color: var(--text-muted);
-        }
-
-        .pagination-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .pagination button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 9px 16px;
-            border-radius: 16px;
-            border: 1px solid rgba(102, 126, 234, 0.32);
-            background: rgba(102, 126, 234, 0.14);
-            color: var(--primary-color);
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-        }
-
-        .pagination button:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .pagination button:not(:disabled):hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px 0;
+            padding: 32px 0;
             color: var(--text-muted);
-            font-size: 1rem;
         }
 
-        .overlay {
-            --overlay-pad: clamp(30px, 4vw, 80px);
-            position: fixed;
-            inset: 0;
-            display: grid;
-            place-items: center;
-            background: var(--overlay-backdrop);
-            backdrop-filter: blur(12px);
-            padding: var(--overlay-pad);
-            padding-top: calc(var(--overlay-pad) + var(--safe-top));
-            padding-bottom: calc(var(--overlay-pad) + var(--safe-bottom));
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity var(--transition-medium);
-            z-index: 1200;
-        }
-
-        .overlay[aria-hidden="false"] {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .overlay-dialog {
-            width: min(900px, 94vw);
-            max-height: min(92vh, 960px);
-            background: var(--mica-tint-strong);
-            border-radius: 32px;
+        .post-content {
+            padding: 28px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.96);
             border: 1px solid var(--mica-border);
-            box-shadow: 0 40px 95px rgba(15, 23, 42, 0.45);
-            display: grid;
-            grid-template-rows: auto 1fr;
-            overflow: hidden;
-            transform-origin: center;
-            transform: scale(0.96);
-            opacity: 0;
-            transition: transform var(--transition-medium), opacity var(--transition-medium);
-        }
-
-        .overlay[aria-hidden="false"] .overlay-dialog {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        .overlay-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: clamp(22px, 2.4vw, 28px);
-            border-bottom: 1px solid var(--mica-border);
-        }
-
-        .overlay-heading {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1 1 auto;
-        }
-
-        .overlay-nav {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .overlay-nav button {
-            padding: 10px 16px;
-            border-radius: 14px;
-            border: 1px solid rgba(102, 126, 234, 0.32);
-            background: rgba(102, 126, 234, 0.14);
-            color: var(--primary-color);
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-        }
-
-        .overlay-nav button:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .overlay-nav button:not(:disabled):hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .overlay-title {
-            margin: 0;
-            font-size: 1.24rem;
-            line-height: 1.5;
-        }
-
-        .overlay-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            font-size: 0.88rem;
-            color: var(--text-muted);
-        }
-
-        .overlay-close {
-            font-size: 1.2rem;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: color var(--transition-fast);
-        }
-
-        .overlay-close:hover {
-            color: var(--primary-color);
-        }
-
-        .overlay-body {
-            padding: clamp(22px, 2.6vw, 30px);
-            overflow-y: auto;
-        }
-
-        .overlay-body.fade-out {
-            opacity: 0;
-            transform: translateY(6px);
-            transition: opacity var(--transition-fast), transform var(--transition-fast);
-        }
-
-        .overlay-body.fade-in {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        #overlayContent img {
-            max-width: 100%;
-            border-radius: 18px;
-            cursor: zoom-in;
-            transition: transform var(--transition-fast);
-        }
-
-        #overlayContent img:hover {
-            transform: scale(1.01);
-        }
-
-        #overlayContent pre {
-            padding: 16px;
-            border-radius: 18px;
-            overflow-x: auto;
-        }
-
-        .control-btn {
-            position: fixed;
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--mica-border);
-            background: var(--mica-tint);
-            color: var(--text-primary);
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
-            z-index: 1400;
-            backdrop-filter: blur(18px) saturate(140%);
-            touch-action: manipulation;
-        }
-
-        .control-btn:hover {
-            transform: translateY(-3px);
             box-shadow: var(--shadow-md);
-            border-color: rgba(102, 126, 234, 0.48);
         }
 
-        .theme-toggle {
-            top: calc(28px + var(--safe-top));
-            right: calc(28px + var(--safe-right));
+        [data-theme="dark"] .post-content {
+            background: rgba(17, 27, 47, 0.88);
         }
 
-        .language-toggle {
-            top: calc(28px + var(--safe-top));
-            left: calc(28px + var(--safe-left));
+        .post-content h2 {
+            margin-top: 0;
         }
 
-        .language-toggle span {
-            font-size: 0.96rem;
-            font-weight: 600;
+        .post-meta {
+            margin: 6px 0 0;
+            color: var(--text-muted);
+            font-size: 0.92rem;
         }
 
-        .lightbox {
-            position: fixed;
-            inset: 0;
-            display: grid;
-            place-items: center;
-            background: rgba(0, 0, 0, 0.72);
-            padding: clamp(16px, 5vw, 80px);
-            padding-top: calc(clamp(16px, 5vw, 80px) + var(--safe-top));
-            padding-bottom: calc(clamp(16px, 5vw, 80px) + var(--safe-bottom));
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity var(--transition-medium);
-            z-index: 1600;
-        }
-
-        .lightbox.is-visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .lightbox figure {
-            margin: 0;
-            max-width: min(1024px, 94vw);
-            max-height: min(94vh, 960px);
-            display: grid;
-            gap: 12px;
-            cursor: grab;
-            touch-action: none;
-        }
-
-        .lightbox img {
+        #blogContent img {
             max-width: 100%;
-            max-height: 100%;
-            border-radius: 20px;
-            user-select: none;
-            touch-action: none;
-            transition: transform 0.22s ease;
-            will-change: transform;
+            border-radius: 16px;
         }
 
-        .lightbox figcaption {
+        #blogContent pre {
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 16px;
+            overflow-x: auto;
             color: #f8fafc;
-            text-align: center;
-            font-size: 0.95rem;
         }
 
-        .lightbox button {
-            position: absolute;
-            top: clamp(16px, 3vw, 32px);
-            right: clamp(16px, 3vw, 32px);
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(15, 23, 42, 0.72);
-            color: #f8fafc;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform var(--transition-fast);
+        .post-actions {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 18px;
         }
 
-        .lightbox button:hover {
-            transform: scale(1.05);
-        }
-
-        @media (max-width: 1080px) {
-            body {
-                padding: calc(36px + var(--safe-top)) calc(18px + var(--safe-right)) calc(64px + var(--safe-bottom)) calc(18px + var(--safe-left));
-            }
-
-            .posts-panel {
-                padding: 30px 28px;
-            }
-
-            .overlay-dialog {
-                width: min(760px, 96vw);
-            }
+        .post-actions .ghost-link {
+            gap: 8px;
         }
 
         @media (max-width: 720px) {
             body {
-                padding: calc(30px + var(--safe-top)) calc(14px + var(--safe-right)) calc(56px + var(--safe-bottom)) calc(14px + var(--safe-left));
-            }
-
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 14px;
-                padding: 22px 24px;
+                padding: 28px 16px 56px;
             }
 
             .posts-panel {
-                padding: 26px 22px;
+                padding: 24px;
             }
 
-            .overlay-dialog {
-                width: 100%;
-                max-height: calc(100vh - 32px);
-                border-radius: 22px;
-            }
-
-            .overlay-nav button span {
-                display: none;
-            }
-
-            .control-btn {
-                width: 44px;
-                height: 44px;
-                border-radius: 14px;
-            }
-
-            .theme-toggle {
-                top: 18px;
-                right: 18px;
-            }
-
-            .language-toggle {
-                top: 18px;
-                left: 18px;
-            }
-
-            .pagination {
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .pagination-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .pagination button {
-                flex: 1 1 auto;
-            }
-        }
-
-        @media (max-width: 520px) {
-            .ghost-link {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .posts-panel {
-                padding: 24px 18px;
-            }
-
-            .post-title {
-                font-size: 1.08rem;
-            }
-
-            .search-row {
-                padding: 12px 14px;
-            }
-
-            .pagination-actions {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .pagination button {
-                width: 100%;
-            }
-
-            .lightbox figure {
-                max-width: 100%;
-                gap: 8px;
-            }
-
-            .lightbox button {
-                width: 44px;
-                height: 44px;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
+            .post-card {
+                padding: 18px;
             }
         }
     </style>
@@ -871,69 +188,49 @@
     <div class="page-shell">
         <header class="page-header hover-surface">
             <div class="header-main">
-                <a class="brand" href="index.html">ff66ccff</a>
+                <span class="brand">ff66ccff</span>
                 <p class="header-note" id="headerNote">记录代码、音乐与故事，分享我的学习旅程。</p>
             </div>
             <a class="ghost-link hover-surface" href="index.html" id="backHomeLink">
-                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-house"></i>
                 <span id="backHomeLabel">返回首页</span>
             </a>
         </header>
 
         <main class="posts-panel hover-surface">
-            <div class="panel-header">
+            <div class="posts-head">
                 <div>
                     <h1 id="blogTitle">博客</h1>
                     <p id="blogSubtitle">记录代码、音乐和故事</p>
                 </div>
+                <label class="search-row hover-surface" for="searchInput">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="searchInput" placeholder="搜索文章标题" autocomplete="off">
+                </label>
             </div>
-            <label class="search-row hover-surface" for="searchInput">
-                <i class="fas fa-search" aria-hidden="true"></i>
-                <input id="searchInput" type="search" placeholder="搜索文章标题或内容" aria-label="搜索文章">
-            </label>
-            <section id="postList" class="post-grid" aria-live="polite"></section>
-            <nav id="paginationControls" class="pagination" aria-label="文章分页" hidden>
-                <div class="pagination-info" id="paginationInfo"></div>
-                <div class="pagination-actions">
-                    <button id="paginationPrev" type="button">
-                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
-                        <span id="paginationPrevLabel">上一页</span>
-                    </button>
-                    <button id="paginationNext" type="button">
-                        <span id="paginationNextLabel">下一页</span>
-                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </nav>
-            <div id="emptyState" class="empty-state" hidden>文章加载中，请稍候...</div>
-        </main>
-    </div>
+            <p class="post-count" id="postStats"></p>
 
-    <div id="articleOverlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
-        <div class="overlay-dialog">
-            <header class="overlay-header">
-                <div class="overlay-heading">
-                    <h2 id="overlayTitle" class="overlay-title">文章标题</h2>
-                    <div id="overlayMeta" class="overlay-meta"></div>
-                </div>
-                <div class="overlay-nav">
-                    <button id="prevPost" type="button">
-                        <i class="fas fa-chevron-left"></i>
-                        <span id="prevLabel">上一篇</span>
-                    </button>
-                    <button id="nextPost" type="button">
-                        <span id="nextLabel">下一篇</span>
-                        <i class="fas fa-chevron-right"></i>
+            <section id="listSection">
+                <div id="blogList" class="post-grid" aria-live="polite"></div>
+                <p id="emptyState" class="empty-state" hidden>文章加载中，请稍候...</p>
+            </section>
+
+            <section id="articleSection" hidden>
+                <div class="post-actions">
+                    <button id="backToList" class="ghost-link" type="button">
+                        <i class="fas fa-arrow-left"></i>
+                        <span id="backToListLabel">返回列表</span>
                     </button>
                 </div>
-                <button id="overlayClose" class="overlay-close" type="button" aria-label="关闭">
-                    <i class="fas fa-times" aria-hidden="true"></i>
-                </button>
-            </header>
-            <div id="overlayBody" class="overlay-body">
-                <article id="overlayContent"></article>
-            </div>
-        </div>
+                <article class="post-content hover-surface">
+                    <header>
+                        <h2 id="articleTitle">文章标题</h2>
+                        <p id="articleMeta" class="post-meta"></p>
+                    </header>
+                    <div id="blogContent"></div>
+                </article>
+            </section>
+        </main>
     </div>
 
     <button class="control-btn theme-toggle" id="themeToggle" type="button" title="切换主题" aria-label="切换主题">
@@ -944,1252 +241,7 @@
         <span id="languageBadge">中</span>
     </button>
 
-    <div id="imageLightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="图片预览">
-        <figure>
-            <img id="lightboxImage" alt="">
-            <figcaption id="lightboxCaption" hidden></figcaption>
-        </figure>
-        <button id="lightboxClose" type="button" aria-label="关闭图片">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-
-    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const POSTS_DIR = 'posts';
-            const METADATA_URL = `${POSTS_DIR}/metadata.json`;
-            const CDN_BASE = 'https://cdn.jsdelivr.net/gh/ff66ccff/ff66ccff.github.io@main';
-            const CDN_METADATA_URL = `${CDN_BASE}/${METADATA_URL}`;
-            const CDN_VERSION = (typeof window.CDN_VERSION_OVERRIDE !== 'undefined' && window.CDN_VERSION_OVERRIDE) || (new URLSearchParams(location.search).get('cdn_v')) || String(Date.now());
-
-            const CACHE_STRATEGIES = {
-                manifest: { cache: 'reload', header: 'public, max-age=300' },
-                content: { cache: 'default', header: 'public, max-age=3600' },
-                static: { cache: 'force-cache', header: 'public, max-age=86400' }
-            };
-
-            function fetchWithCache(url, type = 'content') {
-                const opts = CACHE_STRATEGIES[type] || CACHE_STRATEGIES.content;
-                const headers = { 'Cache-Control': opts.header };
-                try {
-                    const parsed = new URL(url, location.href);
-                    if (parsed.hostname && parsed.hostname.includes('cdn.jsdelivr.net') && !parsed.searchParams.has('v')) {
-                        parsed.searchParams.set('v', CDN_VERSION);
-                        url = parsed.toString();
-                    }
-                } catch (error) {
-                    // ignore URL parsing errors
-                }
-                return fetch(url, { cache: opts.cache, headers });
-            }
-
-            const elements = {
-                headerNote: document.getElementById('headerNote'),
-                backHomeLabel: document.getElementById('backHomeLabel'),
-                blogTitle: document.getElementById('blogTitle'),
-                blogSubtitle: document.getElementById('blogSubtitle'),
-                search: document.getElementById('searchInput'),
-                postList: document.getElementById('postList'),
-                emptyState: document.getElementById('emptyState'),
-                pagination: document.getElementById('paginationControls'),
-                paginationInfo: document.getElementById('paginationInfo'),
-                paginationPrev: document.getElementById('paginationPrev'),
-                paginationNext: document.getElementById('paginationNext'),
-                paginationPrevLabel: document.getElementById('paginationPrevLabel'),
-                paginationNextLabel: document.getElementById('paginationNextLabel'),
-                overlay: document.getElementById('articleOverlay'),
-                overlayTitle: document.getElementById('overlayTitle'),
-                overlayMeta: document.getElementById('overlayMeta'),
-                overlayContent: document.getElementById('overlayContent'),
-                overlayBody: document.getElementById('overlayBody'),
-                overlayClose: document.getElementById('overlayClose'),
-                prevPost: document.getElementById('prevPost'),
-                nextPost: document.getElementById('nextPost'),
-                themeToggle: document.getElementById('themeToggle'),
-                languageToggle: document.getElementById('languageToggle'),
-                languageBadge: document.getElementById('languageBadge'),
-                prevLabel: document.getElementById('prevLabel'),
-                nextLabel: document.getElementById('nextLabel'),
-                lightbox: document.getElementById('imageLightbox'),
-                lightboxFigure: document.querySelector('#imageLightbox figure'),
-                lightboxImage: document.getElementById('lightboxImage'),
-                lightboxCaption: document.getElementById('lightboxCaption'),
-                lightboxClose: document.getElementById('lightboxClose')
-            };
-
-            const i18n = {
-                zh: {
-                    pageTitle: '博客 - ff66ccff',
-                    headerNote: '记录代码、音乐与故事，分享我的学习旅程。',
-                    blogTitle: '博客',
-                    blogSubtitle: '记录代码、音乐和故事',
-                    searchPlaceholder: '搜索文章标题或内容',
-                    loading: '文章加载中，请稍候...',
-                    empty: '暂时没有符合条件的文章，换个关键词试试？',
-                    error: '文章加载失败，请稍后再试。',
-                    published: '发布时间',
-                    updated: '最后修改时间',
-                    backHome: '返回首页',
-                    close: '关闭',
-                    langToggle: '中',
-                    themeTitle: '切换主题',
-                    langTitle: '切换语言',
-                    prev: '上一篇',
-                    next: '下一篇',
-                    lightboxLabel: '图片预览',
-                    lightboxClose: '关闭图片',
-                    paginationAria: '文章分页',
-                    paginationPrev: '上一页',
-                    paginationNext: '下一页'
-                },
-                en: {
-                    pageTitle: 'Blog - ff66ccff',
-                    headerNote: 'Notes on code, music, and stories from my learning journey.',
-                    blogTitle: 'Blog',
-                    blogSubtitle: 'Notes on code, music, and stories',
-                    searchPlaceholder: 'Search posts by title or content',
-                    loading: 'Loading posts, please wait...',
-                    empty: 'No matching posts. Try another keyword?',
-                    error: 'Failed to load posts. Please try again later.',
-                    published: 'Published',
-                    updated: 'Last updated',
-                    backHome: 'Back Home',
-                    close: 'Close',
-                    langToggle: 'EN',
-                    themeTitle: 'Toggle Theme',
-                    langTitle: 'Switch Language',
-                    prev: 'Previous',
-                    next: 'Next',
-                    lightboxLabel: 'Image preview',
-                    lightboxClose: 'Close image',
-                    paginationAria: 'Posts pagination',
-                    paginationPrev: 'Previous Page',
-                    paginationNext: 'Next Page'
-                }
-            };
-
-            const state = {
-                posts: [],
-                filtered: [],
-                lang: 'zh',
-                current: null,
-                isAnimating: false,
-                page: 1,
-                pageSize: 6
-            };
-
-            const hoverSurfaces = new WeakSet();
-            let lightboxZoomController = null;
-            const hoverMedia = window.matchMedia ? window.matchMedia('(hover: hover) and (pointer: fine)') : null;
-            let supportsHover = hoverMedia ? hoverMedia.matches : !('ontouchstart' in window);
-            if (supportsHover) {
-                document.documentElement.classList.remove('no-hover');
-            } else {
-                document.documentElement.classList.add('no-hover');
-            }
-            if (hoverMedia && typeof hoverMedia.addEventListener === 'function') {
-                hoverMedia.addEventListener('change', (event) => {
-                    supportsHover = event.matches;
-                    if (supportsHover) {
-                        document.documentElement.classList.remove('no-hover');
-                        refreshHoverSurfaces();
-                        if (lightboxZoomController) {
-                            lightboxZoomController.refreshCursor();
-                        }
-                    } else {
-                        document.documentElement.classList.add('no-hover');
-                        document.querySelectorAll('.hover-surface.is-active').forEach((surface) => surface.classList.remove('is-active'));
-                        if (lightboxZoomController) {
-                            lightboxZoomController.refreshCursor();
-                        }
-                    }
-                });
-            } else if (hoverMedia && typeof hoverMedia.addListener === 'function') {
-                hoverMedia.addListener((event) => {
-                    supportsHover = event.matches;
-                    if (supportsHover) {
-                        document.documentElement.classList.remove('no-hover');
-                        refreshHoverSurfaces();
-                        if (lightboxZoomController) {
-                            lightboxZoomController.refreshCursor();
-                        }
-                    } else {
-                        document.documentElement.classList.add('no-hover');
-                        document.querySelectorAll('.hover-surface.is-active').forEach((surface) => surface.classList.remove('is-active'));
-                        if (lightboxZoomController) {
-                            lightboxZoomController.refreshCursor();
-                        }
-                    }
-                });
-            }
-
-
-            function bindHoverSurface(node) {
-                if (!node || hoverSurfaces.has(node)) {
-                    return;
-                }
-                if (!supportsHover) {
-                    return;
-                }
-                const activate = () => node.classList.add('is-active');
-                const deactivate = () => node.classList.remove('is-active');
-                node.addEventListener('pointerenter', (event) => {
-                    const rect = node.getBoundingClientRect();
-                    node.style.setProperty('--pointer-x', `${event.clientX - rect.left}px`);
-                    node.style.setProperty('--pointer-y', `${event.clientY - rect.top}px`);
-                    activate();
-                });
-                node.addEventListener('pointermove', (event) => {
-                    const rect = node.getBoundingClientRect();
-                    node.style.setProperty('--pointer-x', `${event.clientX - rect.left}px`);
-                    node.style.setProperty('--pointer-y', `${event.clientY - rect.top}px`);
-                });
-                node.addEventListener('pointerleave', deactivate);
-                node.addEventListener('pointercancel', deactivate);
-                node.addEventListener('touchstart', (event) => {
-                    const touch = event.touches && event.touches[0];
-                    if (!touch) {
-                        return;
-                    }
-                    const rect = node.getBoundingClientRect();
-                    node.style.setProperty('--pointer-x', `${touch.clientX - rect.left}px`);
-                    node.style.setProperty('--pointer-y', `${touch.clientY - rect.top}px`);
-                    activate();
-                }, { passive: true });
-                node.addEventListener('touchend', deactivate);
-                node.addEventListener('touchcancel', deactivate);
-                hoverSurfaces.add(node);
-            }
-
-            function refreshHoverSurfaces() {
-                document.querySelectorAll('.hover-surface').forEach(bindHoverSurface);
-            }
-
-            function clamp(value, min, max) {
-                return Math.min(Math.max(value, min), max);
-            }
-
-            class LightboxZoomController {
-                constructor(image, container, canHover) {
-                    this.image = image;
-                    this.container = container;
-                    this.canHover = typeof canHover === 'function' ? canHover : (() => true);
-                    this.enabled = false;
-                    this.scale = 1;
-                    this.minScale = 0.5;
-                    this.maxScale = 8;
-                    this.doubleTapScale = 2;
-                    this.translation = { x: 0, y: 0 };
-                    this.startOffset = { x: 0, y: 0 };
-                    this.startScale = 1;
-                    this.initialPinchDistance = 0;
-                    this.lastCenter = null;
-                    this.activePointers = new Map();
-                    this.dragPointerId = null;
-                    this.lastTapTime = 0;
-                    this.doubleTapDelay = 280;
-                    this.isDragging = false;
-                    this.wheelTimeout = null;
-                    this.onPointerDown = (event) => this.handlePointerDown(event);
-                    this.onPointerMove = (event) => this.handlePointerMove(event);
-                    this.onPointerUp = (event) => this.handlePointerUp(event);
-                    this.onPointerCancel = (event) => this.handlePointerCancel(event);
-                    this.onDoubleClick = (event) => this.handleDoubleClick(event);
-                    this.onWheel = (event) => this.handleWheel(event);
-                    this.onResize = () => this.reset({ instant: true });
-                    this.bindEvents();
-                    this.refreshCursor();
-                }
-
-                bindEvents() {
-                    if (!this.container || !this.image) {
-                        return;
-                    }
-                    this.container.addEventListener('pointerdown', this.onPointerDown);
-                    this.container.addEventListener('pointermove', this.onPointerMove);
-                    this.container.addEventListener('pointerup', this.onPointerUp);
-                    this.container.addEventListener('pointercancel', this.onPointerCancel);
-                    this.container.addEventListener('dblclick', this.onDoubleClick);
-                    this.image.addEventListener('wheel', this.onWheel, { passive: false });
-                    window.addEventListener('resize', this.onResize);
-                }
-
-                handlePointerDown(event) {
-                    if (!this.enabled || (event.pointerType === 'mouse' && event.button !== 0)) {
-                        return;
-                    }
-                    event.preventDefault();
-                    this.image.style.transition = 'none';
-                    this.activePointers.set(event.pointerId, {
-                        id: event.pointerId,
-                        x: event.clientX,
-                        y: event.clientY,
-                        pointerType: event.pointerType
-                    });
-                    if (typeof this.container.setPointerCapture === 'function') {
-                        try {
-                            this.container.setPointerCapture(event.pointerId);
-                        } catch (error) {
-                            // ignore pointer capture errors
-                        }
-                    }
-                    if (this.activePointers.size === 1) {
-                        this.dragPointerId = event.pointerId;
-                        this.startOffset.x = event.clientX - this.translation.x;
-                        this.startOffset.y = event.clientY - this.translation.y;
-                        this.isDragging = true;
-                        this.refreshCursor();
-                    } else if (this.activePointers.size === 2) {
-                        this.startPinch();
-                    }
-                }
-
-                handlePointerMove(event) {
-                    if (!this.enabled) {
-                        return;
-                    }
-                    const pointer = this.activePointers.get(event.pointerId);
-                    if (pointer) {
-                        pointer.x = event.clientX;
-                        pointer.y = event.clientY;
-                    }
-                    if (this.activePointers.size >= 2) {
-                        this.handlePinchGesture();
-                        return;
-                    }
-                    if (!this.dragPointerId || event.pointerId !== this.dragPointerId) {
-                        return;
-                    }
-                    const limits = this.getLimits();
-                    const rawX = event.clientX - this.startOffset.x;
-                    const rawY = event.clientY - this.startOffset.y;
-                    this.translation.x = clamp(rawX, -limits.limitX, limits.limitX);
-                    this.translation.y = clamp(rawY, -limits.limitY, limits.limitY);
-                    this.applyTransform();
-                }
-
-                handlePointerUp(event) {
-                    if (!this.enabled) {
-                        this.releasePointer(event.pointerId);
-                        return;
-                    }
-                    this.releasePointer(event.pointerId);
-                    if (this.activePointers.size === 1) {
-                        const [remaining] = this.activePointers.values();
-                        if (remaining) {
-                            this.dragPointerId = remaining.id;
-                            this.startOffset.x = remaining.x - this.translation.x;
-                            this.startOffset.y = remaining.y - this.translation.y;
-                            this.isDragging = true;
-                        }
-                    } else if (!this.activePointers.size) {
-                        this.dragPointerId = null;
-                        this.isDragging = false;
-                        this.refreshCursor();
-                    }
-                    if (event.pointerType === 'touch' && !this.activePointers.size) {
-                        const now = performance.now();
-                        if (now - this.lastTapTime < this.doubleTapDelay) {
-                            this.lastTapTime = 0;
-                            this.handleDoubleTap(event);
-                        } else {
-                            this.lastTapTime = now;
-                        }
-                    }
-                }
-
-                handlePointerCancel(event) {
-                    this.releasePointer(event.pointerId);
-                    if (!this.activePointers.size) {
-                        this.dragPointerId = null;
-                        this.isDragging = false;
-                        this.refreshCursor();
-                    }
-                }
-
-                handleDoubleClick(event) {
-                    if (!this.enabled) {
-                        return;
-                    }
-                    this.handleDoubleTap(event);
-                }
-
-                handleWheel(event) {
-                    if (!this.enabled) {
-                        return;
-                    }
-                    event.preventDefault();
-                    const factor = event.deltaY > 0 ? 0.9 : 1.1;
-                    const nextScale = clamp(this.scale * factor, this.minScale, this.maxScale);
-                    if (nextScale === this.scale) {
-                        return;
-                    }
-                    this.updateTransformOriginFromPoint(event.clientX, event.clientY);
-                    this.scale = nextScale;
-                    this.clampTranslation();
-                    this.image.style.transition = 'transform 0.18s ease';
-                    this.applyTransform();
-                    if (this.wheelTimeout) {
-                        clearTimeout(this.wheelTimeout);
-                    }
-                    this.wheelTimeout = setTimeout(() => {
-                        if (this.image) {
-                            this.image.style.transition = '';
-                        }
-                        this.wheelTimeout = null;
-                    }, 180);
-                }
-
-                handleDoubleTap(event) {
-                    const anchorX = event?.clientX ?? window.innerWidth / 2;
-                    const anchorY = event?.clientY ?? window.innerHeight / 2;
-                    const shouldReset = this.scale > 1.05;
-                    const targetScale = shouldReset ? 1 : this.doubleTapScale;
-                    this.zoomTo(targetScale, anchorX, anchorY);
-                }
-
-                zoomTo(scaleValue, anchorX, anchorY) {
-                    const nextScale = clamp(scaleValue, this.minScale, this.maxScale);
-                    this.updateTransformOriginFromPoint(anchorX, anchorY);
-                    if (nextScale <= 1) {
-                        this.translation.x = 0;
-                        this.translation.y = 0;
-                    }
-                    this.scale = nextScale;
-                    this.clampTranslation();
-                    this.image.style.transition = 'transform 0.22s ease';
-                    this.applyTransform();
-                    setTimeout(() => {
-                        if (this.image) {
-                            this.image.style.transition = '';
-                        }
-                    }, 220);
-                }
-
-                startPinch() {
-                    if (this.activePointers.size < 2) {
-                        return;
-                    }
-                    const [first, second] = this.getPrimaryPointers();
-                    this.dragPointerId = null;
-                    this.isDragging = false;
-                    const distance = this.distanceBetween(first, second) || 0.0001;
-                    this.initialPinchDistance = distance;
-                    this.startScale = this.scale;
-                    this.lastCenter = this.midPoint(first, second);
-                    this.updateTransformOriginFromPoint(this.lastCenter.x, this.lastCenter.y);
-                }
-
-                handlePinchGesture() {
-                    if (this.activePointers.size < 2) {
-                        return;
-                    }
-                    const [first, second] = this.getPrimaryPointers();
-                    const center = this.midPoint(first, second);
-                    if (this.lastCenter) {
-                        this.translation.x += center.x - this.lastCenter.x;
-                        this.translation.y += center.y - this.lastCenter.y;
-                    }
-                    const distance = this.distanceBetween(first, second) || 0.0001;
-                    if (!this.initialPinchDistance) {
-                        this.initialPinchDistance = distance;
-                    }
-                    const scaleFactor = distance / this.initialPinchDistance;
-                    const nextScale = clamp(this.startScale * scaleFactor, this.minScale, this.maxScale);
-                    this.scale = nextScale;
-                    this.updateTransformOriginFromPoint(center.x, center.y);
-                    this.clampTranslation();
-                    this.applyTransform();
-                    this.lastCenter = center;
-                }
-
-                releasePointer(pointerId) {
-                    this.activePointers.delete(pointerId);
-                    if (typeof this.container.releasePointerCapture === 'function') {
-                        try {
-                            const canCheck = typeof this.container.hasPointerCapture === 'function';
-                            if (!canCheck || this.container.hasPointerCapture(pointerId)) {
-                                this.container.releasePointerCapture(pointerId);
-                            }
-                        } catch (error) {
-                            // ignore pointer capture errors
-                        }
-                    }
-                    if (this.activePointers.size < 2) {
-                        this.initialPinchDistance = 0;
-                        this.startScale = this.scale;
-                        this.lastCenter = null;
-                    }
-                }
-
-                getPrimaryPointers() {
-                    return Array.from(this.activePointers.values()).slice(0, 2);
-                }
-
-                distanceBetween(a, b) {
-                    return Math.hypot(a.x - b.x, a.y - b.y);
-                }
-
-                midPoint(a, b) {
-                    return {
-                        x: (a.x + b.x) / 2,
-                        y: (a.y + b.y) / 2
-                    };
-                }
-
-                getLimits(scale = this.scale) {
-                    const frameWidth = this.container?.clientWidth || window.innerWidth;
-                    const frameHeight = this.container?.clientHeight || window.innerHeight;
-                    const halfWidth = frameWidth / 2;
-                    const halfHeight = frameHeight / 2;
-                    if (scale <= 1) {
-                        return {
-                            limitX: halfWidth * scale,
-                            limitY: halfHeight * scale
-                        };
-                    }
-                    const extraX = frameWidth * (scale - 1);
-                    const extraY = frameHeight * (scale - 1);
-                    return {
-                        limitX: halfWidth + extraX,
-                        limitY: halfHeight + extraY
-                    };
-                }
-
-                clampTranslation() {
-                    const limits = this.getLimits();
-                    this.translation.x = clamp(this.translation.x, -limits.limitX, limits.limitX);
-                    this.translation.y = clamp(this.translation.y, -limits.limitY, limits.limitY);
-                }
-
-                updateTransformOriginFromPoint(clientX, clientY) {
-                    if (!this.image) {
-                        return;
-                    }
-                    const rect = this.image.getBoundingClientRect();
-                    if (!rect.width || !rect.height) {
-                        return;
-                    }
-                    const originX = ((clientX - rect.left) / rect.width) * 100;
-                    const originY = ((clientY - rect.top) / rect.height) * 100;
-                    this.image.style.transformOrigin = `${clamp(originX, 0, 100)}% ${clamp(originY, 0, 100)}%`;
-                }
-
-                applyTransform() {
-                    if (!this.image) {
-                        return;
-                    }
-                    this.image.style.transform = `translate3d(${this.translation.x}px, ${this.translation.y}px, 0) scale(${this.scale})`;
-                }
-
-                refreshCursor() {
-                    if (!this.container) {
-                        return;
-                    }
-                    if (!this.canHover()) {
-                        this.container.style.cursor = 'default';
-                        return;
-                    }
-                    this.container.style.cursor = this.isDragging ? 'grabbing' : 'grab';
-                }
-
-                reset(options = {}) {
-                    const { instant = false } = options;
-                    this.scale = 1;
-                    this.translation.x = 0;
-                    this.translation.y = 0;
-                    this.startScale = 1;
-                    this.initialPinchDistance = 0;
-                    this.lastCenter = null;
-                    this.activePointers.clear();
-                    this.dragPointerId = null;
-                    this.isDragging = false;
-                    this.image.style.transformOrigin = '50% 50%';
-                    if (instant) {
-                        this.image.style.transition = 'none';
-                        this.applyTransform();
-                        requestAnimationFrame(() => {
-                            if (this.image) {
-                                this.image.style.transition = '';
-                            }
-                        });
-                    } else {
-                        this.image.style.transition = 'transform 0.22s ease';
-                        this.applyTransform();
-                        setTimeout(() => {
-                            if (this.image) {
-                                this.image.style.transition = '';
-                            }
-                        }, 220);
-                    }
-                    this.refreshCursor();
-                }
-
-                enable() {
-                    this.enabled = true;
-                    this.reset({ instant: true });
-                }
-
-                disable() {
-                    this.enabled = false;
-                    this.reset({ instant: true });
-                }
-            }
-
-            function formatDateIso(value) {
-                if (!value) {
-                    return '';
-                }
-                const date = new Date(value);
-                return Number.isNaN(date.getTime()) ? value : date.toISOString();
-            }
-
-            function formatDateDisplay(value) {
-                if (!value) {
-                    return '';
-                }
-                try {
-                    const date = new Date(value);
-                    if (Number.isNaN(date.getTime())) {
-                        return value;
-                    }
-                    return new Intl.DateTimeFormat(state.lang === 'zh' ? 'zh-CN' : 'en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }).format(date);
-                } catch (error) {
-                    return value;
-                }
-            }
-
-            function extractSummary(markdown) {
-                if (!markdown) {
-                    return '';
-                }
-                const cleaned = markdown
-                    .replace(/```[\s\S]*?```/g, '')
-                    .replace(/`[^`]+`/g, '')
-                    .replace(/<[^>]+>/g, '')
-                    .split('\n')
-                    .map((line) => line.trim())
-                    .filter(Boolean);
-                if (!cleaned.length) {
-                    return '';
-                }
-                const first = cleaned[0];
-                return first.length > 160 ? `${first.slice(0, 160)}...` : first;
-            }
-
-            function buildMetaLine(post, options = {}) {
-                const { includePublished = true } = options;
-                const dict = i18n[state.lang];
-                const parts = [];
-                if (includePublished && post.createdAt) {
-                    parts.push(`${dict.published}: ${formatDateDisplay(post.createdAt)}`);
-                }
-                if (post.updatedAt && post.updatedAt !== post.createdAt) {
-                    parts.push(`${dict.updated}: ${formatDateDisplay(post.updatedAt)}`);
-                }
-                return parts.join(' · ');
-            }
-
-            function updateOverlayMeta(post) {
-                elements.overlayMeta.textContent = buildMetaLine(post, { includePublished: true });
-            }
-
-            function clearEmptyState() {
-                elements.emptyState.hidden = true;
-                elements.emptyState.textContent = '';
-                delete elements.emptyState.dataset.state;
-            }
-
-            function updateEmptyState(key) {
-                const dict = i18n[state.lang];
-                elements.emptyState.textContent = dict[key] || '';
-                elements.emptyState.dataset.state = key;
-                elements.emptyState.hidden = false;
-                elements.postList.innerHTML = '';
-                if (elements.pagination) {
-                    elements.pagination.hidden = true;
-                    if (elements.paginationInfo) {
-                        elements.paginationInfo.textContent = '';
-                    }
-                }
-            }
-
-            function renderPostList(posts) {
-                elements.postList.innerHTML = '';
-                const total = posts.length;
-                if (!total) {
-                    state.page = 1;
-                    updateEmptyState('empty');
-                    return;
-                }
-                clearEmptyState();
-                const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
-                if (state.page > totalPages) {
-                    state.page = totalPages;
-                }
-                if (state.page < 1) {
-                    state.page = 1;
-                }
-                const startIndex = (state.page - 1) * state.pageSize;
-                const pageItems = posts.slice(startIndex, startIndex + state.pageSize);
-                const fragment = document.createDocumentFragment();
-                pageItems.forEach((post, offset) => {
-                    const card = document.createElement('article');
-                    card.className = 'post-card hover-surface';
-                    card.tabIndex = 0;
-                    card.setAttribute('role', 'button');
-                    card.setAttribute('aria-label', post.title);
-                    card.dataset.index = String(startIndex + offset);
-                    card.addEventListener('click', (event) => openPost(post, event));
-                    card.addEventListener('keydown', (event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            openPost(post, event);
-                        }
-                    });
-
-                    const titleRow = document.createElement('div');
-                    titleRow.className = 'post-title-row';
-
-                    const title = document.createElement('h2');
-                    title.className = 'post-title';
-                    title.textContent = post.title;
-                    titleRow.appendChild(title);
-
-                    if (post.displayDate) {
-                        const timeWrapper = document.createElement('div');
-                        timeWrapper.className = 'post-time';
-                        timeWrapper.innerHTML = `
-                            <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-                            <time datetime="${formatDateIso(post.displayDate)}">${formatDateDisplay(post.displayDate)}</time>
-                        `;
-                        titleRow.appendChild(timeWrapper);
-                    }
-
-                    card.appendChild(titleRow);
-
-                    if (post.summary) {
-                        const summary = document.createElement('p');
-                        summary.className = 'post-summary';
-                        summary.textContent = post.summary;
-                        card.appendChild(summary);
-                    }
-
-                    const metaLine = buildMetaLine(post, { includePublished: false });
-                    if (metaLine) {
-                        const meta = document.createElement('div');
-                        meta.className = 'post-meta';
-                        meta.textContent = metaLine;
-                        card.appendChild(meta);
-                    }
-
-                    fragment.appendChild(card);
-                });
-                elements.postList.appendChild(fragment);
-                updatePaginationControls(total, startIndex, pageItems.length);
-                if (supportsHover) {
-                    refreshHoverSurfaces();
-                }
-            }
-
-            function formatPaginationInfo(totalCount, startDisplay, endDisplay) {
-                if (state.lang === 'zh') {
-                    return `第 ${startDisplay}-${endDisplay} 篇，共 ${totalCount} 篇`;
-                }
-                return `Showing ${startDisplay}-${endDisplay} of ${totalCount} posts`;
-            }
-
-            function updatePaginationControls(totalCount, startIndex, visibleCount) {
-                if (!elements.pagination || !elements.paginationInfo || !elements.paginationPrev || !elements.paginationNext) {
-                    return;
-                }
-                const totalPages = Math.max(1, Math.ceil(totalCount / state.pageSize));
-                if (totalPages <= 1) {
-                    elements.pagination.hidden = true;
-                    elements.paginationInfo.textContent = '';
-                    return;
-                }
-                if (!visibleCount) {
-                    elements.pagination.hidden = false;
-                    elements.paginationInfo.textContent = '';
-                    elements.paginationPrev.disabled = true;
-                    elements.paginationNext.disabled = totalPages <= 1;
-                    elements.paginationPrev.setAttribute('aria-disabled', 'true');
-                    elements.paginationNext.setAttribute('aria-disabled', elements.paginationNext.disabled ? 'true' : 'false');
-                    return;
-                }
-                elements.pagination.hidden = false;
-                const currentPage = state.page;
-                const startDisplay = startIndex + 1;
-                const endDisplay = Math.min(totalCount, startIndex + visibleCount);
-                elements.paginationInfo.textContent = formatPaginationInfo(totalCount, startDisplay, endDisplay);
-                const isPrevDisabled = currentPage <= 1;
-                const isNextDisabled = currentPage >= totalPages;
-                elements.paginationPrev.disabled = isPrevDisabled;
-                elements.paginationNext.disabled = isNextDisabled;
-                elements.paginationPrev.setAttribute('aria-disabled', isPrevDisabled ? 'true' : 'false');
-                elements.paginationNext.setAttribute('aria-disabled', isNextDisabled ? 'true' : 'false');
-            }
-
-            function goToPage(targetPage) {
-                const totalPages = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
-                const clamped = Math.min(Math.max(1, targetPage), totalPages);
-                if (clamped === state.page) {
-                    return;
-                }
-                state.page = clamped;
-                renderPostList(state.filtered);
-                if (elements.postList && typeof elements.postList.scrollIntoView === 'function') {
-                    elements.postList.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-
-            function animateOverlayContent(callback) {
-                if (!elements.overlayBody) {
-                    callback();
-                    return;
-                }
-                elements.overlayBody.classList.remove('fade-in');
-                elements.overlayBody.classList.add('fade-out');
-                setTimeout(() => {
-                    callback();
-                    elements.overlayBody.classList.remove('fade-out');
-                    elements.overlayBody.classList.add('fade-in');
-                }, 180);
-            }
-
-            function highlightImages() {
-                const images = elements.overlayContent.querySelectorAll('img');
-                images.forEach((img) => {
-                    img.addEventListener('click', () => openLightbox(img));
-                    img.addEventListener('keydown', (event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            openLightbox(img);
-                        }
-                    });
-                    img.tabIndex = 0;
-                    img.setAttribute('role', 'button');
-                    img.setAttribute('aria-label', i18n[state.lang].lightboxLabel);
-                });
-            }
-
-
-
-            function openLightbox(image) {
-                if (!image || !elements.lightbox || !elements.lightboxImage) {
-                    return;
-                }
-                elements.lightboxImage.src = image.src;
-                elements.lightboxImage.alt = image.alt || '';
-                const captionText = image.alt || '';
-                if (captionText) {
-                    elements.lightboxCaption.textContent = captionText;
-                    elements.lightboxCaption.hidden = false;
-                } else {
-                    elements.lightboxCaption.hidden = true;
-                }
-                elements.lightbox.setAttribute('aria-hidden', 'false');
-                elements.lightbox.classList.add('is-visible');
-                if (lightboxZoomController) {
-                    lightboxZoomController.enable();
-                }
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeLightbox() {
-                if (!elements.lightbox) {
-                    return;
-                }
-                elements.lightbox.classList.remove('is-visible');
-                elements.lightbox.setAttribute('aria-hidden', 'true');
-                document.body.style.overflow = state.current ? 'hidden' : '';
-                elements.lightboxImage.src = '';
-                elements.lightboxImage.alt = '';
-                elements.lightboxCaption.textContent = '';
-                if (lightboxZoomController) {
-                    lightboxZoomController.disable();
-                }
-            }
-
-            function initLightboxZoom() {
-                if (!elements.lightboxImage || !elements.lightboxFigure) {
-                    return;
-                }
-                lightboxZoomController = new LightboxZoomController(
-                    elements.lightboxImage,
-                    elements.lightboxFigure,
-                    () => supportsHover
-                );
-            }
-
-            function openOverlay() {
-                if (state.isAnimating) {
-                    return;
-                }
-                state.isAnimating = true;
-                elements.overlay.setAttribute('aria-hidden', 'false');
-                elements.overlayBody.classList.add('fade-in');
-                elements.overlayBody.scrollTop = 0;
-                document.body.style.overflow = 'hidden';
-                setTimeout(() => {
-                    state.isAnimating = false;
-                }, 320);
-            }
-
-            function closeOverlay() {
-                if (state.isAnimating) {
-                    return;
-                }
-                state.isAnimating = true;
-                elements.overlayBody.classList.remove('fade-in');
-                elements.overlayBody.classList.add('fade-out');
-                setTimeout(() => {
-                    elements.overlay.setAttribute('aria-hidden', 'true');
-                    elements.overlayBody.classList.remove('fade-out');
-                    elements.overlayContent.innerHTML = '';
-                    state.current = null;
-                    document.body.style.overflow = '';
-                    state.isAnimating = false;
-                }, 220);
-            }
-
-            function updateNavButtons() {
-                if (!state.current) {
-                    elements.prevPost.disabled = true;
-                    elements.nextPost.disabled = true;
-                    return;
-                }
-                const list = state.filtered.length ? state.filtered : state.posts;
-                const index = list.findIndex((item) => item.slug === state.current.slug);
-                const prev = index > 0 ? list[index - 1] : null;
-                const next = index >= 0 && index < list.length - 1 ? list[index + 1] : null;
-                elements.prevPost.disabled = !prev;
-                elements.nextPost.disabled = !next;
-                elements.prevPost.onclick = prev ? () => switchPost(prev) : null;
-                elements.nextPost.onclick = next ? () => switchPost(next) : null;
-            }
-
-            function switchPost(post) {
-                if (!post) {
-                    return;
-                }
-                animateOverlayContent(() => {
-                    state.current = post;
-                    elements.overlayTitle.textContent = post.title;
-                    elements.overlayContent.innerHTML = marked.parse(post.content, { gfm: true, breaks: true });
-                    Prism.highlightAllUnder(elements.overlayContent);
-                    updateOverlayMeta(post);
-                    highlightImages();
-                    updateNavButtons();
-                });
-            }
-
-            function openPost(post, originEvent) {
-                state.current = post;
-                elements.overlayTitle.textContent = post.title;
-                elements.overlayContent.innerHTML = marked.parse(post.content, { gfm: true, breaks: true });
-                Prism.highlightAllUnder(elements.overlayContent);
-                updateOverlayMeta(post);
-                highlightImages();
-                updateNavButtons();
-                if (supportsHover && originEvent && originEvent.currentTarget) {
-                    const card = originEvent.currentTarget;
-                    card.style.transform = 'scale(0.98)';
-                    card.style.transition = 'transform 0.2s ease';
-                    requestAnimationFrame(() => {
-                        card.style.transform = '';
-                    });
-                }
-                openOverlay();
-            }
-
-            async function fetchWithFallback(url, fallbackUrl, type = 'content') {
-                try {
-                    const response = await fetchWithCache(url, type);
-                    if (!response.ok) {
-                        throw new Error(`Primary fetch failed: ${response.status}`);
-                    }
-                    return response;
-                } catch (primaryError) {
-                    if (!fallbackUrl) {
-                        throw primaryError;
-                    }
-                    const fallbackResponse = await fetchWithCache(fallbackUrl, type);
-                    if (!fallbackResponse.ok) {
-                        throw new Error(`Fallback fetch failed: ${fallbackResponse.status}`);
-                    }
-                    return fallbackResponse;
-                }
-            }
-
-            function extractTitle(markdown) {
-                const match = markdown.match(/^#\s+(.+)$/m);
-                return match ? match[1].trim() : '';
-            }
-
-            function stripLeadingTitle(markdown, title) {
-                if (!markdown || !title) {
-                    return markdown;
-                }
-                const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const pattern = new RegExp(`^#\\s+${escaped}\\s*\\n?`, 'i');
-                return markdown.replace(pattern, '').trim();
-            }
-
-            function parseFrontMatter(markdown) {
-                const frontMatterPattern = /^---\s*[\r\n]+([\s\S]*?)\s*---\s*[\r\n]*/;
-                const match = markdown.match(frontMatterPattern);
-                if (!match) {
-                    return { attributes: {}, body: markdown };
-                }
-                const attributes = {};
-                match[1].split(/\r?\n/).forEach((line) => {
-                    const idx = line.indexOf(':');
-                    if (idx === -1) {
-                        return;
-                    }
-                    const key = line.slice(0, idx).trim();
-                    const value = line.slice(idx + 1).trim().replace(/^['"]|['"]$/g, '');
-                    if (key) {
-                        attributes[key] = value;
-                    }
-                });
-                const body = markdown.slice(match[0].length);
-                return { attributes, body };
-            }
-
-            async function loadPosts() {
-                updateEmptyState('loading');
-                try {
-                    const response = await fetchWithFallback(METADATA_URL, CDN_METADATA_URL, 'manifest');
-                    const manifest = await response.json();
-                    const items = Array.isArray(manifest.posts) ? manifest.posts : [];
-                    if (!items.length) {
-                        updateEmptyState('empty');
-                        return;
-                    }
-                    const posts = await Promise.all(items.map(async (entry) => {
-                        const filename = entry.filename || `${entry.slug}.md`;
-                        const localUrl = `${POSTS_DIR}/${filename}`;
-                        const cdnUrl = `${CDN_BASE}/${POSTS_DIR}/${filename}`;
-                        const markdownResponse = await fetchWithFallback(localUrl, cdnUrl, 'content');
-                        const raw = await markdownResponse.text();
-                        const { attributes, body } = parseFrontMatter(raw);
-                        const title = entry.title || attributes.title || extractTitle(body) || entry.slug || filename;
-                        const content = stripLeadingTitle(body, title);
-                        const createdAt = entry.published || attributes.published || attributes.date || '';
-                        const updatedAt = entry.updated || attributes.updated || attributes.modified || createdAt;
-                        return {
-                            slug: entry.slug || attributes.slug || filename.replace(/\.md$/i, ''),
-                            title,
-                            content,
-                            summary: entry.summary || attributes.summary || extractSummary(content),
-                            createdAt,
-                            updatedAt,
-                            displayDate: updatedAt || createdAt
-                        };
-                    }));
-                    posts.sort((a, b) => {
-                        const aTime = Date.parse(a.updatedAt || a.createdAt || 0);
-                        const bTime = Date.parse(b.updatedAt || b.createdAt || 0);
-                        return bTime - aTime;
-                    });
-                    state.posts = posts;
-                    state.filtered = [...posts];
-                    state.page = 1;
-                    renderPostList(state.filtered);
-                } catch (error) {
-                    console.error(error);
-                    updateEmptyState('error');
-                }
-            }
-
-            function applyLanguageContent(lang) {
-                const dict = i18n[lang];
-                document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
-                document.title = dict.pageTitle;
-                elements.headerNote.textContent = dict.headerNote;
-                elements.blogTitle.textContent = dict.blogTitle;
-                elements.blogSubtitle.textContent = dict.blogSubtitle;
-                elements.search.placeholder = dict.searchPlaceholder;
-                elements.backHomeLabel.textContent = dict.backHome;
-                elements.languageBadge.textContent = dict.langToggle;
-                elements.themeToggle.title = dict.themeTitle;
-                elements.themeToggle.setAttribute('aria-label', dict.themeTitle);
-                elements.languageToggle.title = dict.langTitle;
-                elements.languageToggle.setAttribute('aria-label', dict.langTitle);
-                elements.prevLabel.textContent = dict.prev;
-                elements.nextLabel.textContent = dict.next;
-                elements.pagination?.setAttribute('aria-label', dict.paginationAria);
-                if (elements.paginationPrevLabel) {
-                    elements.paginationPrevLabel.textContent = dict.paginationPrev;
-                }
-                if (elements.paginationNextLabel) {
-                    elements.paginationNextLabel.textContent = dict.paginationNext;
-                }
-                if (elements.paginationPrev) {
-                    elements.paginationPrev.setAttribute('aria-label', dict.paginationPrev);
-                    elements.paginationPrev.title = dict.paginationPrev;
-                }
-                if (elements.paginationNext) {
-                    elements.paginationNext.setAttribute('aria-label', dict.paginationNext);
-                    elements.paginationNext.title = dict.paginationNext;
-                }
-                elements.lightbox?.setAttribute('aria-label', dict.lightboxLabel);
-                elements.lightboxClose?.setAttribute('aria-label', dict.lightboxClose);
-                if (!elements.emptyState.hidden && elements.emptyState.dataset.state) {
-                    elements.emptyState.textContent = dict[elements.emptyState.dataset.state] || '';
-                }
-                if (state.current) {
-                    updateOverlayMeta(state.current);
-                    elements.overlayClose.setAttribute('aria-label', dict.close);
-                } else {
-                    elements.overlayClose.setAttribute('aria-label', dict.close);
-                }
-                highlightImages();
-            }
-
-            function setLanguage(lang) {
-                state.lang = lang;
-                localStorage.setItem('language', lang);
-                applyLanguageContent(lang);
-                if (state.posts.length) {
-                    renderPostList(state.filtered);
-                }
-            }
-
-            function initLanguage() {
-                const stored = localStorage.getItem('language');
-                const preferred = stored === 'zh' || stored === 'en'
-                    ? stored
-                    : ((navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en');
-                setLanguage(preferred);
-            }
-
-            function initLanguageToggle() {
-                elements.languageToggle.addEventListener('click', () => {
-                    const next = state.lang === 'zh' ? 'en' : 'zh';
-                    setLanguage(next);
-                });
-            }
-
-            function applyTheme(theme) {
-                const icon = elements.themeToggle.querySelector('i');
-                if (theme === 'dark') {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    if (icon && icon.classList.contains('fa-moon')) {
-                        icon.classList.replace('fa-moon', 'fa-sun');
-                    }
-                } else {
-                    document.documentElement.removeAttribute('data-theme');
-                    if (icon && icon.classList.contains('fa-sun')) {
-                        icon.classList.replace('fa-sun', 'fa-moon');
-                    }
-                }
-            }
-
-            function initTheme() {
-                const stored = localStorage.getItem('theme');
-                if (stored === 'dark') {
-                    applyTheme('dark');
-                } else if (stored === 'light') {
-                    applyTheme('light');
-                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    applyTheme('dark');
-                }
-                elements.themeToggle.addEventListener('click', () => {
-                    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                    const next = isDark ? 'light' : 'dark';
-                    applyTheme(next);
-                    localStorage.setItem('theme', next);
-                });
-            }
-
-            elements.search.addEventListener('input', (event) => {
-                const keyword = event.target.value.trim().toLowerCase();
-                if (!keyword) {
-                    state.filtered = [...state.posts];
-                } else {
-                    state.filtered = state.posts.filter((post) => {
-                        const haystack = `${post.slug} ${post.title} ${post.summary} ${post.content}`.toLowerCase();
-                        return haystack.includes(keyword);
-                    });
-                }
-                state.page = 1;
-                renderPostList(state.filtered);
-            });
-
-            elements.paginationPrev?.addEventListener('click', () => goToPage(state.page - 1));
-            elements.paginationNext?.addEventListener('click', () => goToPage(state.page + 1));
-
-            elements.overlay.addEventListener('click', (event) => {
-                if (event.target === elements.overlay) {
-                    closeOverlay();
-                }
-            });
-
-            elements.overlayClose.addEventListener('click', () => closeOverlay());
-
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape') {
-                    if (elements.lightbox.classList.contains('is-visible')) {
-                        closeLightbox();
-                        return;
-                    }
-                    if (elements.overlay.getAttribute('aria-hidden') === 'false') {
-                        closeOverlay();
-                    }
-                }
-                if (event.key === 'ArrowLeft' && state.current) {
-                    elements.prevPost.click();
-                }
-                if (event.key === 'ArrowRight' && state.current) {
-                    elements.nextPost.click();
-                }
-            });
-
-            elements.prevPost.addEventListener('click', () => elements.prevPost.onclick && elements.prevPost.onclick());
-            elements.nextPost.addEventListener('click', () => elements.nextPost.onclick && elements.nextPost.onclick());
-
-            elements.lightbox.addEventListener('click', (event) => {
-                if (event.target === elements.lightbox) {
-                    closeLightbox();
-                }
-            });
-
-            elements.lightboxClose.addEventListener('click', () => closeLightbox());
-
-            initLightboxZoom();
-            if (supportsHover) {
-                refreshHoverSurfaces();
-            }
-            initTheme();
-            initLanguage();
-            initLanguageToggle();
-            if ('serviceWorker' in navigator) {
-                const isSecureContext = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
-                if (isSecureContext) {
-                    window.addEventListener('load', () => {
-                        navigator.serviceWorker.register('sw.js').catch((error) => {
-                            console.warn('Service worker registration failed:', error);
-                        });
-                    });
-                }
-            }
-            loadPosts();
-        });
-    </script>
+    <script type="module" src="scripts/blog.js"></script>
 </body>
 
 </html>

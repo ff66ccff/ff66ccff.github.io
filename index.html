@@ -8,47 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-blue: #4facfe;
-            --accent-pink: #f093fb;
-            --accent-cyan: #00d4ff;
-            --bg-primary: #e8ecf7;
-            --mica-tint: rgba(255, 255, 255, 0.82);
-            --mica-tint-strong: rgba(255, 255, 255, 0.9);
-            --mica-noise: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(102, 126, 234, 0.16));
-            --mica-border: rgba(255, 255, 255, 0.62);
-            --reveal-glow: rgba(255, 255, 255, 0.72);
-            --text-primary: #1f2937;
-            --text-secondary: #475569;
-            --text-muted: #6b7280;
-            --border-color: rgba(15, 23, 42, 0.12);
-            --shadow-sm: 0 12px 32px rgba(15, 23, 42, 0.14);
-            --shadow-md: 0 36px 76px rgba(15, 23, 42, 0.18);
-            --font-family: 'Segoe UI Variable Display', 'Segoe UI', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #0d1528;
-            --mica-tint: rgba(20, 29, 46, 0.82);
-            --mica-tint-strong: rgba(24, 34, 56, 0.9);
-            --mica-noise: linear-gradient(135deg, rgba(16, 26, 44, 0.65), rgba(102, 126, 234, 0.22));
-            --mica-border: rgba(148, 163, 184, 0.28);
-            --reveal-glow: rgba(148, 176, 224, 0.68);
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5f5;
-            --text-muted: #94a3b8;
-            --border-color: rgba(148, 163, 184, 0.3);
-            --shadow-sm: 0 16px 42px rgba(8, 15, 35, 0.55);
-            --shadow-md: 0 46px 94px rgba(8, 15, 35, 0.7);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
         body {
             margin: 0;
             min-height: 100vh;
@@ -570,51 +531,8 @@
         <span>中</span>
     </button>
 
-    <script>
-        const i18n = {
-            zh: {
-                pageTitle: "ff66ccff - 主页",
-                headerNote: "记录代码、音乐与故事，分享我的学习旅程。",
-                name: "ff66ccff",
-                subtitle: "四川大学 25级计算机学生",
-                interestsTitle: "我的兴趣",
-                codingTitle: "编程",
-                codingSubtitle: "Programming",
-                vocaloidTitle: "中文 VOCALOID",
-                vocaloidSubtitle: "Chinese Vocaloid",
-                scifiTitle: "科幻小说",
-                scifiSubtitle: "Sci-Fi Novels",
-                placeholderTitle: "[数据删除]",
-                placeholderSubtitle: "[数据删除]",
-                tagline: "记录代码、音乐与故事,分享我的学习旅程。",
-                viewProfile: "查看我的 GitHub",
-                viewBlog: "进入博客",
-                langToggle: "中",
-                themeTitle: "切换主题",
-                langTitle: "切换语言"
-            },
-            en: {
-                pageTitle: "ff66ccff - Home",
-                headerNote: "Notes on code, music, and stories from my learning journey.",
-                name: "ff66ccff",
-                subtitle: "Computer Science Student, Sichuan University (Class of 2025)",
-                interestsTitle: "My Interests",
-                codingTitle: "Programming",
-                codingSubtitle: "Code & Dev",
-                vocaloidTitle: "Chinese VOCALOID",
-                vocaloidSubtitle: "Music & Voice Synth",
-                scifiTitle: "Sci-Fi Novels",
-                scifiSubtitle: "Science Fiction",
-                placeholderTitle: "[DATA EXPUNGED]",
-                placeholderSubtitle: "Content removed",
-                tagline: "Notes on coding, music, and stories from my learning journey.",
-                viewProfile: "View My GitHub",
-                viewBlog: "Visit Blog",
-                langToggle: "EN",
-                themeTitle: "Toggle Theme",
-                langTitle: "Switch Language"
-            }
-        };
+    <script type="module">
+        import { getLang, getTranslations } from './scripts/i18n.js';
 
         const elements = {
             headerNote: document.getElementById('headerNote'),
@@ -640,16 +558,11 @@
             avatarContainer: document.getElementById('avatarContainer')
         };
 
-        let currentLang = 'zh';
-
-        function getBrowserLanguage() {
-            const lang = navigator.language || navigator.userLanguage || '';
-            return lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
-        }
+        let currentLang = getLang();
 
         function setLanguage(lang) {
             currentLang = lang;
-            const t = i18n[lang];
+            const t = getTranslations('home', lang);
             document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
             document.title = t.pageTitle;
             elements.headerNote.textContent = t.headerNote;
@@ -683,9 +596,7 @@
         }
 
         function initLanguage() {
-            const savedLang = localStorage.getItem('language');
-            const langToUse = savedLang === 'zh' || savedLang === 'en' ? savedLang : getBrowserLanguage();
-            setLanguage(langToUse);
+            setLanguage(currentLang);
         }
 
         function initLanguageToggle() {

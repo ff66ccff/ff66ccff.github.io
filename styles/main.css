@@ -1,0 +1,245 @@
+:root {
+    --bg-body: #e8ecf7;
+    --bg-primary: #e8ecf7;
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --accent-color: #ff66cc;
+    --accent-blue: #4facfe;
+    --accent-pink: #f093fb;
+    --accent-cyan: #00d4ff;
+    --mica-tint: rgba(255, 255, 255, 0.82);
+    --mica-tint-strong: rgba(255, 255, 255, 0.9);
+    --mica-noise: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(102, 126, 234, 0.16));
+    --mica-border: rgba(255, 255, 255, 0.62);
+    --reveal-glow: rgba(255, 255, 255, 0.72);
+    --text-main: #1f2937;
+    --text-primary: #1f2937;
+    --text-secondary: #475569;
+    --text-muted: #6b7280;
+    --border-color: rgba(15, 23, 42, 0.12);
+    --shadow-sm: 0 12px 32px rgba(15, 23, 42, 0.14);
+    --shadow-md: 0 36px 76px rgba(15, 23, 42, 0.18);
+    --overlay-backdrop: rgba(15, 23, 42, 0.55);
+    --transition-fast: 0.24s ease;
+    --transition-medium: 0.32s ease;
+    --transition-slow: 0.44s ease;
+    --font-family: 'Segoe UI Variable Display', 'Segoe UI', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+}
+
+[data-theme="dark"] {
+    --bg-body: #0d1528;
+    --bg-primary: #0d1528;
+    --mica-tint: rgba(20, 29, 46, 0.82);
+    --mica-tint-strong: rgba(24, 34, 56, 0.9);
+    --mica-noise: linear-gradient(135deg, rgba(16, 26, 44, 0.65), rgba(102, 126, 234, 0.22));
+    --mica-border: rgba(148, 163, 184, 0.28);
+    --reveal-glow: rgba(148, 176, 224, 0.68);
+    --text-main: #f8fafc;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5f5;
+    --text-muted: #94a3b8;
+    --border-color: rgba(148, 163, 184, 0.3);
+    --shadow-sm: 0 16px 42px rgba(8, 15, 35, 0.55);
+    --shadow-md: 0 46px 94px rgba(8, 15, 35, 0.7);
+    --overlay-backdrop: rgba(6, 12, 24, 0.72);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --bg-body: #0d1528;
+        --bg-primary: #0d1528;
+        --mica-tint: rgba(20, 29, 46, 0.82);
+        --mica-tint-strong: rgba(24, 34, 56, 0.9);
+        --mica-noise: linear-gradient(135deg, rgba(16, 26, 44, 0.65), rgba(102, 126, 234, 0.22));
+        --mica-border: rgba(148, 163, 184, 0.28);
+        --reveal-glow: rgba(148, 176, 224, 0.68);
+        --text-main: #f8fafc;
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5f5;
+        --text-muted: #94a3b8;
+        --border-color: rgba(148, 163, 184, 0.3);
+        --shadow-sm: 0 16px 42px rgba(8, 15, 35, 0.55);
+        --shadow-md: 0 46px 94px rgba(8, 15, 35, 0.7);
+        --overlay-backdrop: rgba(6, 12, 24, 0.72);
+    }
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-family, 'Segoe UI', sans-serif);
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+    color: var(--accent-color, #ff66cc);
+    text-decoration: none;
+}
+
+.page-shell {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.hover-surface {
+    position: relative;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    overflow: hidden;
+}
+
+.hover-surface::before,
+.hover-surface::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--transition-fast, 0.2s ease);
+}
+
+.hover-surface::before {
+    z-index: -2;
+    background: radial-gradient(600px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(255, 255, 255, 0.08), transparent 40%);
+}
+
+.hover-surface::after {
+    z-index: -1;
+    background: radial-gradient(800px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(102, 126, 234, 0.16), transparent 40%);
+}
+
+.hover-surface.is-active::before {
+    opacity: 0.5;
+}
+
+.hover-surface.is-active::after {
+    opacity: 0.8;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 24px 30px;
+    border-radius: 28px;
+    background: var(--mica-tint);
+    border: 1px solid var(--mica-border);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(26px) saturate(150%);
+}
+
+.header-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.brand {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--primary-color);
+}
+
+.header-note {
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.ghost-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    border-radius: 18px;
+    font-weight: 600;
+    color: var(--primary-color);
+    background: rgba(102, 126, 234, 0.12);
+    border: 1px solid rgba(102, 126, 234, 0.32);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    backdrop-filter: blur(18px) saturate(135%);
+    cursor: pointer;
+    border: none;
+}
+
+.ghost-link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(102, 126, 234, 0.48);
+}
+
+.control-btn {
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--mica-border);
+    background: var(--mica-tint);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    z-index: 1000;
+    backdrop-filter: blur(18px) saturate(140%);
+}
+
+.control-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(102, 126, 234, 0.48);
+}
+
+.theme-toggle {
+    top: 28px;
+    right: 28px;
+}
+
+.language-toggle {
+    top: 28px;
+    left: 28px;
+}
+
+.language-toggle span {
+    font-size: 0.96rem;
+    font-weight: 600;
+}
+
+@media (max-width: 720px) {
+    .control-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+    }
+
+    .theme-toggle {
+        top: 18px;
+        right: 18px;
+    }
+
+    .language-toggle {
+        top: 18px;
+        left: 18px;
+    }
+}
