@@ -182,7 +182,14 @@ img {
 /* Profile Section (Index) */
 .profile-section {
     text-align: center;
-    padding: 40px 0;
+    padding: 40px;
+    background-color: var(--bg-header);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
 }
 
 .avatar {
@@ -474,6 +481,9 @@ img {
     align-self: center;
     width: 100%;
     max-width: 700px;
+    background-color: var(--bg-header);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 /* Blog Layout */
