@@ -20,7 +20,8 @@
     --accent-teal-hover: #16a085;
 
     /* Layout */
-    --max-width: 1000px;
+    --max-width: 1200px;
+    /* Increased for header/hero, but blog list is constrained */
     --header-height: 70px;
     --radius: 16px;
     --spacing: 24px;
@@ -118,6 +119,9 @@ body::before {
     width: 100%;
     z-index: 100;
     transition: all 0.3s;
+    background: #1e2a38;
+    /* Dark header background to match image */
+    border-bottom: none;
 }
 
 .site-header.transparent {
@@ -129,15 +133,17 @@ body::before {
 
 .site-header:not(.transparent),
 .site-header:hover {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--glass-border);
+    background: #1e2a38;
+    /* Keep it dark blue */
+    backdrop-filter: none;
+    border-bottom: none;
 }
 
 .brand {
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--text-main);
+    color: #ffffff;
+    /* Force white for dark header */
     letter-spacing: -0.5px;
 }
 
@@ -149,7 +155,8 @@ body::before {
 
 .nav-link {
     font-weight: 500;
-    color: var(--text-main);
+    color: #e9ecef;
+    /* Light text for dark header */
     opacity: 0.8;
     position: relative;
     padding: 5px 0;
@@ -335,7 +342,24 @@ body::before {
 .post-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0;
+    /* Remove gap as we will use borders or padding */
+    max-width: 800px;
+    /* Constrain width */
+    margin: 40px auto;
+    /* Center horizontally */
+    background: #1e2126;
+    /* Dark background for the container */
+    border-radius: 8px;
+    padding: 20px 0;
+    /* Padding inside the container */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Override for light mode if needed, or keep dark for blog list specifically */
+[data-theme="light"] .post-list {
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .post-item:nth-child(1) {
@@ -374,42 +398,77 @@ body::before {
 
 .post-item {
     display: block;
-    /* Ensure it's block for anchor */
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 20px;
-    border: 1px solid var(--glass-border);
-    transition: all 0.3s ease;
+    background: transparent;
+    /* Remove individual card background */
+    backdrop-filter: none;
+    border-radius: 0;
+    padding: 25px 40px;
+    /* More horizontal padding */
+    margin-bottom: 0;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Subtle divider */
+    transition: background-color 0.2s ease;
     position: relative;
     overflow: hidden;
-    color: var(--text-main);
-    /* Ensure text color */
+    color: #e9ecef;
+    /* Force light text for dark container */
     cursor: pointer;
     animation: fadeInUp 0.5s ease-out forwards;
     opacity: 0;
 }
 
+[data-theme="light"] .post-item {
+    color: var(--text-main);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.post-item:last-child {
+    border-bottom: none;
+}
+
 .post-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 4px;
-    background: var(--primary);
-    opacity: 0;
-    transition: opacity 0.3s;
+    display: none;
+    /* Remove the left border accent */
 }
 
 .post-item:hover {
-    transform: translateX(10px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: none;
+    /* Remove movement */
+    box-shadow: none;
+    background-color: rgba(255, 255, 255, 0.03);
+    /* Subtle hover bg */
 }
 
-.post-item:hover::before {
-    opacity: 1;
+[data-theme="light"] .post-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.post-item-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+[data-theme="light"] .post-item-title {
+    color: #2c3e50;
+}
+
+.post-item-summary {
+    color: #adb5bd;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+[data-theme="light"] .post-item-summary {
+    color: #7f8c8d;
+}
+
+.post-item-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
 }
 
 /* Article View Wrapper (Chat Style) */
