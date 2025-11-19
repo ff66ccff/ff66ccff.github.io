@@ -12,7 +12,8 @@
     "author": "ff66ccff",
     "license": "MIT",
     "devDependencies": {
-        "vitepress": "^1.0.0",
-        "vue": "^3.0.0"
+        "vitepress": "latest",
+        "vue": "^3.0.0",
+        "typescript": "^5.0.0"
     }
 }
