@@ -16,6 +16,7 @@
     --header-height: 60px;
     --radius: 12px;
     --spacing: 20px;
+    --bg-header: rgba(255, 255, 255, 0.85);
 }
 
 [data-theme="dark"] {
@@ -30,6 +31,7 @@
     --border: #2c2e33;
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.3);
+    --bg-header: rgba(37, 38, 43, 0.85);
 }
 
 /* Reset & Base */
@@ -100,7 +102,14 @@ img {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 40px;
-    padding-top: 20px;
+    margin-top: 20px;
+    padding: 0 20px;
+    background-color: var(--bg-header);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
 }
 
 .brand {
