@@ -12,8 +12,8 @@
     <style>
         body {
             padding: 40px 24px 72px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: var(--bg-color);
+            color: var(--text-color);
         }
 
         .posts-panel {
@@ -82,6 +82,39 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 18px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .pagination-controls button {
+            padding: 10px 18px;
+            border-radius: 18px;
+            border: 1px solid var(--mica-border);
+            background: var(--mica-tint);
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .pagination-controls button:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .pagination-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-controls span {
+            font-weight: 600;
+            color: var(--text-secondary);
         }
 
         .post-card {
@@ -213,6 +246,11 @@
             <section id="listSection">
                 <div id="blogList" class="post-grid" aria-live="polite"></div>
                 <p id="emptyState" class="empty-state" hidden>文章加载中，请稍候...</p>
+                <div id="paginationControls" class="pagination-controls" hidden>
+                    <button id="prevPage" type="button">Prev</button>
+                    <span id="pageInfo">1 / 1</span>
+                    <button id="nextPage" type="button">Next</button>
+                </div>
             </section>
 
             <section id="articleSection" hidden>

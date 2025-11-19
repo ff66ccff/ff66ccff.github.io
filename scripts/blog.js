@@ -1,6 +1,8 @@
 import { marked } from 'https://cdn.jsdelivr.net/npm/marked@11.1.1/lib/marked.esm.js';
 import { getLang, getTranslations } from './i18n.js';
 
+const rootElement = document.documentElement;
+
 const elements = {
     headerNote: document.getElementById('headerNote'),
     backHomeLabel: document.getElementById('backHomeLabel'),
@@ -19,7 +21,11 @@ const elements = {
     backToListLabel: document.getElementById('backToListLabel'),
     languageToggle: document.getElementById('languageToggle'),
     languageBadge: document.getElementById('languageBadge'),
-    themeToggle: document.getElementById('themeToggle')
+    themeToggle: document.getElementById('themeToggle'),
+    pagination: document.getElementById('paginationControls'),
+    prevPage: document.getElementById('prevPage'),
+    nextPage: document.getElementById('nextPage'),
+    pageInfo: document.getElementById('pageInfo')
 };
 
 const state = {
@@ -29,7 +35,9 @@ const state = {
     query: '',
     currentPath: null,
     cache: new Map(),
-    loading: false
+    loading: false,
+    page: 1,
+    pageSize: 5
 };
 
 const STATUS = {
@@ -50,12 +58,13 @@ function updateThemeIcon(isDark) {
 
 function setTheme(isDark) {
     if (isDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
+        rootElement.setAttribute('data-theme', 'dark');
         localStorage.setItem('theme', 'dark');
     } else {
-        document.documentElement.removeAttribute('data-theme');
+        rootElement.removeAttribute('data-theme');
         localStorage.setItem('theme', 'light');
     }
+    rootElement.classList.toggle('dark-mode', isDark);
     updateThemeIcon(isDark);
 }
 
@@ -63,7 +72,7 @@ function initTheme() {
     const saved = localStorage.getItem('theme');
     setTheme(saved === 'dark');
     elements.themeToggle?.addEventListener('click', () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const isDark = rootElement.classList.contains('dark-mode');
         setTheme(!isDark);
     });
 }
@@ -88,6 +97,7 @@ function applyTranslations() {
     if (state.currentPath) {
         updateArticleMeta();
     }
+    updatePaginationControls();
 }
 
 function setLanguage(lang) {
@@ -130,6 +140,63 @@ function updatePostStats() {
     }
 }
 
+function getTotalPages() {
+    if (!state.filtered.length) {
+        return 0;
+    }
+    return Math.ceil(state.filtered.length / state.pageSize);
+}
+
+function clampPage() {
+    const total = getTotalPages();
+    if (total === 0) {
+        state.page = 1;
+        return 0;
+    }
+    if (state.page > total) {
+        state.page = total;
+    }
+    if (state.page < 1) {
+        state.page = 1;
+    }
+    return total;
+}
+
+function updatePaginationControls(totalPages = getTotalPages()) {
+    if (!elements.pagination || !elements.prevPage || !elements.nextPage || !elements.pageInfo) {
+        return;
+    }
+
+    const listVisible = !elements.listSection?.hidden;
+    if (!state.filtered.length || !listVisible) {
+        elements.pagination.hidden = true;
+        return;
+    }
+
+    const t = getTranslations('blog', state.lang);
+    const template = t.pageIndicator || 'Page {current} / {total}';
+    elements.pageInfo.textContent = template
+        .replace('{current}', state.page)
+        .replace('{total}', totalPages);
+    elements.prevPage.textContent = t.prevPage || 'Prev';
+    elements.nextPage.textContent = t.nextPage || 'Next';
+    elements.prevPage.disabled = state.page <= 1;
+    elements.nextPage.disabled = state.page >= totalPages;
+    elements.pagination.hidden = false;
+}
+
+function changePage(delta) {
+    const totalPages = clampPage();
+    if (totalPages === 0) {
+        return;
+    }
+    const target = Math.min(Math.max(1, state.page + delta), totalPages);
+    if (target !== state.page) {
+        state.page = target;
+        renderPostList();
+    }
+}
+
 function normalizePosts(payload) {
     const source = Array.isArray(payload)
         ? payload
@@ -164,6 +231,7 @@ async function fetchPosts() {
         const data = await response.json();
         state.posts = normalizePosts(data);
         state.filtered = [...state.posts];
+        state.page = 1;
         state.loading = false;
         updateEmptyState(state.filtered.length ? STATUS.idle : STATUS.empty);
         updatePostStats();
@@ -172,6 +240,7 @@ async function fetchPosts() {
         console.error(error);
         state.loading = false;
         updateEmptyState(STATUS.error);
+        updatePaginationControls();
     }
 }
 
@@ -182,11 +251,15 @@ function renderPostList() {
     elements.postList.innerHTML = '';
     if (!state.filtered.length) {
         updateEmptyState(state.loading ? STATUS.loading : STATUS.empty);
+        updatePaginationControls();
         return;
     }
     updateEmptyState(STATUS.idle);
     const t = getTranslations('blog', state.lang);
-    state.filtered.forEach((post) => {
+    const totalPages = clampPage();
+    const start = (state.page - 1) * state.pageSize;
+    const pageItems = state.filtered.slice(start, start + state.pageSize);
+    pageItems.forEach((post) => {
         const card = document.createElement('article');
         card.className = 'post-card hover-surface';
         card.tabIndex = 0;
@@ -210,6 +283,7 @@ function renderPostList() {
         elements.postList.appendChild(card);
     });
     updatePostStats();
+    updatePaginationControls(totalPages);
 }
 
 function filterPosts(query) {
@@ -217,6 +291,7 @@ function filterPosts(query) {
     const needle = query.trim().toLowerCase();
     if (!needle) {
         state.filtered = [...state.posts];
+        state.page = 1;
         renderPostList();
         return;
     }
@@ -225,6 +300,7 @@ function filterPosts(query) {
             .filter(Boolean)
             .some((field) => String(field).toLowerCase().includes(needle));
     });
+    state.page = 1;
     renderPostList();
 }
 
@@ -262,6 +338,9 @@ async function openPost(postPath, title = '', pushHistory = false) {
     state.currentPath = postPath;
     elements.listSection.hidden = true;
     elements.articleSection.hidden = false;
+    if (elements.pagination) {
+        elements.pagination.hidden = true;
+    }
     updateArticleMeta();
     const t = getTranslations('blog', state.lang);
     try {
@@ -288,6 +367,7 @@ function showList(pushHistory = false) {
     state.currentPath = null;
     elements.articleSection.hidden = true;
     elements.listSection.hidden = false;
+    updatePaginationControls();
     const url = new URL(window.location.href);
     url.searchParams.delete('p');
     if (pushHistory) {
@@ -315,6 +395,11 @@ function initSearch() {
     });
 }
 
+function initPaginationControls() {
+    elements.prevPage?.addEventListener('click', () => changePage(-1));
+    elements.nextPage?.addEventListener('click', () => changePage(1));
+}
+
 function initNavigation() {
     elements.backToList?.addEventListener('click', () => {
         showList(true);
@@ -329,6 +414,7 @@ async function start() {
     initTheme();
     initLanguageToggle();
     initSearch();
+    initPaginationControls();
     initNavigation();
     await fetchPosts();
     handleRouteChange(true);

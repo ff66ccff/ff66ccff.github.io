@@ -75,7 +75,10 @@ export const translations = {
             summaryUnavailable: "暂无摘要",
             loadingArticle: "文章内容加载中...",
             errorArticle: "文章加载失败，请稍后再试。",
-            backToList: "返回列表"
+            backToList: "返回列表",
+            prevPage: "上一页",
+            nextPage: "下一页",
+            pageIndicator: "第 {current} / {total} 页"
         },
         en: {
             headerNote: "Notes on code, music, and stories from my learning journey.",
@@ -108,7 +111,10 @@ export const translations = {
             summaryUnavailable: "Summary unavailable",
             loadingArticle: "Loading article...",
             errorArticle: "Failed to load the article. Please try again later.",
-            backToList: "Back to list"
+            backToList: "Back to list",
+            prevPage: "Previous",
+            nextPage: "Next",
+            pageIndicator: "Page {current} of {total}"
         }
     }
 };

@@ -9,6 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="styles/main.css">
+    <script>
+        if (window.navigator && navigator.serviceWorker) {
+            navigator.serviceWorker.getRegistrations()
+                .then(function (registrations) {
+                    for (let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+        }
+    </script>
     <style>
         body {
             margin: 0;
@@ -534,6 +544,7 @@
     <script type="module">
         import { getLang, getTranslations } from './scripts/i18n.js';
 
+        const rootElement = document.documentElement;
         const elements = {
             headerNote: document.getElementById('headerNote'),
             name: document.getElementById('name'),
@@ -617,12 +628,13 @@
 
         function setTheme(isDark) {
             if (isDark) {
-                document.documentElement.setAttribute('data-theme', 'dark');
+                rootElement.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
             } else {
-                document.documentElement.removeAttribute('data-theme');
+                rootElement.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'light');
             }
+            rootElement.classList.toggle('dark-mode', isDark);
             updateThemeIcon(isDark);
         }
 
@@ -630,7 +642,7 @@
             const saved = localStorage.getItem('theme');
             setTheme(saved === 'dark');
             elements.themeToggle.addEventListener('click', () => {
-                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const isDark = rootElement.classList.contains('dark-mode');
                 setTheme(!isDark);
             });
         }
