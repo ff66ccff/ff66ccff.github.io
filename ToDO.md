@@ -1,58 +1,97 @@
-@workspace /fix I need to perform a major refactor to fix 3 specific issues in this project. Please execute the following 3 steps sequentially. You have permission to create, edit, and delete files.
 
-### Step 1: Completely REMOVE Service Worker (Fix caching)
-The Service Worker is causing caching issues. I want it gone.
-1.  **DELETE** the file `sw.js` from the root directory.
-2.  **EDIT** `index.html`:
-    *   Remove the code block that registers the service worker.
-    *   Insert this "Kill Switch" script in the `<head>` to force unregister existing workers for visitors:
-        ```javascript
-        <script>
-          if(window.navigator && navigator.serviceWorker) {
-            navigator.serviceWorker.getRegistrations()
-            .then(function(registrations) {
-              for(let registration of registrations) {
-                registration.unregister();
-              }
-            });
-          }
-        </script>
-        ```
 
-### Step 2: Fix Dark Mode (Fix partial applying & toggle logic)
-The dark mode currently only applies partially or fails on some elements.
-1.  **EDIT** `css/style.css` (or `style.css`):
-    *   Ensure there are global CSS variables for colors (e.g., `--bg-color`, `--text-color`).
-    *   Add a global rule to force all elements to inherit these colors, preventing "white patches" in dark mode:
+### 第一阶段：核心工程改造（解决“Loading...”之痛）
+
+目前你的最大问题是**内容对于爬虫和弱网环境不可见**。
+
+1.  **引入 SSG（静态站点生成器）**
+    *   **现状**：你可能在用手搓的 JS 动态加载 JSON/Markdown。
+    *   **建议**：做一个自动化生成
+    *   **理由**：
+        *   **SEO 满分**：构建时直接生成 HTML，Google/百度能抓取到每一篇文章。
+        *   **速度极快**：首屏无白屏，不用等 JS 执行完才出字。
+        *   **简历亮点**：如果你用 Next.js/Nuxt.js 重构，这直接就是一个前端工程化项目经历。
+    *   **极客折中方案**：如果你就是不想用框架，想坚持手搓，请务必加上**预渲染（Prerendering）**或者在 HTML 里写好基本的 `<noscript>` 内容。
+
+2.  **添加 Open Graph (OG) 标签**
+    *   **现状**：现在把你的链接发到微信、QQ、Twitter，大概率只显示一个灰色的链接，或者随缘抓取的文字。
+    *   **建议**：在 `<head>` 里加上 OG 标签。
+    *   ```html
+      <meta property="og:title" content="FF66CC's Blog" />
+      <meta property="og:description" content="川大计科 | 代码 | Vocaloid | 科幻" />
+      <meta property="og:image" content="你的头像或洋红色Banner.png" />
+    ```
+    *   **效果**：链接分享出去会变成一张漂亮的卡片，点击率暴增。
+
+---
+
+### 第二阶段：视觉与 UI 升级（利用好 #FF66CC）
+
+你有这么好的一个颜色 IP，不用太浪费了。
+
+1.  **建立视觉识别系统（VI）**
+    *   **现状**：黑白灰为主，稍显单调。
+    *   **建议**：将 `#FF66CC`（洋红色）定义为你的 **Accent Color（强调色）**。
+    *   **实施**：
+        *   超链接的 `hover` 状态变成粉色。
+        *   代码块的左边框加上粉色条。
+        *   选中文本的背景色（`::selection`）设为粉色。
+        *   顶部导航栏下面加一条 2px 的粉色进度条/分割线。
+    *   **效果**：瞬间从“打印纸”变成“赛博朋克风格界面”。
+
+2.  **字体优化（Typography）**
+    *   **现状**：大概率是浏览器默认的宋体或黑体。
+    *   **建议**：
+        *   **正文**：指定一套系统字体栈，优先 `PingFang SC` (Mac) / `Microsoft YaHei` (Win)。
+        *   **代码**：作为程序员，代码块字体必须讲究。引入 **Fira Code** 或 **JetBrains Mono**（带连字特性的），这能体现你对代码美学的追求。
+    *   **CSS 片段**：
         ```css
-        *, *::before, *::after {
-            transition: background-color 0.3s, color 0.3s;
-        }
-        body, .card, .navbar, footer { 
-            /* Ensure these elements use variables, not hardcoded colors */
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
+        font-family: 'Fira Code', 'Consolas', monospace;
         ```
-2.  **EDIT** `js/script.js` (or wherever `initTheme` is):
-    *   Change the toggle target from `document.body` to `document.documentElement` (the `<html>` tag).
-    *   Fix the icon toggle logic: Do NOT use `replace()`. Use `remove('fa-sun', 'fa-moon')` then `add(...)` based on the current state.
 
-### Step 3: Refactor Blog to Static JSON + Pagination (Fix API limit)
-The GitHub API is failing. We will switch to a build-time JSON generation.
-1.  **CREATE** a folder `scripts/` and a file `scripts/generate-posts.js`.
-    *   Write a Node.js script using `fs` and `path` modules.
-    *   It should scan `posts/*.md`, extract Title (first line) and Date (filename or stat), and sort by date desc.
-    *   It should write the result to `posts.json` in the root.
-2.  **CREATE** `.github/workflows/deploy.yml`.
-    *   Create a workflow that runs on push to `main`.
-    *   Steps: Checkout -> Setup Node -> Run `node scripts/generate-posts.js` -> Upload Artifact (current dir) -> Deploy to GitHub Pages.
-3.  **EDIT** `js/blog.js`:
-    *   Remove all GitHub API calls.
-    *   Fetch `./posts.json` instead.
-    *   Implement **Pagination**:
-        *   Page size: 5 posts.
-        *   Add logic to render only the current slice of the array.
-        *   Add "Prev" and "Next" buttons to the DOM to control the page index.
+---
 
-Please execute these changes now.
+### 第三阶段：内容与功能增强（为了就业与交流）
+
+你说你是 25 届（大三/大四），这个博客应该成为你的**在线简历**。
+
+1.  **增加“About Me” / 简历页**
+    *   **建议**：单独开一个页面，放上：
+        *   **技能栈**：会什么语言，用过什么框架。
+        *   **项目展示**：Github 仓库的卡片链接（Pinned Repos）。
+        *   **联系方式**：邮箱（最好用 Base64 编码或者图片防爬）。
+    *   **目的**：HR 或导师看到这个页面时，能迅速判断你的技术水平。
+
+2.  **增加评论系统**
+    *   **建议**：接入 **Giscus** 或 **Gitalk**。
+    *   **理由**：基于 GitHub Issues 的评论系统，非常适合依附于 GitHub Pages 的博客。不需要后端，数据安全，而且只有有 GitHub 账号的人才能评论，天然过滤了垃圾广告。
+
+3.  **分类与标签（Taxonomy）**
+    *   **建议**：既然你内容杂（技术、Vocaloid、科幻），一定要做分类。
+    *   **效果**：想看技术的 HR 不会被 Vocaloid 劝退，想看二次元的同好能快速找到组织。
+
+---
+
+### 第四阶段：彩蛋（极客的浪漫）
+
+既然 ID 是 `ff66ccff`，可以玩点花的：
+
+1.  **控制台彩蛋**
+    *   在 JS 里写一行：
+        ```javascript
+        console.log("%c Hello World! %c imply ff66ccff", "background:#333;color:#fff;padding:4px;", "background:#ff66cc;color:#fff;padding:4px;");
+        ```
+    *   懂行的开发者按 F12 时会会心一笑。
+
+2.  **404 页面**
+    *   做一个定制的 404 页面，放一个你喜欢的 Vocaloid 角色或者科幻梗（比如“主不在乎”或者“二向箔打击中”），这比默认的 GitHub 404 有趣得多。
+
+### 总结
+
+**现在的你**：
+> 一个有点高冷的、只给自己看的纯文本记事本。
+
+**修改后的你**：
+> 一个有鲜明视觉风格（粉色黑客风）、技术栈现代、对访客友好且能展示专业能力的 **“Full Stack Student Developer”**。
+
+动起来吧，先把“Loading...”解决掉！

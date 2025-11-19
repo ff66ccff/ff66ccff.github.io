@@ -1,0 +1,18 @@
+{
+    "name": "ff66ccff-blog",
+    "version": "1.0.0",
+    "description": "Personal website of ff66ccff",
+    "main": "index.js",
+    "scripts": {
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs",
+        "docs:preview": "vitepress preview docs"
+    },
+    "keywords": [],
+    "author": "ff66ccff",
+    "license": "MIT",
+    "devDependencies": {
+        "vitepress": "^1.0.0",
+        "vue": "^3.0.0"
+    }
+}
