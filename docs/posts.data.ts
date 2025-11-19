@@ -26,7 +26,9 @@ export default createContentLoader('posts/**/*.md', {
             }))
             .sort((a, b) => b.date.time - a.date.time)
     }
-})function formatDate(raw: string): Post['date'] {
+})
+
+function formatDate(raw: string): Post['date'] {
     const date = new Date(raw)
     date.setUTCHours(12)
     return {
