@@ -17,7 +17,7 @@ export default createContentLoader('posts/**/*.md', {
     excerpt: true,
     transform(raw): Post[] {
         return raw
-            .filter(({ url }) => url !== '/posts/' && !url.endsWith('/index.html')) // 排除索引页
+            .filter(({ frontmatter }) => frontmatter.published) // 仅处理包含发布日期的文章
             .map(({ url, frontmatter, excerpt }) => ({
                 title: frontmatter.title,
                 url,
@@ -26,9 +26,7 @@ export default createContentLoader('posts/**/*.md', {
             }))
             .sort((a, b) => b.date.time - a.date.time)
     }
-})
-
-function formatDate(raw: string): Post['date'] {
+})function formatDate(raw: string): Post['date'] {
     const date = new Date(raw)
     date.setUTCHours(12)
     return {
