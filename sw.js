@@ -1,6 +1,6 @@
-const CACHE_VERSION = 'blog-cache-v1';
-const PRECACHE = `precache-${CACHE_VERSION}`;
-const RUNTIME = `runtime-${CACHE_VERSION}`;
+const CACHE_NAME = 'static-cache-v-auto-1';
+const PRECACHE = `${CACHE_NAME}-precache`;
+const RUNTIME = `${CACHE_NAME}-runtime`;
 
 const PRECACHE_URLS = [
     '/',
@@ -12,16 +12,17 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener('install', (event) => {
+    self.skipWaiting();
     event.waitUntil(
         caches.open(PRECACHE)
             .then((cache) => Promise.all(
                 PRECACHE_URLS.map((url) => cache.add(url).catch(() => undefined))
             ))
-            .then(() => self.skipWaiting())
     );
 });
 
 self.addEventListener('activate', (event) => {
+    self.clients.claim();
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
@@ -29,7 +30,7 @@ self.addEventListener('activate', (event) => {
                     .filter((name) => name !== PRECACHE && name !== RUNTIME)
                     .map((name) => caches.delete(name))
             );
-        }).then(() => self.clients.claim())
+        })
     );
 });
 

@@ -27,7 +27,7 @@ const state = {
     posts: [],
     filtered: [],
     query: '',
-    currentFile: null,
+    currentPath: null,
     cache: new Map(),
     loading: false
 };
@@ -39,17 +39,24 @@ const STATUS = {
     error: 'error'
 };
 
-function setTheme(isDark) {
+function updateThemeIcon(isDark) {
     const icon = elements.themeToggle?.querySelector('i');
+    if (!icon) {
+        return;
+    }
+    icon.classList.remove('fa-sun', 'fa-moon');
+    icon.classList.add(isDark ? 'fa-moon' : 'fa-sun');
+}
+
+function setTheme(isDark) {
     if (isDark) {
         document.documentElement.setAttribute('data-theme', 'dark');
-        icon?.classList.replace('fa-moon', 'fa-sun');
         localStorage.setItem('theme', 'dark');
     } else {
         document.documentElement.removeAttribute('data-theme');
-        icon?.classList.replace('fa-sun', 'fa-moon');
         localStorage.setItem('theme', 'light');
     }
+    updateThemeIcon(isDark);
 }
 
 function initTheme() {
@@ -78,7 +85,7 @@ function applyTranslations() {
     elements.themeToggle.setAttribute('aria-label', t.themeTitle);
     updateEmptyState();
     updatePostStats();
-    if (state.currentFile) {
+    if (state.currentPath) {
         updateArticleMeta();
     }
 }
@@ -124,20 +131,33 @@ function updatePostStats() {
 }
 
 function normalizePosts(payload) {
-    if (Array.isArray(payload)) {
-        return payload;
-    }
-    if (Array.isArray(payload?.posts)) {
-        return payload.posts;
-    }
-    return [];
+    const source = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.posts)
+            ? payload.posts
+            : [];
+
+    return source
+        .map((item) => {
+            const pathValue = item.path || (item.file ? `posts/${item.file}` : null);
+            return {
+                title: item.title || item.file || 'Untitled',
+                date: item.date || '',
+                snippet: item.snippet || '',
+                path: pathValue
+            };
+        })
+        .filter((item) => Boolean(item.path));
 }
 
 async function fetchPosts() {
     updateEmptyState(STATUS.loading);
     state.loading = true;
     try {
-        const response = await fetch('posts.json', { cache: 'no-store' });
+        const response = await fetch('./posts.json', { cache: 'no-store' }).catch((error) => {
+            console.error('Failed to request posts.json:', error);
+            throw error;
+        });
         if (!response.ok) {
             throw new Error('Failed to load posts.json');
         }
@@ -171,12 +191,15 @@ function renderPostList() {
         card.className = 'post-card hover-surface';
         card.tabIndex = 0;
         const title = document.createElement('h2');
-        title.textContent = post.title || post.file;
+        title.textContent = post.title || post.path;
         const meta = document.createElement('time');
         meta.dateTime = post.date || '';
         meta.textContent = post.date || '';
-        card.append(title, meta);
-        const open = () => openPost(post.file, post.title || post.file, true);
+        const snippet = document.createElement('p');
+        snippet.className = 'post-snippet';
+        snippet.textContent = post.snippet || '';
+        card.append(title, meta, snippet);
+        const open = () => openPost(post.path, post.title || post.path, true);
         card.addEventListener('click', open);
         card.addEventListener('keypress', (event) => {
             if (event.key === 'Enter' || event.key === ' ') {
@@ -198,30 +221,33 @@ function filterPosts(query) {
         return;
     }
     state.filtered = state.posts.filter((post) => {
-        return [post.title, post.file, post.date]
+        return [post.title, post.path, post.date, post.snippet]
             .filter(Boolean)
             .some((field) => String(field).toLowerCase().includes(needle));
     });
     renderPostList();
 }
 
-async function fetchPostContent(file) {
-    if (state.cache.has(file)) {
-        return state.cache.get(file);
+async function fetchPostContent(postPath) {
+    if (state.cache.has(postPath)) {
+        return state.cache.get(postPath);
     }
-    const encoded = file.split('/').map(encodeURIComponent).join('/');
-    const response = await fetch(`posts/${encoded}`, { cache: 'no-store' });
+    const encoded = postPath
+        .split('/')
+        .map((segment) => encodeURIComponent(segment))
+        .join('/');
+    const response = await fetch(encoded, { cache: 'no-store' });
     if (!response.ok) {
         throw new Error('Post not found');
     }
     const text = await response.text();
-    state.cache.set(file, text);
+    state.cache.set(postPath, text);
     return text;
 }
 
 function updateArticleMeta() {
     const t = getTranslations('blog', state.lang);
-    const post = state.posts.find((item) => item.file === state.currentFile);
+    const post = state.posts.find((item) => item.path === state.currentPath);
     if (!post) {
         elements.articleMeta.textContent = '';
         return;
@@ -232,16 +258,16 @@ function updateArticleMeta() {
     elements.articleMeta.textContent = published;
 }
 
-async function openPost(file, title = '', pushHistory = false) {
-    state.currentFile = file;
+async function openPost(postPath, title = '', pushHistory = false) {
+    state.currentPath = postPath;
     elements.listSection.hidden = true;
     elements.articleSection.hidden = false;
     updateArticleMeta();
     const t = getTranslations('blog', state.lang);
     try {
-        elements.articleTitle.textContent = title || file;
+        elements.articleTitle.textContent = title || postPath;
         elements.blogContent.innerHTML = `<p>${t.loadingArticle}</p>`;
-        const raw = await fetchPostContent(file);
+        const raw = await fetchPostContent(postPath);
         const html = marked.parse(raw, { mangle: false, headerIds: false });
         elements.blogContent.innerHTML = html;
         updateArticleMeta();
@@ -250,16 +276,16 @@ async function openPost(file, title = '', pushHistory = false) {
         elements.blogContent.innerHTML = `<p>${t.errorArticle}</p>`;
     }
     const url = new URL(window.location.href);
-    url.searchParams.set('p', file);
+    url.searchParams.set('p', postPath);
     if (pushHistory) {
-        history.pushState({ post: file }, '', url);
+        history.pushState({ post: postPath }, '', url);
     } else {
-        history.replaceState({ post: file }, '', url);
+        history.replaceState({ post: postPath }, '', url);
     }
 }
 
 function showList(pushHistory = false) {
-    state.currentFile = null;
+    state.currentPath = null;
     elements.articleSection.hidden = true;
     elements.listSection.hidden = false;
     const url = new URL(window.location.href);
@@ -273,11 +299,11 @@ function showList(pushHistory = false) {
 
 function handleRouteChange(replace = false) {
     const params = new URLSearchParams(window.location.search);
-    const file = params.get('p');
-    if (file) {
-        const post = state.posts.find((item) => item.file === file);
-        const title = post?.title || file;
-        openPost(file, title, !replace);
+    const postPath = params.get('p');
+    if (postPath) {
+        const post = state.posts.find((item) => item.path === postPath);
+        const title = post?.title || postPath;
+        openPost(postPath, title, !replace);
     } else {
         showList(!replace);
     }

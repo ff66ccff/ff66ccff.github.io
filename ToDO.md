@@ -1,142 +1,83 @@
 
+***
 
-**Role:** You are a Senior Web Developer. I need you to refactor my GitHub Pages repository (`https://github.com/ff66ccff/ff66ccff.github.io`).
+# Detailed Refactoring Instruction for GitHub Copilot
 
-**Current Stack:** HTML5, CSS3, Vanilla JS.
-**Goal:** Transform this static site into a dynamic blog using **Client-Side Rendering** and **GitHub Actions** for automation.
+**Context:**
+I am maintaining a static blog website hosted on GitHub Pages (`ff66ccff.github.io`). The project uses vanilla HTML/CSS/JS. I need to implement a robust automated build pipeline and fix critical client-side bugs.
 
-Please implement the following 4 changes based on the specific code patterns below.
-
-#### 1. CSS Architecture (Variables & Dark Mode)
-Refactor `styles/main.css`. Use CSS variables for theming instead of hardcoded values.
-**Reference Code:**
-```css
-:root {
-  --bg-body: #ffffff;
-  --text-main: #333333;
-  --accent-color: #ff66cc;
-}
-
-[data-theme="dark"] {
-  --bg-body: #1a1a1a;
-  --text-main: #f0f0f0;
-}
-
-body {
-  background-color: var(--bg-body);
-  color: var(--text-main);
-  transition: background 0.3s, color 0.3s;
-}
-```
-
-#### 2. Internationalization (i18n)
-Separate text from logic. Create `scripts/i18n.js`.
-**Reference Code:**
-```javascript
-// scripts/i18n.js
-export const translations = {
-  zh: {
-    title: "FF66CCFF 的主页",
-    desc: "代码 / 音乐 / 故事",
-    nav_blog: "博客"
-  },
-  en: {
-    title: "FF66CCFF's Home",
-    desc: "Code / Music / Stories",
-    nav_blog: "Blog"
-  }
-};
-
-export function getLang() {
-  return localStorage.getItem('lang') || (navigator.language.includes('zh') ? 'zh' : 'en');
-}
-```
-
-#### 3. Automated Blog Indexing (GitHub Actions)
-I need a workflow to auto-generate `posts.json` when I push Markdown files.
-Create `.github/workflows/build-blog.yml` with this logic:
-**Reference Code:**
-```yaml
-name: Build Blog Index
-on:
-  push:
-    paths: ['posts/*.md'] # Trigger only on markdown changes
-
-permissions:
-  contents: write
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      
-      - name: Generate JSON
-        run: |
-          python -c "
-          import os, json, re
-          posts = []
-          for f in os.listdir('posts'):
-              if f.endswith('.md'):
-                  with open(f'posts/{f}', 'r', encoding='utf-8') as file:
-                      content = file.read()
-                      # Extract Front Matter (title/date)
-                      title = re.search(r'title:\s*(.+)', content)
-                      date = re.search(r'date:\s*(.+)', content)
-                      posts.append({
-                          'file': f,
-                          'title': title.group(1).strip() if title else f,
-                          'date': date.group(1).strip() if date else 'Unknown'
-                      })
-          # Sort by date desc
-          posts.sort(key=lambda x: x['date'], reverse=True)
-          with open('posts.json', 'w', encoding='utf-8') as f:
-              json.dump(posts, f, ensure_ascii=False, indent=2)
-          "
-
-      - name: Commit & Push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add posts.json
-          git commit -m "Auto-update blog index" || exit 0
-          git push
-```
-
-#### 4. Dynamic Blog Loader (JS)
-Update `scripts/blog.js` (and `blog.html`) to fetch the JSON and render Markdown.
-**Reference Logic:**
-```javascript
-// scripts/blog.js
-import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
-
-const params = new URLSearchParams(window.location.search);
-const postFile = params.get('p'); // e.g. ?p=my-story.md
-
-if (!postFile) {
-  // 1. List Mode
-  fetch('/posts.json')
-    .then(res => res.json())
-    .then(posts => {
-      // Render list to <div id="blog-list">...</div>
-      // Example: <a href="?p=${post.file}">${post.title}</a>
-    });
-} else {
-  // 2. Article Mode
-  fetch(`/posts/${postFile}`)
-    .then(res => res.text())
-    .then(md => {
-      // Render markdown to <div id="blog-content">...</div>
-      document.getElementById('blog-content').innerHTML = marked.parse(md);
-    });
-}
-```
-
-**Instructions:**
-Please analyze my current file structure and apply these changes step-by-step. Start with the CSS and i18n modules.
+**Objective:**
+Please generate code to implement the following 4-step refactoring plan.
 
 ---
 
+### Step 1: Implement Automated Content Generation (Node.js)
+Create a script named **`scripts/generate-posts.js`** (you may need to create the folder).
+**Constraints:**
+*   Use **only** Node.js built-in modules (`fs`, `path`). Do not require `package.json` or `npm install`.
+*   **Logic:**
+    1.  Scan the `./posts` directory.
+    2.  Filter for `.md` files only.
+    3.  For each file, parse metadata:
+        *   **Title:** Read the file content. Look for the first line starting with `# ` (Markdown H1). If not found, fallback to the filename.
+        *   **Date:** Try to extract from the filename if it matches `YYYY-MM-DD-title.md`. Otherwise, use `fs.statSync().birthtime`.
+        *   **Path:** The relative path accessible by the browser (e.g., `posts/filename.md`).
+        *   **Snippet:** Extract the first 100 characters of the text (stripping Markdown syntax if possible) for a preview.
+    4.  Sort the array by Date (descending).
+    5.  Write the result to **`posts.json`** in the root directory.
+    6.  Log "Successfully generated posts.json" to the console.
+
+---
+
+### Step 2: Set up GitHub Actions Workflow
+Create or overwrite **`.github/workflows/deploy.yml`**.
+**Configuration Requirements:**
+*   **Trigger:** On `push` to `main` branch.
+*   **Permissions:** Must include `contents: read`, `pages: write`, and `id-token: write`.
+*   **Job Steps:**
+    1.  **Checkout** source code.
+    2.  **Setup Node.js** (version 20).
+    3.  **Run Build Script:** Execute `node scripts/generate-posts.js`.
+    4.  **Upload Artifact:** Use `actions/upload-pages-artifact@v3`. Important: Upload the current directory `.` so that `posts.json` is included.
+    5.  **Deploy:** Use `actions/deploy-pages@v4`.
+
+---
+
+### Step 3: Refactor Frontend Data Fetching (`blog.js`)
+Modify the existing blog loading logic to stop using the GitHub API.
+**Requirements:**
+*   **Fetch Source:** Change `fetch('https://api.github.com/...')` to `fetch('./posts.json')`.
+*   **Error Handling:** Add a `.catch()` block to log errors if the JSON fails to load.
+*   **Content Loading:** When a user clicks a post title:
+    *   Do **not** use `raw.githubusercontent.com`.
+    *   Fetch the file using the local relative path provided in the JSON (e.g., `fetch(post.path)`).
+*   **DOM:** Ensure the rendering loop matches the structure of the new JSON object (Title, Date, Snippet).
+
+---
+
+### Step 4: Fix Critical UI & Caching Bugs
+1.  **Service Worker (`sw.js`):**
+    *   Update `CACHE_NAME` to `'static-cache-v-auto-1'` to invalidate old caches.
+    *   In the `install` event: execute `self.skipWaiting()` immediately.
+    *   In the `activate` event: execute `clients.claim()` immediately.
+    *   *Reason:* This ensures users see the new site version without manually clearing the cache.
+
+2.  **Dark Mode Toggle (`script.js` or `index.html`):**
+    *   Locate the `initTheme` or toggle event listener.
+    *   **Fix:** Stop using `classList.replace()`. It causes bugs if the class state is desynchronized.
+    *   **Implementation:**
+        ```javascript
+        // Expected Logic:
+        const icon = document.getElementById('theme-icon'); // Ensure correct ID
+        // Always remove both to reset state
+        icon.classList.remove('fa-sun', 'fa-moon');
+        // Add the correct one based on isDark boolean
+        icon.classList.add(isDark ? 'fa-moon' : 'fa-sun');
+        ```
+
+**Output Request:**
+Please provide the full code for:
+1.  `scripts/generate-posts.js`
+2.  `.github/workflows/deploy.yml`
+3.  The corrected functions for `blog.js`
+4.  The corrected logic for `sw.js` and the theme toggle function.
