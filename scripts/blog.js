@@ -14,12 +14,23 @@ const els = {
     nextPost: document.getElementById('nextPost'),
     lightbox: document.getElementById('lightbox'),
     lightboxImg: document.getElementById('lightboxImg'),
-    lightboxClose: document.querySelector('.lightbox-close')
+    lightboxClose: document.querySelector('.lightbox-close'),
+    // New Elements
+    searchInput: document.getElementById('searchInput'),
+    pagination: document.getElementById('pagination'),
+    archiveList: document.getElementById('archiveList'),
+    blogSidebar: document.querySelector('.blog-sidebar'),
+    searchContainer: document.querySelector('.search-container')
 };
 
 // State
 let posts = [];
+let filteredPosts = [];
 let currentPostIndex = -1;
+let currentPage = 1;
+const itemsPerPage = 5;
+let searchQuery = '';
+let dateFilter = null; // { year: 2023, month: 11 }
 
 // Initialize
 async function init() {
@@ -40,6 +51,12 @@ async function init() {
             return dateB - dateA;
         });
 
+        // Initialize filtered posts
+        filteredPosts = [...posts];
+
+        // Generate Archive
+        generateArchive();
+
         if (postSlug) {
             await loadPost(postSlug);
         } else {
@@ -51,17 +68,53 @@ async function init() {
     }
 }
 
+// Filter Posts
+function filterPosts() {
+    filteredPosts = posts.filter(post => {
+        const matchSearch = !searchQuery ||
+            (post.title.toLowerCase().includes(searchQuery) ||
+                (post.summary && post.summary.toLowerCase().includes(searchQuery)));
+
+        let matchDate = true;
+        if (dateFilter) {
+            const date = new Date(post.published || post.updated);
+            matchDate = date.getFullYear() === dateFilter.year &&
+                (date.getMonth() + 1) === dateFilter.month;
+        }
+
+        return matchSearch && matchDate;
+    });
+
+    currentPage = 1;
+    renderPostList();
+}
+
 // Render Post List
 function renderPostList() {
     els.loading.classList.add('hidden');
     els.articleView.classList.add('hidden');
     els.postList.classList.remove('hidden');
+    els.pagination.classList.remove('hidden');
+    if (els.blogSidebar) els.blogSidebar.classList.remove('hidden');
+    if (els.searchContainer) els.searchContainer.classList.remove('hidden');
+
     els.postList.innerHTML = '';
 
     // Update URL
     history.pushState(null, '', 'blog.html');
 
-    posts.forEach(post => {
+    if (filteredPosts.length === 0) {
+        els.postList.innerHTML = '<div class="no-results" style="text-align:center; padding: 20px; color: var(--text-muted);">没有找到相关文章</div>';
+        els.pagination.innerHTML = '';
+        return;
+    }
+
+    // Pagination Logic
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pagePosts = filteredPosts.slice(start, end);
+
+    pagePosts.forEach(post => {
         const date = new Date(post.published || post.updated).toLocaleDateString('zh-CN');
         const item = document.createElement('a');
         item.className = 'post-item';
@@ -78,13 +131,116 @@ function renderPostList() {
         };
         els.postList.appendChild(item);
     });
+
+    renderPagination();
 }
+
+// Render Pagination
+function renderPagination() {
+    const totalPages = Math.ceil(filteredPosts.length / itemsPerPage);
+    els.pagination.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    // Prev Button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn';
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPostList();
+            window.scrollTo(0, 0);
+        }
+    };
+    els.pagination.appendChild(prevBtn);
+
+    // Page Numbers
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+        btn.textContent = i;
+        btn.onclick = () => {
+            currentPage = i;
+            renderPostList();
+            window.scrollTo(0, 0);
+        };
+        els.pagination.appendChild(btn);
+    }
+
+    // Next Button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn';
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPostList();
+            window.scrollTo(0, 0);
+        }
+    };
+    els.pagination.appendChild(nextBtn);
+}
+
+// Generate Archive Sidebar
+function generateArchive() {
+    const archive = {};
+    posts.forEach(post => {
+        const date = new Date(post.published || post.updated);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const key = `${year}-${month}`;
+
+        if (!archive[key]) {
+            archive[key] = { year, month, count: 0 };
+        }
+        archive[key].count++;
+    });
+
+    // Sort by date desc
+    const sortedKeys = Object.keys(archive).sort((a, b) => {
+        const [y1, m1] = a.split('-').map(Number);
+        const [y2, m2] = b.split('-').map(Number);
+        return (y2 * 12 + m2) - (y1 * 12 + m1);
+    });
+
+    els.archiveList.innerHTML = `
+        <li class="archive-item" onclick="clearDateFilter()">
+            <span>全部文章</span>
+            <span class="archive-count">${posts.length}</span>
+        </li>
+    `;
+
+    sortedKeys.forEach(key => {
+        const { year, month, count } = archive[key];
+        const li = document.createElement('li');
+        li.className = 'archive-item';
+        li.innerHTML = `
+            <span>${year}年${month}月</span>
+            <span class="archive-count">${count}</span>
+        `;
+        li.onclick = () => {
+            dateFilter = { year, month };
+            filterPosts();
+        };
+        els.archiveList.appendChild(li);
+    });
+}
+
+window.clearDateFilter = function () {
+    dateFilter = null;
+    filterPosts();
+};
 
 // Load and Render Article
 async function loadPost(identifier) {
     els.loading.classList.remove('hidden');
     els.postList.classList.add('hidden');
+    els.pagination.classList.add('hidden');
     els.articleView.classList.add('hidden');
+    if (els.searchContainer) els.searchContainer.classList.add('hidden');
 
     try {
         // Find post by slug or filename
@@ -104,8 +260,10 @@ async function loadPost(identifier) {
         if (!res.ok) throw new Error('Failed to load post content');
         const text = await res.text();
 
-        // Remove Front Matter (YAML)
-        const content = text.replace(/^---[\s\S]*?---\s*/, '');
+        // Remove Front Matter (YAML) and First H1
+        let content = text.replace(/^---[\s\S]*?---\s*/, '');
+        // Remove the first H1 title if it exists to avoid duplication
+        content = content.replace(/^#\s+.+$/m, '');
 
         // Render
         els.articleTitle.textContent = post.title;
@@ -172,7 +330,20 @@ function setupImages() {
 }
 
 // Event Listeners
-els.backBtn.onclick = renderPostList;
+els.backBtn.onclick = () => {
+    // Clear URL param
+    const url = new URL(window.location);
+    url.searchParams.delete('p');
+    history.pushState(null, '', url);
+    renderPostList();
+};
+
+if (els.searchInput) {
+    els.searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase();
+        filterPosts();
+    });
+}
 
 els.lightbox.onclick = (e) => {
     if (e.target !== els.lightboxImg) {

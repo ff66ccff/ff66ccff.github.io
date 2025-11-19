@@ -14,7 +14,7 @@
         <header class="site-header">
             <a href="index.html" class="brand">ff66ccff</a>
             <nav class="nav-links">
-                <a href="index.html" class="nav-link">首页</a>
+                <!-- <a href="index.html" class="nav-link">首页</a> -->
                 <a href="blog.html" class="nav-link active">博客</a>
                 <a href="https://github.com/ff66ccff" target="_blank" class="nav-link">GitHub</a>
                 <button id="theme-toggle" class="btn btn-icon" aria-label="Toggle theme">
@@ -23,40 +23,58 @@
             </nav>
         </header>
 
-        <main id="app">
-            <!-- Loading State -->
-            <div id="loading" class="loading">
-                <i class="fas fa-spinner fa-spin"></i> 加载中...
-            </div>
+        <div class="blog-layout">
+            <main class="blog-main">
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="搜索文章...">
+                </div>
 
-            <!-- Post List View -->
-            <div id="postList" class="post-list hidden">
-                <!-- Posts will be injected here -->
-            </div>
+                <!-- Loading State -->
+                <div id="loading" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> 加载中...
+                </div>
 
-            <!-- Article View -->
-            <article id="articleView" class="article-container hidden">
-                <header class="article-header">
-                    <button id="backBtn" class="btn" style="margin-bottom: 20px;">
-                        <i class="fas fa-arrow-left"></i> 返回列表
-                    </button>
-                    <h1 id="articleTitle" class="article-title"></h1>
-                    <div id="articleMeta" class="article-meta"></div>
-                </header>
-                <div id="articleContent" class="markdown-body"></div>
+                <!-- Post List View -->
+                <div id="postList" class="post-list hidden">
+                    <!-- Posts will be injected here -->
+                </div>
 
-                <nav id="postNav" class="post-nav hidden">
-                    <a id="prevPost" class="post-nav-btn prev">
-                        <span class="post-nav-label">上一篇</span>
-                        <span class="post-nav-title"></span>
-                    </a>
-                    <a id="nextPost" class="post-nav-btn next">
-                        <span class="post-nav-label">下一篇</span>
-                        <span class="post-nav-title"></span>
-                    </a>
-                </nav>
-            </article>
-        </main>
+                <!-- Pagination -->
+                <div id="pagination" class="pagination"></div>
+
+                <!-- Article View -->
+                <article id="articleView" class="article-container hidden">
+                    <header class="article-header">
+                        <button id="backBtn" class="btn" style="margin-bottom: 20px;">
+                            <i class="fas fa-arrow-left"></i> 返回列表
+                        </button>
+                        <h1 id="articleTitle" class="article-title"></h1>
+                        <div id="articleMeta" class="article-meta"></div>
+                    </header>
+                    <div id="articleContent" class="markdown-body"></div>
+
+                    <nav id="postNav" class="post-nav hidden">
+                        <a id="prevPost" class="post-nav-btn prev">
+                            <span class="post-nav-label">上一篇</span>
+                            <span class="post-nav-title"></span>
+                        </a>
+                        <a id="nextPost" class="post-nav-btn next">
+                            <span class="post-nav-label">下一篇</span>
+                            <span class="post-nav-title"></span>
+                        </a>
+                    </nav>
+                </article>
+            </main>
+
+            <aside class="blog-sidebar">
+                <div class="card sidebar-card">
+                    <h3>归档</h3>
+                    <ul id="archiveList" class="archive-list">
+                        <!-- Archives will be injected here -->
+                    </ul>
+                </div>
+            </aside>
+        </div>
     </div>
 
     <!-- Lightbox -->
