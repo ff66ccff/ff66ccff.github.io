@@ -120,7 +120,10 @@ export const translations = {
 };
 
 export function getLang() {
-    const saved = localStorage.getItem('language') || localStorage.getItem('lang');
+    let saved = null;
+    try {
+        saved = localStorage.getItem('language') || localStorage.getItem('lang');
+    } catch (e) { }
     if (saved === 'zh' || saved === 'en') {
         return saved;
     }

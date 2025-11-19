@@ -1,4 +1,4 @@
-import { marked } from 'https://cdn.jsdelivr.net/npm/marked@11.1.1/lib/marked.esm.js';
+import { marked } from 'https://esm.sh/marked@11.1.1';
 import { getLang, getTranslations } from './i18n.js';
 
 const rootElement = document.documentElement;
@@ -59,17 +59,18 @@ function updateThemeIcon(isDark) {
 function setTheme(isDark) {
     if (isDark) {
         rootElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
+        try { localStorage.setItem('theme', 'dark'); } catch (e) { }
     } else {
-        rootElement.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
+        rootElement.setAttribute('data-theme', 'light');
+        try { localStorage.setItem('theme', 'light'); } catch (e) { }
     }
     rootElement.classList.toggle('dark-mode', isDark);
     updateThemeIcon(isDark);
 }
 
 function initTheme() {
-    const saved = localStorage.getItem('theme');
+    let saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) { }
     setTheme(saved === 'dark');
     elements.themeToggle?.addEventListener('click', () => {
         const isDark = rootElement.classList.contains('dark-mode');
@@ -102,7 +103,7 @@ function applyTranslations() {
 
 function setLanguage(lang) {
     state.lang = lang;
-    localStorage.setItem('language', lang);
+    try { localStorage.setItem('language', lang); } catch (e) { }
     applyTranslations();
     renderPostList();
 }
@@ -206,11 +207,11 @@ function normalizePosts(payload) {
 
     return source
         .map((item) => {
-            const pathValue = item.path || (item.file ? `posts/${item.file}` : null);
+            const pathValue = item.path || (item.filename ? `posts/${item.filename}` : null);
             return {
-                title: item.title || item.file || 'Untitled',
-                date: item.date || '',
-                snippet: item.snippet || '',
+                title: item.title || item.filename || 'Untitled',
+                date: item.published || item.updated || item.date || '',
+                snippet: item.summary || item.snippet || '',
                 path: pathValue
             };
         })
@@ -221,14 +222,15 @@ async function fetchPosts() {
     updateEmptyState(STATUS.loading);
     state.loading = true;
     try {
-        const response = await fetch('./posts.json', { cache: 'no-store' }).catch((error) => {
-            console.error('Failed to request posts.json:', error);
+        const response = await fetch('posts/metadata.json', { cache: 'no-store' }).catch((error) => {
+            console.error('Failed to request posts/metadata.json:', error);
             throw error;
         });
         if (!response.ok) {
-            throw new Error('Failed to load posts.json');
+            throw new Error('Failed to load posts/metadata.json');
         }
         const data = await response.json();
+        console.log('Fetched posts:', data);
         state.posts = normalizePosts(data);
         state.filtered = [...state.posts];
         state.page = 1;

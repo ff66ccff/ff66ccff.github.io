@@ -576,34 +576,38 @@
             const t = getTranslations('home', lang);
             document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
             document.title = t.pageTitle;
-            elements.headerNote.textContent = t.headerNote;
-            elements.name.textContent = t.name;
-            elements.subtitle.textContent = t.subtitle;
-            elements.interestsTitle.textContent = t.interestsTitle;
-            elements.codingTitle.textContent = t.codingTitle;
-            elements.codingSubtitle.textContent = t.codingSubtitle;
-            elements.vocaloidTitle.textContent = t.vocaloidTitle;
-            elements.vocaloidSubtitle.textContent = t.vocaloidSubtitle;
-            elements.scifiTitle.textContent = t.scifiTitle;
-            elements.scifiSubtitle.textContent = t.scifiSubtitle;
+            if (elements.headerNote) elements.headerNote.textContent = t.headerNote;
+            if (elements.name) elements.name.textContent = t.name;
+            if (elements.subtitle) elements.subtitle.textContent = t.subtitle;
+            if (elements.interestsTitle) elements.interestsTitle.textContent = t.interestsTitle;
+            if (elements.codingTitle) elements.codingTitle.textContent = t.codingTitle;
+            if (elements.codingSubtitle) elements.codingSubtitle.textContent = t.codingSubtitle;
+            if (elements.vocaloidTitle) elements.vocaloidTitle.textContent = t.vocaloidTitle;
+            if (elements.vocaloidSubtitle) elements.vocaloidSubtitle.textContent = t.vocaloidSubtitle;
+            if (elements.scifiTitle) elements.scifiTitle.textContent = t.scifiTitle;
+            if (elements.scifiSubtitle) elements.scifiSubtitle.textContent = t.scifiSubtitle;
             if (elements.placeholderTitle) {
                 elements.placeholderTitle.textContent = t.placeholderTitle;
             }
             if (elements.placeholderSubtitle) {
                 elements.placeholderSubtitle.textContent = t.placeholderSubtitle;
             }
-            elements.tagline.textContent = t.tagline;
-            elements.viewProfile.textContent = t.viewProfile;
-            elements.viewBlog.textContent = t.viewBlog;
-            const langToggleLabel = elements.languageToggle.querySelector('span');
+            if (elements.tagline) elements.tagline.textContent = t.tagline;
+            if (elements.viewProfile) elements.viewProfile.textContent = t.viewProfile;
+            if (elements.viewBlog) elements.viewBlog.textContent = t.viewBlog;
+            const langToggleLabel = elements.languageToggle ? elements.languageToggle.querySelector('span') : null;
             if (langToggleLabel) {
                 langToggleLabel.textContent = t.langToggle;
             }
-            elements.themeToggle.title = t.themeTitle;
-            elements.languageToggle.title = t.langTitle;
-            elements.themeToggle.setAttribute('aria-label', t.themeTitle);
-            elements.languageToggle.setAttribute('aria-label', t.langTitle);
-            localStorage.setItem('language', lang);
+            if (elements.themeToggle) {
+                elements.themeToggle.title = t.themeTitle;
+                elements.themeToggle.setAttribute('aria-label', t.themeTitle);
+            }
+            if (elements.languageToggle) {
+                elements.languageToggle.title = t.langTitle;
+                elements.languageToggle.setAttribute('aria-label', t.langTitle);
+            }
+            try { localStorage.setItem('language', lang); } catch (e) { }
         }
 
         function initLanguage() {
@@ -629,22 +633,25 @@
         function setTheme(isDark) {
             if (isDark) {
                 rootElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
+                try { localStorage.setItem('theme', 'dark'); } catch (e) { }
             } else {
-                rootElement.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'light');
+                rootElement.setAttribute('data-theme', 'light');
+                try { localStorage.setItem('theme', 'light'); } catch (e) { }
             }
             rootElement.classList.toggle('dark-mode', isDark);
             updateThemeIcon(isDark);
         }
 
         function initTheme() {
-            const saved = localStorage.getItem('theme');
+            let saved = null;
+            try { saved = localStorage.getItem('theme'); } catch (e) { }
             setTheme(saved === 'dark');
-            elements.themeToggle.addEventListener('click', () => {
-                const isDark = rootElement.classList.contains('dark-mode');
-                setTheme(!isDark);
-            });
+            if (elements.themeToggle) {
+                elements.themeToggle.addEventListener('click', () => {
+                    const isDark = rootElement.classList.contains('dark-mode');
+                    setTheme(!isDark);
+                });
+            }
         }
 
         function loadAvatar() {
