@@ -382,37 +382,19 @@ body::before {
     animation-delay: 0.5s;
 }
 
-/* Article View */
-.article-container {
-    background-color: var(--bg-card);
-    background: var(--glass-bg);
-    backdrop-filter: blur(15px);
-    padding: 40px;
-    border-radius: 0 20px 20px 20px;
-    /* Top-left square-ish for bubble effect */
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    position: relative;
-    margin-top: 0;
-}
-
 .post-item {
     display: block;
     background: transparent;
-    /* Remove individual card background */
     backdrop-filter: none;
     border-radius: 0;
     padding: 25px 40px;
-    /* More horizontal padding */
     margin-bottom: 0;
     border: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    /* Subtle divider */
     transition: background-color 0.2s ease;
     position: relative;
     overflow: hidden;
     color: #e9ecef;
-    /* Force light text for dark container */
     cursor: pointer;
     animation: fadeInUp 0.5s ease-out forwards;
     opacity: 0;
@@ -429,15 +411,12 @@ body::before {
 
 .post-item::before {
     display: none;
-    /* Remove the left border accent */
 }
 
 .post-item:hover {
     transform: none;
-    /* Remove movement */
     box-shadow: none;
     background-color: rgba(255, 255, 255, 0.03);
-    /* Subtle hover bg */
 }
 
 [data-theme="light"] .post-item:hover {
@@ -471,65 +450,157 @@ body::before {
     color: #6c757d;
 }
 
-/* Article View Wrapper (Chat Style) */
-.article-view-wrapper {
-    display: flex;
-    gap: 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding-top: 20px;
+/* Article View */
+.article-container {
+    background-color: var(--bg-card);
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    padding: 60px;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
+    position: relative;
+    margin: 40px auto;
+    max-width: 900px;
+    /* Centered and focused width */
     animation: fadeInUp 0.6s ease-out;
 }
 
-.article-sidebar {
-    flex-shrink: 0;
+.article-header {
+    margin-bottom: 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 30px;
 }
 
-.article-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--glass-border);
-    box-shadow: var(--shadow);
+.article-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
 }
 
-.article-main {
-    flex-grow: 1;
-    min-width: 0;
-    /* Prevent flex overflow */
+.article-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    line-height: 1.3;
+    color: var(--text-main);
 }
 
-.article-author-info {
+.article-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.article-author {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 8px;
-    padding-left: 5px;
 }
 
-.author-name {
-    font-weight: bold;
-    color: var(--text-muted);
-    /* Light text on dark bg */
+.meta-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-[data-theme="dark"] .author-name {
-    color: #e9ecef;
+.meta-name {
+    font-weight: 600;
+    color: var(--text-main);
 }
 
-.author-badge {
-    background: #6c5ce7;
+/* Markdown Content Enhancements */
+.markdown-body {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-main);
+}
+
+.markdown-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 30px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    cursor: zoom-in;
+    /* Hint for medium-zoom */
+}
+
+.markdown-body p {
+    margin-bottom: 1.5em;
+}
+
+.markdown-body h2 {
+    margin-top: 2em;
+    margin-bottom: 1em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Button Styles in Markdown */
+.markdown-body button,
+.markdown-body .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: var(--primary);
     color: white;
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 4px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    margin: 10px 0;
 }
 
-.article-meta {
-    font-size: 0.85rem;
+.markdown-body button:hover,
+.markdown-body .btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Ghost Button (Back Button) */
+.btn-ghost {
+    background: transparent;
     color: var(--text-muted);
-    margin-left: auto;
+    border: 1px solid transparent;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.btn-ghost:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--primary);
+}
+
+[data-theme="dark"] .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .article-container {
+        padding: 25px;
+        margin: 20px;
+        border-radius: 12px;
+    }
+
+    .article-title {
+        font-size: 1.8rem;
+    }
+
+    .article-meta-row {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
 
 /* Lightbox */

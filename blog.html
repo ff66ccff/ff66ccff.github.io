@@ -35,38 +35,36 @@
             </div>
 
             <!-- Article View -->
-            <div id="articleView" class="article-view-wrapper hidden">
-                <div class="article-sidebar">
-                    <img src="avatar.jpg" alt="Author" class="article-avatar">
-                </div>
-                <div class="article-main">
-                    <div class="article-author-info">
-                        <span class="author-name">ff66ccff</span>
-                        <span class="author-badge">极个别同志</span>
-                        <span id="articleMeta" class="article-meta"></span>
+            <article id="articleView" class="article-container hidden">
+                <header class="article-header">
+                    <div class="article-actions">
+                        <button id="backBtn" class="btn btn-ghost">
+                            <i class="fas fa-arrow-left"></i> 返回列表
+                        </button>
                     </div>
-                    <article class="article-container">
-                        <header class="article-header">
-                            <button id="backBtn" class="btn btn-sm" style="margin-bottom: 10px;">
-                                <i class="fas fa-arrow-left"></i> 返回
-                            </button>
-                            <h1 id="articleTitle" class="article-title"></h1>
-                        </header>
-                        <div id="articleContent" class="markdown-body"></div>
+                    <h1 id="articleTitle" class="article-title"></h1>
+                    <div class="article-meta-row">
+                        <div class="article-author">
+                            <img src="avatar.jpg" alt="ff66ccff" class="meta-avatar">
+                            <span class="meta-name">ff66ccff</span>
+                        </div>
+                        <span id="articleMeta" class="article-date"></span>
+                    </div>
+                </header>
 
-                        <nav id="postNav" class="post-nav hidden">
-                            <a id="prevPost" class="post-nav-btn prev">
-                                <span class="post-nav-label">上一篇</span>
-                                <span class="post-nav-title"></span>
-                            </a>
-                            <a id="nextPost" class="post-nav-btn next">
-                                <span class="post-nav-label">下一篇</span>
-                                <span class="post-nav-title"></span>
-                            </a>
-                        </nav>
-                    </article>
-                </div>
-            </div>
+                <div id="articleContent" class="markdown-body"></div>
+
+                <nav id="postNav" class="post-nav hidden">
+                    <a id="prevPost" class="post-nav-btn prev">
+                        <span class="post-nav-label">上一篇</span>
+                        <span class="post-nav-title"></span>
+                    </a>
+                    <a id="nextPost" class="post-nav-btn next">
+                        <span class="post-nav-label">下一篇</span>
+                        <span class="post-nav-title"></span>
+                    </a>
+                </nav>
+            </article>
         </main>
     </div>
 
