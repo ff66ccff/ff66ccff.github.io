@@ -19,6 +19,17 @@ hero:
 import { data } from '../posts.data.ts'
 </script>
 
+<div class="category-nav">
+  <a href="/posts/coding/" class="category-btn coding">
+    <span class="icon">📂</span>
+    <span class="text">编程分类</span>
+  </a>
+  <a href="/posts/life/" class="category-btn life">
+    <span class="icon">☕</span>
+    <span class="text">生活分类</span>
+  </a>
+</div>
+
 <div class="blog-list">
   <div v-for="post in data" :key="post.url" class="post-card">
     <a :href="post.url">
@@ -119,5 +130,44 @@ import { data } from '../posts.data.ts'
 
 .post-card:hover .read-more {
   transform: translateX(4px);
+}
+
+.category-nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: 30px;
+  text-decoration: none !important;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.category-btn.coding {
+  background-color: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+}
+
+.category-btn.life {
+  background-color: var(--vp-c-accent-soft);
+  color: var(--vp-c-accent);
+}
+
+.category-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.95);
+}
+
+.category-btn .icon {
+  font-size: 1.2rem;
 }
 </style>

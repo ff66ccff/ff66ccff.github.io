@@ -5,6 +5,8 @@ const hitokoto = ref('Loading...')
 const from = ref('')
 
 const fetchHitokoto = async () => {
+  hitokoto.value = 'Loading...'
+  from.value = ''
   try {
     // Add timestamp to prevent caching
     const res = await fetch(`https://v1.hitokoto.cn?c=a&t=${Date.now()}`)
