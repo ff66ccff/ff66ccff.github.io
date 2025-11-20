@@ -1,22 +1,22 @@
 ---
 layout: page
-title: Blog
+title: 博客
 hero:
-  name: Blog
-  text: My Thoughts & Notes
-  tagline: Coding, Vocaloid, Sci-Fi
+  name: 博客
+  text: 随想与笔记
+  tagline: 编程 · Vocaloid · 科幻 · 生活
   actions:
     - theme: brand
-      text: Coding
+      text: 编程
       link: /posts/coding/
     - theme: alt
       text: Vocaloid
       link: /posts/vocaloid/
     - theme: alt
-      text: Sci-Fi
+      text: 科幻
       link: /posts/sci-fi/
     - theme: alt
-      text: Life
+      text: 生活
       link: /posts/life/
 ---
 
@@ -24,34 +24,105 @@ hero:
 import { data } from '../posts.data.ts'
 </script>
 
-## All Posts
-
-<div v-for="post in data" :key="post.url" class="post-item">
-  <a :href="post.url">
-    <div class="post-title">{{ post.title }}</div>
-    <div class="post-date">{{ post.date.string }}</div>
-    <div v-if="post.excerpt" class="post-excerpt" v-html="post.excerpt"></div>
-  </a>
+<div class="blog-list">
+  <div v-for="post in data" :key="post.url" class="post-card">
+    <a :href="post.url">
+      <div class="post-header">
+        <div class="post-title">{{ post.title }}</div>
+        <div class="post-date">{{ post.date.string }}</div>
+      </div>
+      <div v-if="post.excerpt" class="post-excerpt" v-html="post.excerpt"></div>
+      <div class="post-footer">
+        <span class="read-more">阅读全文 →</span>
+      </div>
+    </a>
+  </div>
 </div>
 
 <style>
-.post-item {
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--vp-c-divider);
-  padding-bottom: 1rem;
+.blog-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
 }
+
+.post-card {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-bg-soft);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+  border-color: var(--vp-c-brand-1);
+}
+
+.post-card a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.post-header {
+  margin-bottom: 16px;
+}
+
 .post-title {
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  margin-bottom: 8px;
+  line-height: 1.3;
+  transition: color 0.2s;
+}
+
+.post-card:hover .post-title {
   color: var(--vp-c-brand-1);
 }
+
 .post-date {
   font-size: 0.9rem;
-  color: var(--vp-c-text-2);
-  margin-bottom: 0.5rem;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
 }
+
 .post-excerpt {
   font-size: 1rem;
-  color: var(--vp-c-text-1);
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  flex-grow: 1;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.read-more {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.post-card:hover .read-more {
+  transform: translateX(4px);
 }
 </style>

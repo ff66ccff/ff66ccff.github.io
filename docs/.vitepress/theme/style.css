@@ -24,6 +24,14 @@
 body {
     font-family: var(--vp-font-family-base);
     letter-spacing: 0.02em;
+    background-image: radial-gradient(circle at 50% 0%, rgba(102, 204, 255, 0.05) 0%, transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255, 102, 204, 0.05) 0%, transparent 60%);
+    background-attachment: fixed;
+}
+
+::selection {
+    background-color: var(--vp-c-brand-soft);
+    color: var(--vp-c-brand-1);
 }
 
 /* Smooth Scrolling */
@@ -127,4 +135,16 @@ html {
     background-color: var(--vp-c-accent-soft);
     padding: 3px 6px;
     border-radius: 4px;
+}
+
+/* Glassmorphism for Nav and Sidebar */
+.VPNav,
+.VPSidebar {
+    backdrop-filter: blur(12px);
+    background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark .VPNav,
+.dark .VPSidebar {
+    background-color: rgba(30, 30, 30, 0.8) !important;
 }
