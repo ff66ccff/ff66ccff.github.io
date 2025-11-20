@@ -5,17 +5,11 @@ sidebar: false
 hero:
   name: 博客
   text: 随想与笔记
-  tagline: 编程 · Vocaloid · 科幻 · 生活
+  tagline: 编程 · 生活
   actions:
     - theme: brand
       text: 编程
       link: /posts/coding/
-    - theme: alt
-      text: Vocaloid
-      link: /posts/vocaloid/
-    - theme: alt
-      text: 科幻
-      link: /posts/sci-fi/
     - theme: alt
       text: 生活
       link: /posts/life/

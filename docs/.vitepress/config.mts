@@ -13,9 +13,7 @@ export default defineConfig({
 
         nav: [
             { text: '首页', link: '/' },
-            { text: '博客', link: '/posts/' },
-            { text: '项目', link: '/projects' },
-            { text: '关于', link: '/about' }
+            { text: '博客', link: '/posts/' }
         ],
 
         sidebar: {
@@ -34,20 +32,6 @@ export default defineConfig({
                         { text: '游戏本的痛', link: '/posts/life/游戏本的痛' },
                         { text: '累', link: '/posts/life/累' },
                         { text: '记得向尘世之外瞥一眼', link: '/posts/life/记得向尘世之外瞥一眼' }
-                    ]
-                },
-                {
-                    text: 'Vocaloid',
-                    collapsed: false,
-                    items: [
-                        // { text: 'Example', link: '/posts/vocaloid/example' }
-                    ]
-                },
-                {
-                    text: '科幻',
-                    collapsed: false,
-                    items: [
-                        // { text: 'Example', link: '/posts/sci-fi/example' }
                     ]
                 }
             ]

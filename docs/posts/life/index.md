@@ -1,28 +1,7 @@
-# Life
+# 生活
 
-<script setup>
-import { data } from '../../posts.data.ts'
-const posts = data.filter(p => p.url.includes('/posts/life/'))
-</script>
+这里是关于生活的文章。
 
-<div v-for="post in posts" :key="post.url" class="post-item">
-  <a :href="post.url">
-    <div class="post-title">{{ post.title }}</div>
-    <div class="post-date">{{ post.date.string }}</div>
-  </a>
-</div>
-
-<style>
-.post-item {
-  margin-bottom: 1rem;
-}
-.post-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--vp-c-brand-1);
-}
-.post-date {
-  font-size: 0.8rem;
-  color: var(--vp-c-text-2);
-}
-</style>
+- [游戏本的痛](./游戏本的痛)
+- [累](./累)
+- [记得向尘世之外瞥一眼](./记得向尘世之外瞥一眼)
