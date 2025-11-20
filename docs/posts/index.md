@@ -1,6 +1,7 @@
 ---
 layout: page
 title: 博客
+sidebar: false
 hero:
   name: 博客
   text: 随想与笔记
