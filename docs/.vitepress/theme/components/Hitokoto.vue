@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import sentencesData from '../../../hitokoto/sentences.data'
+import { data as sentencesData } from '../../../hitokoto/sentences.data'
 
 const typingSvgUrl = ref('')
 
