@@ -2,7 +2,7 @@
 
 在这里添加你的一言，每行一句，使用无序列表格式（减号开头）。
 
-- Talk is cheap, show me the code.
+- Talk is cheap, show me your code.
 - Attention is all you need.
 - 给岁月以文明，而不是给文明以岁月。
 - 没关系的，都一样。
