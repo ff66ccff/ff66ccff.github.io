@@ -8,12 +8,18 @@ const fetchHitokoto = async () => {
   hitokoto.value = 'Loading...'
   from.value = ''
   try {
-    // Add timestamp to prevent caching
-    const res = await fetch(`https://v1.hitokoto.cn?c=a&t=${Date.now()}`)
+    const res = await fetch('https://v1.hitokoto.cn?c=a', {
+      cache: 'no-store',
+      headers: {
+        'Pragma': 'no-cache',
+        'Cache-Control': 'no-cache'
+      }
+    })
     const data = await res.json()
     hitokoto.value = data.hitokoto
     from.value = data.from ? `— ${data.from}` : ''
   } catch (e) {
+    console.error('Hitokoto fetch failed:', e)
     hitokoto.value = 'ID is Pink, but Soul is Blue'
     from.value = ''
   }
