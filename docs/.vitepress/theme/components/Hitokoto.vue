@@ -6,7 +6,8 @@ const from = ref('')
 
 const fetchHitokoto = async () => {
   try {
-    const res = await fetch('https://v1.hitokoto.cn')
+    // Add timestamp to prevent caching
+    const res = await fetch(`https://v1.hitokoto.cn?c=a&t=${Date.now()}`)
     const data = await res.json()
     hitokoto.value = data.hitokoto
     from.value = data.from ? `— ${data.from}` : ''

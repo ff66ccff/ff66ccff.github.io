@@ -8,10 +8,10 @@ hero:
   tagline: 编程 · 生活
   actions:
     - theme: brand
-      text: 编程
+      text: 📂 编程分类
       link: /posts/coding/
     - theme: alt
-      text: 生活
+      text: ☕ 生活分类
       link: /posts/life/
 ---
 
