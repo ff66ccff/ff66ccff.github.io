@@ -9,11 +9,7 @@ const fetchHitokoto = async () => {
   from.value = ''
   try {
     const res = await fetch('https://v1.hitokoto.cn?c=a', {
-      cache: 'no-store',
-      headers: {
-        'Pragma': 'no-cache',
-        'Cache-Control': 'no-cache'
-      }
+      cache: 'no-store', 
     })
     const data = await res.json()
     hitokoto.value = data.hitokoto
