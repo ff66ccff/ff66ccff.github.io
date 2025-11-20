@@ -4,26 +4,27 @@ layout: home
 hero:
   name: "FF66CC"
   text: "ID is Pink, but Soul is Blue"
-  tagline: "SCU CS 25 | Vocaloid & Sci-Fi"
+  tagline: "SCU CS 25 | Vocaloid 与 科幻"
   image:
     src: /avatar.jpg
     alt: FF66CC Avatar
   actions:
     - theme: brand
-      text: Read Blog
+      text: 阅读博客
       link: /posts/
     - theme: alt
-      text: View Projects
+      text: 查看项目
       link: /projects
 
 features:
-  - title: Coding
-    details: Tech notes, algorithms, and development logs.
+  - title: 编程
+    details: 技术笔记、算法和开发日志。
     link: /posts/coding/
   - title: Vocaloid
-    details: Music reviews, culture analysis, and favorites.
+    details: 乐评、文化分析和收藏。
     link: /posts/vocaloid/
-  - title: Sci-Fi
-    details: Book reviews, thoughts on futurism and sci-fi concepts.
+  - title: 科幻
+    details: 书评、对未来主义和科幻概念的思考。
     link: /posts/sci-fi/
 ---
+
