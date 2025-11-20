@@ -1,11 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { data as sentencesData } from '../../../hitokoto/sentences.data.ts'
+import sentencesData from '../../../hitokoto/sentences.data'
 
 const typingSvgUrl = ref('')
 
 // 使用导入的数据，如果为空则使用默认兜底
 const sentences = sentencesData && sentencesData.length > 0 ? sentencesData : [
+  "数据加载失败，请检查 sentences.md 文件",
   "Talk is cheap, show me the code.",
   "Attention is all you need.",
   "给岁月以文明，而不是给文明以岁月。",
