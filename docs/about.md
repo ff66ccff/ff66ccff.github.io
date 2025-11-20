@@ -1,13 +1,13 @@
-# About Me
+# 关于我
 
-Hello! I am **ff66ccff**, a freshman Computer Science student at Sichuan University (SCU).
+你好！我是 **ff66ccff**，四川大学（SCU）计算机科学专业的大一新生。
 
-## Interests
+## 兴趣
 
-- **Coding**: Web development, System programming.
-- **Vocaloid**: Huge fan of Miku and others.
-- **Sci-Fi**: Love reading Three-Body Problem, Foundation, etc.
+- **编程**: Web 开发，系统编程。
+- **Vocaloid**: Miku 还有其他 V 家角色的超级粉丝。
+- **科幻**: 喜爱《三体》、《基地》等科幻作品。
 
-## Contact
+## 联系方式
 
 - GitHub: [ff66ccff](https://github.com/ff66ccff)

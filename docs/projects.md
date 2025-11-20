@@ -1,11 +1,11 @@
-# Projects
+# 项目
 
-Here are some of my projects.
+这里是我的一些项目。
 
-## Web Development
+## Web 开发
 
-- **Personal Blog**: This website, built with VitePress.
+- **个人博客**: 本网站，使用 VitePress 构建。
 
-## Others
+## 其他
 
-- *More projects coming soon...*
+- *更多项目即将到来...*

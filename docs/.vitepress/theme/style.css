@@ -1,34 +1,130 @@
 :root {
-    /* Brand Color: #66CCFF (Tianyi Blue) */
+    /* Brand Color: #66CCFF (Tianyi Blue) & #FF66CC (Pink) */
     --vp-c-brand-1: #66CCFF;
     --vp-c-brand-2: #33B2FF;
-    /* Darker for hover */
     --vp-c-brand-3: #0099FF;
-    /* Even darker for active */
     --vp-c-brand-soft: rgba(102, 204, 255, 0.14);
 
-    --vp-home-hero-name-color: transparent;
-    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #66CCFF 30%, #ff66cc 90%);
-    --vp-home-hero-image-background-image: linear-gradient(-45deg, #66CCFF 50%, #ff66cc 50%);
-    --vp-home-hero-image-filter: blur(40px);
+    /* Accent Colors */
+    --vp-c-accent: #FF66CC;
+    --vp-c-accent-soft: rgba(255, 102, 204, 0.14);
 
-    /* Font Family */
+    /* Typography */
+    --vp-font-family-base: "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --vp-font-family-mono: 'Fira Code', 'JetBrains Mono', monospace;
+
+    /* Hero Section */
+    --vp-home-hero-name-color: transparent;
+    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #66CCFF 30%, #FF66CC 90%);
+    --vp-home-hero-image-background-image: linear-gradient(-45deg, #66CCFF 50%, #FF66CC 50%);
+    --vp-home-hero-image-filter: blur(60px);
 }
 
-.vp-doc code {
-    font-family: var(--vp-font-family-mono);
+/* Elegant Global Styles */
+body {
+    font-family: var(--vp-font-family-base);
+    letter-spacing: 0.02em;
 }
 
-/* Custom Button Styling to ensure contrast */
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--vp-c-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--vp-c-divider);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--vp-c-text-2);
+}
+
+/* Card & Container Styling */
+.VPFeature {
+    border-radius: 12px !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.VPFeature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styling */
 .VPButton.brand {
+    background-image: linear-gradient(to right, #66CCFF, #33B2FF);
+    border: none;
     color: white !important;
-    /* Ensure text is readable on light blue */
-    background-color: var(--vp-c-brand-1);
-    border-color: var(--vp-c-brand-1);
+    border-radius: 20px;
+    transition: all 0.3s ease;
 }
 
 .VPButton.brand:hover {
-    background-color: var(--vp-c-brand-2);
-    border-color: var(--vp-c-brand-2);
+    background-image: linear-gradient(to right, #33B2FF, #0099FF);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 204, 255, 0.4);
+}
+
+.VPButton.alt {
+    border-radius: 20px;
+    border-color: var(--vp-c-divider);
+    transition: all 0.3s ease;
+}
+
+.VPButton.alt:hover {
+    border-color: var(--vp-c-accent);
+    color: var(--vp-c-accent) !important;
+    background-color: var(--vp-c-accent-soft);
+}
+
+/* Image Zoom Styles */
+.medium-zoom-overlay {
+    z-index: 100;
+}
+
+.medium-zoom-image--opened {
+    z-index: 101;
+}
+
+/* Typography Improvements */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.vp-doc p {
+    line-height: 1.8;
+    margin-bottom: 1.2em;
+}
+
+.vp-doc img {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.vp-doc img:hover {
+    transform: scale(1.01);
+}
+
+/* Code Block Styling */
+.vp-doc code {
+    font-family: var(--vp-font-family-mono);
+    color: var(--vp-c-accent);
+    background-color: var(--vp-c-accent-soft);
+    padding: 3px 6px;
+    border-radius: 4px;
 }

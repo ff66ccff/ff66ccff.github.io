@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-    title: "FF66CC",
+    title: "ff66ccff",
     description: "ID is Pink, but Soul is Blue (#66CCFF)",
     lang: 'zh-CN',
     head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
@@ -21,12 +21,33 @@ export default defineConfig({
         sidebar: {
             '/posts/': [
                 {
-                    text: '分类',
+                    text: '编程',
+                    collapsed: false,
                     items: [
-                        { text: '编程', link: '/posts/coding/' },
-                        { text: 'Vocaloid', link: '/posts/vocaloid/' },
-                        { text: '科幻', link: '/posts/sci-fi/' },
-                        { text: '生活', link: '/posts/life/' }
+                        { text: 'Welcome to the Blog', link: '/posts/coding/welcome-to-the-blog' }
+                    ]
+                },
+                {
+                    text: '生活',
+                    collapsed: false,
+                    items: [
+                        { text: '游戏本的痛', link: '/posts/life/游戏本的痛' },
+                        { text: '累', link: '/posts/life/累' },
+                        { text: '记得向尘世之外瞥一眼', link: '/posts/life/记得向尘世之外瞥一眼' }
+                    ]
+                },
+                {
+                    text: 'Vocaloid',
+                    collapsed: false,
+                    items: [
+                        // { text: 'Example', link: '/posts/vocaloid/example' }
+                    ]
+                },
+                {
+                    text: '科幻',
+                    collapsed: false,
+                    items: [
+                        // { text: 'Example', link: '/posts/sci-fi/example' }
                     ]
                 }
             ]

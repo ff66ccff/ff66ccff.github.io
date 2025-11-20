@@ -2,12 +2,12 @@
 layout: home
 
 hero:
-  name: "FF66CC"
-  text: "ID is Pink, but Soul is Blue"
-  tagline: "SCU CS 25 | Vocaloid 与 科幻"
+  name: "ff66ccff"
+  text: ""
+  tagline: ""
   image:
     src: /avatar.jpg
-    alt: FF66CC Avatar
+    alt: ff66ccff Avatar
   actions:
     - theme: brand
       text: 阅读博客
