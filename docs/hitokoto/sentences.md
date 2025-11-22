@@ -14,3 +14,4 @@
 - 人说正心诚意致知格物才明理，却道禀守慎独良知方能正我心
 - 落霞与孤鹜齐飞，秋水共长天一色
 - 华风夏韵，洛水天依
+- I'LL NEVER BOW TO THE REAPER WHO TAKES YOUR LIVES.
