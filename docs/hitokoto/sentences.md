@@ -14,7 +14,7 @@
 - 人说正心诚意致知格物才明理，却道禀守慎独良知方能正我心
 - 落霞与孤鹜齐飞，秋水共长天一色
 - 华风夏韵，洛水天依
-- "I'LL NEVER BOW TO THE REAPER WHO TAKES YOUR LIVES."
+- I'LL NEVER BOW TO THE REAPER WHO TAKES YOUR LIVES.
 - 众里寻他千百度，蓦然回首，那人却在，灯火阑珊处。
 - 渔舟唱晚，响穷彭蠡之滨；雁阵惊寒，声断衡阳之浦。
 - 参差荇菜，左右采之。窈窕淑女，琴瑟友之。
