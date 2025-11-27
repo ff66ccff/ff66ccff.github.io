@@ -150,8 +150,19 @@ html {
 }
 
 /* Hero Actions 按钮居中 */
+/* 移动端：在左侧内容区内居中 */
 .VPHero .actions {
     justify-content: center;
+}
+
+/* 桌面端：在整个页面宽度上居中 */
+@media (min-width: 960px) {
+    .VPHero .actions {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 40px;
+    }
 }
 
 /* Hero text 样式优化 */
