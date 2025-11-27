@@ -14,6 +14,10 @@ hero:
       link: /posts/
 ---
 
+<div class="student-info">
+  <p>SCU 计算机 2025 级学生</p>
+</div>
+
 <div class="hobbies-section">
   <h2>我的爱好</h2>
   <div class="hobbies-list">
@@ -85,6 +89,67 @@ hero:
   font-size: 0.9rem;
   color: var(--vp-c-text-2);
   line-height: 1.6;
+}
+
+/* 新增样式 */
+.student-info {
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 60px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+/* 强制 Hero 区域居中显示，提升美观度 */
+@media (min-width: 960px) {
+  .VPHomeHero .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .VPHomeHero .main {
+    order: 2;
+    width: 100%;
+    max-width: 900px;
+    margin-top: 20px;
+  }
+
+  .VPHomeHero .image {
+    order: 1;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .VPHomeHero .name {
+    margin: 0 auto;
+  }
+  
+  .VPHomeHero .text {
+    margin: 10px auto;
+    max-width: 600px;
+  }
+
+  .VPHomeHero .actions {
+    justify-content: center;
+    margin-top: 30px;
+  }
+}
+
+/* 移动端和通用样式调整 */
+.VPHomeHero .actions {
+  justify-content: center;
+}
+
+/* 调整 Hitokoto 组件在居中布局下的显示 */
+.hitokoto-wrapper {
+  margin: 30px auto !important;
+  max-width: 700px;
 }
 </style>
 
