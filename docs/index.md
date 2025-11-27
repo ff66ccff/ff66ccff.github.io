@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "ff66ccff"
-  text: ""
+  text: "SCU 计算机 2025 级学生"
   tagline: ""
   image:
     src: /avatar.jpg

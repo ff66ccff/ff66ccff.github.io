@@ -148,3 +148,16 @@ html {
 .dark .VPSidebar {
     background-color: rgba(30, 30, 30, 0.8) !important;
 }
+
+/* Hero Actions 按钮居中 */
+.VPHero .actions {
+    justify-content: center;
+}
+
+/* Hero text 样式优化 */
+.VPHero .text {
+    font-size: 1.2rem !important;
+    color: var(--vp-c-text-2) !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.05em;
+}
