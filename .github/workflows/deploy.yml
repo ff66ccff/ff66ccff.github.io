@@ -27,6 +27,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
 
       - name: Install dependencies
         run: npm install
@@ -36,6 +41,8 @@ jobs:
 
       - name: Build with VitePress
         run: npm run docs:build
+        env:
+          BASE: ${{ steps.pages.outputs.base_path }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

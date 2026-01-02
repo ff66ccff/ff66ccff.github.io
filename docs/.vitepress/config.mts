@@ -7,6 +7,12 @@ export default defineConfig({
     lang: 'zh-CN',
     head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
 
+    base: process.env.BASE || '/',
+
+    markdown: {
+        breaks: true
+    },
+
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
         logo: '/avatar.jpg',
@@ -32,7 +38,7 @@ export default defineConfig({
                         { text: '游戏本的痛', link: '/posts/life/游戏本的痛' },
                         { text: '累', link: '/posts/life/累' },
                         { text: '记得向尘世之外瞥一眼', link: '/posts/life/记得向尘世之外瞥一眼' },
-                        { text: '辞旧迎新之时', link: '/posts/life/辞旧迎新之时[BGM]' }
+                        { text: '辞旧迎新之时', link: '/posts/life/辞旧迎新之时-bgm' }
                     ]
                 }
             ]
