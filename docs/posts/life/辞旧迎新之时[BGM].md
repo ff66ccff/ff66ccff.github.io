@@ -1,3 +1,8 @@
+---
+title: "辞旧迎新之时"
+published: "2026-01-02T00:00:00+08:00"
+---
+
 # 辞旧迎新之时[BGM]
 
 <div class="music-player">
