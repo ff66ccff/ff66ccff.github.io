@@ -31,7 +31,8 @@ export default defineConfig({
                     items: [
                         { text: '游戏本的痛', link: '/posts/life/游戏本的痛' },
                         { text: '累', link: '/posts/life/累' },
-                        { text: '记得向尘世之外瞥一眼', link: '/posts/life/记得向尘世之外瞥一眼' }
+                        { text: '记得向尘世之外瞥一眼', link: '/posts/life/记得向尘世之外瞥一眼' },
+                        { text: '辞旧迎新之时', link: '/posts/life/辞旧迎新之时[BGM]' }
                     ]
                 }
             ]

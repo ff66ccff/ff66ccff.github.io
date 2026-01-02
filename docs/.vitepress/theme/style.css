@@ -172,3 +172,29 @@ html {
     font-weight: 400 !important;
     letter-spacing: 0.05em;
 }
+
+/* Music Player Styling */
+.music-player {
+    margin: 24px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.music-player iframe {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.music-player iframe:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(102, 204, 255, 0.2);
+}
+
+.dark .music-player iframe {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.dark .music-player iframe:hover {
+    box-shadow: 0 8px 24px rgba(102, 204, 255, 0.15);
+}
