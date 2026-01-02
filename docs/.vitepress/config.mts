@@ -1,7 +1,10 @@
 import { defineConfig } from 'vitepress'
 
+const base = process.env.BASE && process.env.BASE !== '' ? process.env.BASE : '/'
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+    base,
     title: "ff66ccff",
     description: "ID is Pink, but Soul is Blue (#66CCFF)",
     lang: 'zh-CN',
