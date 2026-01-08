@@ -1,4 +1,64 @@
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
+
+const POSTS_DIR = path.resolve(__dirname, '../posts')
+const CATEGORY_LABEL: Record<string, string> = {
+    coding: '编程',
+    life: '生活'
+}
+
+function parseFrontmatter(filePath: string): { title?: string; published?: string } {
+    const content = fs.readFileSync(filePath, 'utf-8')
+    const match = content.match(/^---\s*[\r\n]+([\s\S]*?)[\r\n]+---/)
+    if (!match) return {}
+
+    return match[1].split(/\r?\n/).reduce<Record<string, string>>((acc, line) => {
+        const pair = line.match(/^(\w+):\s*(.*)$/)
+        if (pair) {
+            const [, key, raw] = pair
+            acc[key] = raw.replace(/^"|"$/g, '')
+        }
+        return acc
+    }, {})
+}
+
+function createSidebar() {
+    if (!fs.existsSync(POSTS_DIR)) return []
+
+    const categories = fs
+        .readdirSync(POSTS_DIR, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => entry.name)
+
+    return categories
+        .map((category) => {
+            const dir = path.join(POSTS_DIR, category)
+            const items = fs
+                .readdirSync(dir)
+                .filter((file) => file.endsWith('.md') && file !== 'index.md')
+                .map((file) => {
+                    const fullPath = path.join(dir, file)
+                    const meta = parseFrontmatter(fullPath)
+                    const text = meta.title || path.basename(file, '.md')
+                    const published = meta.published ? new Date(meta.published).getTime() : 0
+                    const link = `/posts/${category}/${file.replace(/\.md$/, '')}`
+                    return { text, link, published }
+                })
+                .sort((a, b) => b.published - a.published)
+                .map(({ text, link }) => ({ text, link }))
+
+            return {
+                text: CATEGORY_LABEL[category] || category,
+                collapsed: false,
+                items
+            }
+        })
+        .filter((section) => section.items.length > 0)
+}
 
 const base = process.env.BASE && process.env.BASE !== '' ? process.env.BASE : '/'
 
@@ -26,25 +86,7 @@ export default defineConfig({
         ],
 
         sidebar: {
-            '/posts/': [
-                {
-                    text: '编程',
-                    collapsed: false,
-                    items: [
-                        { text: 'Welcome to the Blog', link: '/posts/coding/welcome-to-the-blog' }
-                    ]
-                },
-                {
-                    text: '生活',
-                    collapsed: false,
-                    items: [
-                        { text: '游戏本的痛', link: '/posts/life/游戏本的痛' },
-                        { text: '累', link: '/posts/life/累' },
-                        { text: '记得向尘世之外瞥一眼', link: '/posts/life/记得向尘世之外瞥一眼' },
-                        { text: '辞旧迎新之时', link: '/posts/life/辞旧迎新之时-bgm' }
-                    ]
-                }
-            ]
+            '/posts/': createSidebar()
         },
 
         socialLinks: [
