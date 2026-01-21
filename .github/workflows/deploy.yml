@@ -39,18 +39,25 @@ jobs:
         run: node scripts/add-frontmatter.js
 
       - name: Build with Hexo
-        run: npm run docs:build
+        run: npx hexo clean --config _config.yml && npx hexo generate --config _config.yml
 
-      - name: Verify output
+      - name: Detect output dir
         run: |
-          test -f docs/index.html
-          touch docs/.nojekyll
-          ls -la docs
+          if [ -f docs/index.html ]; then
+            echo "OUTPUT_DIR=docs" >> $GITHUB_ENV
+          elif [ -f public/index.html ]; then
+            echo "OUTPUT_DIR=public" >> $GITHUB_ENV
+          else
+            echo "No build output found"
+            exit 1
+          fi
+          touch "${OUTPUT_DIR}/.nojekyll"
+          ls -la "${OUTPUT_DIR}"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: ${{ env.OUTPUT_DIR }}
 
   deploy:
     environment:
