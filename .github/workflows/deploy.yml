@@ -1,4 +1,4 @@
-name: Deploy VitePress site to Pages
+name: Deploy Hexo site to Pages
 
 on:
   push:
@@ -38,15 +38,13 @@ jobs:
       - name: Auto-generate frontmatter
         run: node scripts/add-frontmatter.js
 
-      - name: Build with VitePress
+      - name: Build with Hexo
         run: npm run docs:build
-        env:
-          BASE: ${{ steps.pages.outputs.base_path }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          path: docs
 
   deploy:
     environment:
