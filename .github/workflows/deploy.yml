@@ -44,13 +44,14 @@ jobs:
       - name: Detect output dir
         run: |
           if [ -f docs/index.html ]; then
-            echo "OUTPUT_DIR=docs" >> $GITHUB_ENV
+            OUTPUT_DIR=docs
           elif [ -f public/index.html ]; then
-            echo "OUTPUT_DIR=public" >> $GITHUB_ENV
+            OUTPUT_DIR=public
           else
             echo "No build output found"
             exit 1
           fi
+          echo "OUTPUT_DIR=${OUTPUT_DIR}" >> $GITHUB_ENV
           touch "${OUTPUT_DIR}/.nojekyll"
           ls -la "${OUTPUT_DIR}"
 
