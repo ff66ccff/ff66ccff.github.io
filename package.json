@@ -5,7 +5,8 @@
     "scripts": {
         "clean": "hexo clean",
         "dev": "hexo server",
-        "build": "hexo generate"
+        "build": "hexo generate",
+        "docs:build": "hexo clean && hexo generate"
     },
     "keywords": [],
     "author": "ff66ccff",
