@@ -44,10 +44,13 @@ jobs:
       - name: Debug build output
         run: |
           npx hexo config public_dir source_dir theme
+          echo "Posts:";
+          ls -la source/_posts || true
           ls -la
           ls -la docs || true
           ls -la public || true
           find . -maxdepth 3 -type f -name index.html | head -n 20
+          npx hexo list route || true
 
       - name: Detect output dir
         run: |
