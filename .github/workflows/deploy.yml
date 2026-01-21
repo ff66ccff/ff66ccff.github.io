@@ -41,6 +41,14 @@ jobs:
       - name: Build with Hexo
         run: npx hexo clean --config _config.yml && npx hexo generate --config _config.yml
 
+      - name: Debug build output
+        run: |
+          npx hexo config public_dir source_dir theme
+          ls -la
+          ls -la docs || true
+          ls -la public || true
+          find . -maxdepth 3 -type f -name index.html | head -n 20
+
       - name: Detect output dir
         run: |
           if [ -f docs/index.html ]; then
@@ -49,6 +57,7 @@ jobs:
             OUTPUT_DIR=public
           else
             echo "No build output found"
+            find . -maxdepth 3 -type f -name index.html | head -n 50
             exit 1
           fi
           echo "OUTPUT_DIR=${OUTPUT_DIR}" >> $GITHUB_ENV
