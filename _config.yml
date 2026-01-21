@@ -1,39 +1,28 @@
-# Hexo configuration
-
 title: ff66ccff
-subtitle: ""
-description: ""
+subtitle: ''
+description: ''
 author: ff66ccff
 language: zh-CN
 timezone: Asia/Shanghai
-
 url: https://ff66ccff.github.io
 root: /
-permalink: :year/:month/:day/:title/
-permalink_defaults:
-
+permalink: ':year/:month/:day/:title/'
+permalink_defaults: null
 source_dir: source
-public_dir: docs
-
-# Writing
-new_post_name: :title.md
+public_dir: source_dir
+new_post_name: ':title.md'
 post_asset_folder: false
 render_drafts: false
 highlight:
   enable: true
   line_number: true
   auto_detect: false
-  tab_replace: ""
-
-# Home page setting
+  tab_replace: ''
 index_generator:
   path: ''
   per_page: 10
-  order_by: -date
-
-# Theme
+  order_by: '-date'
 theme: volantis
-
 theme_config:
   navbar:
     menu:
@@ -52,7 +41,7 @@ theme_config:
       archive: true
       others: false
     title: ff66ccff
-    subtitle: '<span id="hitokoto">加载中...</span>'
+    subtitle: <span id="hitokoto">加载中...</span>
     background: /photos/wallhaven-yq5ejd_3840x2400.png
     features:
       - name: 博客
@@ -70,24 +59,31 @@ theme_config:
   plugins:
     fancybox:
       enable: true
-      js: https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.umd.min.js
-      css: https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.css
+      js: >-
+        https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.umd.min.js
+      css: >-
+        https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.css
     jquery:
       enable: true
       js: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
   cdn_system:
-    priority: [custom, local, cdnjs, npm, static]
+    priority:
+      - custom
+      - local
+      - cdnjs
+      - npm
+      - static
     system_config:
       custom:
         jquery: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
-        fancybox_js: https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.umd.min.js
-        fancybox_css: https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.css
-
+        fancybox_js: >-
+          https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.umd.min.js
+        fancybox_css: >-
+          https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.css
 import:
   head_end:
-    - '<link rel="stylesheet" href="/css/custom.css">'
+    - <link rel="stylesheet" href="/css/custom.css">
   body_end:
-    - '<script src="/js/custom.js"></script>'
-
+    - <script src="/js/custom.js"></script>
 skip_render:
   - hitokoto/sentences.md
