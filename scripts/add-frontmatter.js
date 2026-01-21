@@ -7,7 +7,7 @@ const fs = require('fs')
 const path = require('path')
 const { execSync } = require('child_process')
 
-const POSTS_DIR = path.join(process.cwd(), 'docs', 'posts')
+const POSTS_DIR = path.join(process.cwd(), 'source', '_posts')
 
 // 递归获取所有 .md 文件
 function getAllMarkdownFiles(dir, files = []) {
