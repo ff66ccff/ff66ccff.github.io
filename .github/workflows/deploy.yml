@@ -41,6 +41,12 @@ jobs:
       - name: Build with Hexo
         run: npm run docs:build
 
+      - name: Verify output
+        run: |
+          test -f docs/index.html
+          touch docs/.nojekyll
+          ls -la docs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
