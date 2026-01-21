@@ -3,9 +3,9 @@
  * 在 GitHub Actions 构建之前运行
  */
 
-import fs from 'fs'
-import path from 'path'
-import { execSync } from 'child_process'
+const fs = require('fs')
+const path = require('path')
+const { execSync } = require('child_process')
 
 const POSTS_DIR = path.join(process.cwd(), 'docs', 'posts')
 
@@ -127,4 +127,6 @@ function main() {
     }
 }
 
-main()
+if (require.main === module) {
+    main()
+}

@@ -1,0 +1,93 @@
+# Hexo configuration
+
+title: ff66ccff
+subtitle: ""
+description: ""
+author: ff66ccff
+language: zh-CN
+timezone: Asia/Shanghai
+
+url: https://ff66ccff.github.io
+root: /
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+
+source_dir: source
+public_dir: docs
+
+# Writing
+new_post_name: :title.md
+post_asset_folder: false
+render_drafts: false
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: false
+  tab_replace: ""
+
+# Home page setting
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
+
+# Theme
+theme: volantis
+
+theme_config:
+  navbar:
+    menu:
+      - name: 博客
+        icon: fa-solid fa-rss
+        url: /
+      - name: 分类
+        icon: fa-solid fa-folder-open
+        url: categories/
+      - name: 归档
+        icon: fa-solid fa-archive
+        url: archives/
+  cover:
+    display:
+      home: true
+      archive: true
+      others: false
+    title: ff66ccff
+    subtitle: '<span id="hitokoto">加载中...</span>'
+    background: /photos/wallhaven-yq5ejd_3840x2400.png
+    features:
+      - name: 博客
+        icon: fa-solid fa-rss
+        url: /
+      - name: GitHub
+        icon: fa-brands fa-github
+        url: https://github.com/ff66ccff
+  sidebar:
+    widget_library:
+      blogger:
+        avatar: /avatar.jpg
+        url: /
+        title: ff66ccff
+  plugins:
+    fancybox:
+      enable: true
+      js: https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.umd.min.js
+      css: https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.css
+    jquery:
+      enable: true
+      js: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
+  cdn_system:
+    priority: [custom, local, cdnjs, npm, static]
+    system_config:
+      custom:
+        jquery: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
+        fancybox_js: https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.umd.min.js
+        fancybox_css: https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.33/fancybox/fancybox.css
+
+import:
+  head_end:
+    - '<link rel="stylesheet" href="/css/custom.css">'
+  body_end:
+    - '<script src="/js/custom.js"></script>'
+
+skip_render:
+  - hitokoto/sentences.md
