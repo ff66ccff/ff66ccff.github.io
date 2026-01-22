@@ -54,14 +54,22 @@ jobs:
 
       - name: Detect output dir
         run: |
-          if [ -f docs/index.html ]; then
-            OUTPUT_DIR=docs
-          elif [ -f public/index.html ]; then
-            OUTPUT_DIR=public
-          else
+          OUTPUT_DIR=$(npx hexo config public_dir | tail -n 1 | awk '{print $2}')
+          if [ -z "$OUTPUT_DIR" ]; then
+            if [ -d docs ]; then
+              OUTPUT_DIR=docs
+            elif [ -d public ]; then
+              OUTPUT_DIR=public
+            fi
+          fi
+          if [ -z "$OUTPUT_DIR" ] || [ ! -d "$OUTPUT_DIR" ]; then
             echo "No build output found"
             find . -maxdepth 3 -type f -name index.html | head -n 50
             exit 1
+          fi
+          if [ ! -f "$OUTPUT_DIR/index.html" ]; then
+            echo "Warning: $OUTPUT_DIR/index.html not found"
+            find "$OUTPUT_DIR" -maxdepth 3 -type f -name index.html | head -n 20
           fi
           echo "OUTPUT_DIR=${OUTPUT_DIR}" >> $GITHUB_ENV
           touch "${OUTPUT_DIR}/.nojekyll"
