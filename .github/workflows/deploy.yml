@@ -34,6 +34,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Ensure volantis theme
+        run: |
+          if [ ! -d themes/volantis ]; then
+            git clone --depth=1 https://github.com/volantis-x/hexo-theme-volantis.git themes/volantis
+          fi
+
       - name: Auto-generate frontmatter
         run: node scripts/add-frontmatter.js
 
@@ -62,7 +68,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
-          if-no-files-found: error
 
   deploy:
     environment:
