@@ -37,6 +37,13 @@ function hasPublishedField(content) {
     return /^published:/m.test(frontmatterMatch[1])
 }
 
+// 检查 frontmatter 是否有 title 字段
+function hasTitleField(content) {
+    const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/)
+    if (!frontmatterMatch) return false
+    return /^title:/m.test(frontmatterMatch[1])
+}
+
 // 从文件名提取标题（去掉扩展名和特殊字符标记如 [BGM]）
 function extractTitle(filePath) {
     const fileName = path.basename(filePath, '.md')
@@ -88,11 +95,13 @@ published: "${publishDate}"
         console.log(`✅ 添加 frontmatter: ${path.relative(POSTS_DIR, filePath)}`)
         return true
     } else if (!hasPublishedField(content)) {
-        // 有 frontmatter 但缺少 published 字段，添加它
-        content = content.replace(
-            /^(---\s*\n)/,
-            `$1title: "${title}"\npublished: "${publishDate}"\n`
-        )
+        // 有 frontmatter 但缺少 published 字段，补充它（如无 title 则一并补充）
+        const needsTitle = !hasTitleField(content)
+        const insertLines = needsTitle
+            ? `title: "${title}"\npublished: "${publishDate}"\n`
+            : `published: "${publishDate}"\n`
+
+        content = content.replace(/^(---\s*\n)/, `$1${insertLines}`)
         fs.writeFileSync(filePath, content, 'utf-8')
         console.log(`✅ 补充 published 字段: ${path.relative(POSTS_DIR, filePath)}`)
         return true
