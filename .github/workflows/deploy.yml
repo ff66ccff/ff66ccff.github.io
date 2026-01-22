@@ -41,6 +41,14 @@ jobs:
       - name: Build with Hexo
         run: npx hexo clean --config _config.yml && npx hexo generate --config _config.yml
 
+      - name: Normalize output to docs
+        run: |
+          if [ -f public/index.html ] && [ ! -f docs/index.html ]; then
+            rm -rf docs
+            mkdir -p docs
+            cp -a public/. docs/
+          fi
+
       - name: Debug build output
         run: |
           npx hexo config public_dir source_dir theme
