@@ -62,15 +62,13 @@ jobs:
 
       - name: Verify build output
         run: |
-          OUTPUT_DIR=docs
-          if [ ! -d "$OUTPUT_DIR" ]; then
-            echo "No build output directory: $OUTPUT_DIR"
+          if [ -f docs/index.html ]; then
+            OUTPUT_DIR=docs
+          elif [ -f public/index.html ]; then
+            OUTPUT_DIR=public
+          else
+            echo "Missing docs/index.html and public/index.html"
             find . -maxdepth 3 -type f -name index.html | head -n 50
-            exit 1
-          fi
-          if [ ! -f "$OUTPUT_DIR/index.html" ]; then
-            echo "Missing $OUTPUT_DIR/index.html"
-            find "$OUTPUT_DIR" -maxdepth 3 -type f -name index.html | head -n 20
             exit 1
           fi
           echo "OUTPUT_DIR=${OUTPUT_DIR}" >> $GITHUB_ENV
