@@ -9,7 +9,7 @@ root: /
 permalink: ':year/:month/:day/:title/'
 permalink_defaults: null
 source_dir: source
-public_dir: docs
+public_dir: public
 new_post_name: ':title.md'
 post_asset_folder: false
 render_drafts: false

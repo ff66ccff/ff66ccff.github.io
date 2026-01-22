@@ -44,24 +44,24 @@ jobs:
 
       - name: Verify output
         run: |
-          if [ ! -d docs ]; then
-            echo "docs directory missing"
+          if [ ! -d public ]; then
+            echo "public directory missing"
             find . -maxdepth 3 -type f -name index.html | head -n 50
             exit 1
           fi
-          if [ ! -f docs/index.html ]; then
-            echo "docs/index.html missing"
-            find docs -maxdepth 3 -type f -name index.html | head -n 20
+          if [ ! -f public/index.html ]; then
+            echo "public/index.html missing"
+            find public -maxdepth 3 -type f -name index.html | head -n 20
             exit 1
           fi
-          touch docs/.nojekyll
-          ls -la docs | head -n 40
-          echo "index size:" $(stat -c%s docs/index.html)
+          touch public/.nojekyll
+          ls -la public | head -n 40
+          echo "index size:" $(stat -c%s public/index.html)
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          path: ./public
           if-no-files-found: error
 
   deploy:
