@@ -3,19 +3,52 @@
         const target = document.getElementById('hitokoto');
         if (!target) return;
 
+        let lines = [];
+        let current = 0;
+        let typingTimer = null;
+        const typingSpeed = 55;
+
+        const typeText = (text) => {
+            if (typingTimer) clearInterval(typingTimer);
+            target.textContent = '';
+            let idx = 0;
+            typingTimer = setInterval(() => {
+                target.textContent = text.slice(0, idx + 1);
+                idx += 1;
+                if (idx >= text.length) {
+                    clearInterval(typingTimer);
+                    typingTimer = null;
+                }
+            }, typingSpeed);
+        };
+
+        const showNext = () => {
+            if (!lines.length) return;
+            current = (current + 1) % lines.length;
+            typeText(lines[current]);
+        };
+
+        const hydrate = (items) => {
+            lines = items;
+            if (!lines.length) return;
+            current = Math.floor(Math.random() * lines.length);
+            target.style.cursor = 'pointer';
+            target.title = '点击切换下一句';
+            target.addEventListener('click', showNext);
+            typeText(lines[current]);
+        };
+
         fetch('<%- url_for("/hitokoto/sentences.md") %>')
             .then((res) => res.text())
             .then((text) => {
-                const lines = text
+                const parsed = text
                     .split(/\r?\n/)
                     .map((line) => line.trim())
                     .filter((line) => line.startsWith('- '))
                     .map((line) => line.replace(/^\-\s+/, '').trim())
                     .filter(Boolean);
 
-                if (!lines.length) return;
-                const pick = lines[Math.floor(Math.random() * lines.length)];
-                target.textContent = pick;
+                hydrate(parsed);
             })
             .catch(() => {
                 // keep default text
