@@ -1,6 +1,6 @@
 'use strict';
 
-const CDN_ROOT = 'https://cdn.jsdelivr.net/gh/ff66ccff/ff66ccff.github.io@main';
+const CDN_ROOT = 'https://cdn.jsdelivr.net/gh/ff66ccff/ff66ccff.github.io@main/source';
 
 // Keep local image paths during `hexo server`; rewrite to CDN for generate/deploy.
 hexo.extend.filter.register('after_render:html', (html) => {
