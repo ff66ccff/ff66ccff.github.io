@@ -106,4 +106,4 @@ skip_render:
 lazyload:
   enable: true
   onlypost: false
-  loadingImg: https://cdn.jsdelivr.net/gh/tengshin/tengshin/images/loading.svg
+  loadingImg: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwIDAgNjAwIDQwMCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiNlNWU3ZWIiLz48L3N2Zz4=
