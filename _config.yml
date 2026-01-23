@@ -102,3 +102,8 @@ import:
     - <script src="/js/custom.js"></script>
 skip_render:
   - hitokoto/sentences.md
+
+lazyload:
+  enable: true
+  onlypost: false
+  loadingImg: https://cdn.jsdelivr.net/gh/tengshin/tengshin/images/loading.svg

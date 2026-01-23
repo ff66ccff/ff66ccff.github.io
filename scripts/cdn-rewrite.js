@@ -8,6 +8,35 @@ hexo.extend.filter.register('after_render:html', (html) => {
     if (isLocalPreview) return html;
     if (typeof html !== 'string') return html;
 
-    const pattern = /src=(['"])\/(photos|images)\/([^"']+)\1/g;
-    return html.replace(pattern, (match, quote, folder, rest) => `src=${quote}${CDN_ROOT}/${folder}/${rest}${quote}`);
+    const rewritePath = (url) => {
+        if (typeof url !== 'string') return url;
+        if (url.startsWith('/photos/') || url.startsWith('/images/')) {
+            return `${CDN_ROOT}${url}`;
+        }
+        return url;
+    };
+
+    const rewriteSrcset = (value) => {
+        return value
+            .split(',')
+            .map((item) => {
+                const trimmed = item.trim();
+                if (!trimmed) return item;
+                const parts = trimmed.split(/\s+/);
+                const url = parts[0];
+                const rest = parts.slice(1).join(' ');
+                const rewritten = rewritePath(url);
+                return rest ? `${rewritten} ${rest}` : rewritten;
+            })
+            .join(', ');
+    };
+
+    const attrPattern = /\b(src|data-src|data-original|data-bg|data-background|poster|srcset|data-srcset)\s*=\s*(['"])([^"']+)\2/gi;
+    return html.replace(attrPattern, (match, attr, quote, value) => {
+        const lower = attr.toLowerCase();
+        const rewritten = (lower === 'srcset' || lower === 'data-srcset')
+            ? rewriteSrcset(value)
+            : rewritePath(value);
+        return `${attr}=${quote}${rewritten}${quote}`;
+    });
 });
