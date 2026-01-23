@@ -1,0 +1,43 @@
+name: Compress Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'source/photos/**'
+      - 'source/images/**'
+
+permissions:
+  contents: write
+
+jobs:
+  compress:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Optimize images
+        id: optimize
+        uses: calibreapp/image-actions@main
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          jpegQuality: 80
+          pngQuality: 80
+          webpQuality: 80
+
+      - name: Commit optimized images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          CHANGES=$(git status --porcelain)
+          if [ -n "$CHANGES" ]; then
+            git add source/photos source/images 2>/dev/null || true
+            git commit -m "chore: compress images"
+            git push
+          else
+            echo "No image changes to commit."
+          fi
