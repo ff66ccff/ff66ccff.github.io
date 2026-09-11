@@ -28,3 +28,12 @@
         - Rust
         - 开源
       color: '#0086b3'
+    - title: Fat Old Eight’s Blog
+      url: https://fat-old-eight.github.io/
+      avatar: https://avatars.githubusercontent.com/u/87306476?v=4
+      description: 算法竞赛、数学物理与生活闲话 · OI / Codeforces 题解 / 中文 VOCALOID 同好。
+      keywords:
+        - OI
+        - 算法竞赛
+        - VOCALOID
+      color: '#ff4e00'
