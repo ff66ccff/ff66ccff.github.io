@@ -59,6 +59,13 @@ theme_config:
         avatar: /avatar.jpg
         url: /
         title: ff66ccff
+  article:
+    body:
+      meta_library:
+        author:
+          avatar: /avatar.jpg
+          name: ff66ccff
+          url: /
   plugins:
     fancybox:
       enable: true

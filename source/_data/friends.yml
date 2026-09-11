@@ -10,3 +10,21 @@
         - 病原生物学
         - 细菌耐药性
       color: '#0f766e'
+    - title: Valproate
+      url: https://lingyu061126.github.io/
+      avatar: https://lingyu061126.github.io/images/Image_165853659272824.jpg
+      description: 一名普通的人类观察员 · 电气专业本科生的学习笔记与碎碎念。
+      keywords:
+        - 电气
+        - 数学
+        - 人类观察
+      color: '#6366f1'
+    - title: lalala 的小站
+      url: https://wiki.lalala-233.top/
+      avatar: https://avatars.githubusercontent.com/u/79189174?v=4
+      description: 个人知识库与技术小 Wiki · 记录 Rust、C++、开源贡献与极客思考。
+      keywords:
+        - Wiki
+        - Rust
+        - 开源
+      color: '#0086b3'
