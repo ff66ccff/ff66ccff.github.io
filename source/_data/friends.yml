@@ -1,0 +1,12 @@
+- group: 朋友们
+  description: 志同道合的同行者与优秀站点
+  items:
+    - title: The Medical Field of Astepluver
+      url: https://astepluver.github.io/
+      avatar: https://astepluver.github.io/favicon.svg
+      description: 基础医学（病原生物学）大四在读：记录细菌耐药性研究路上的学习动态与文献笔记。
+      keywords:
+        - 基础医学
+        - 病原生物学
+        - 细菌耐药性
+      color: '#0f766e'
