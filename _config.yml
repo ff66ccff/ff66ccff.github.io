@@ -27,7 +27,7 @@ theme_config:
   navbar:
     menu:
       - name: 博客
-        icon: fa-solid fa-rss
+        icon: fa-solid fa-house
         url: /
       - name: 分类
         icon: fa-solid fa-folder-open
@@ -48,7 +48,7 @@ theme_config:
     background: /photos/wallhaven-yq5ejd_3840x2400.png
     features:
       - name: 博客
-        icon: fa-solid fa-rss
+        icon: fa-solid fa-house
         url: /
       - name: GitHub
         icon: fa-brands fa-github
@@ -128,11 +128,17 @@ lazyload:
 # RSS Feed
 feed:
   enable: true
-  type: atom
-  path: atom.xml
+  type:
+    - atom
+    - rss2
+  path:
+    - atom.xml
+    - rss2.xml
   limit: 20
   hub:
   content: true
   content_limit: 140
   content_limit_delim: ' '
   order_by: -date
+  icon: /avatar.jpg
+  autodiscovery: true
