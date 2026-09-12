@@ -59,6 +59,13 @@ theme_config:
         avatar: /avatar.jpg
         url: /
         title: ff66ccff
+        social:
+          - icon: fa-solid fa-rss
+            url: /atom.xml
+          - icon: fab fa-github
+            url: https://github.com/ff66ccff
+          - icon: fa-solid fa-headphones-alt
+            url: https://music.163.com/#/playlist?id=3061115045
   article:
     body:
       meta_library:
@@ -117,3 +124,15 @@ lazyload:
   enable: true
   onlypost: false
   loadingImg: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwIDAgNjAwIDQwMCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiNlNWU3ZWIiLz48L3N2Zz4=
+
+# RSS Feed
+feed:
+  enable: true
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content: true
+  content_limit: 140
+  content_limit_delim: ' '
+  order_by: -date
