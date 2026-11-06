@@ -6,6 +6,8 @@ ff66ccff 的个人主页：技术手记、生活随想、中文 VOCALOID 与科�
 
 2026 年从 **Hexo 7 + Volantis** 迁移到 **Astro 7**：文章、个人资料、友链与一言数据全部保留，URL 兼容旧站。
 
+![首页（亮色）](docs/screenshots/home-light.webp)
+
 ## 技术栈
 
 | 能力 | 实现 |

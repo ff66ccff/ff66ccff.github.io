@@ -86,6 +86,22 @@ Astro API 端点里无法直接渲染 `render(entry)` 返回的组件，因此�
 
 ## 5. 视觉与工程升级
 
+| 首页（亮色） | 首页（暗色） |
+| --- | --- |
+| ![首页亮色](screenshots/home-light.webp) | ![首页暗色](screenshots/home-dark.webp) |
+
+| 文章页（暗色） | 移动端 |
+| --- | --- |
+| ![文章页暗色](screenshots/post-dark.webp) | ![移动端首页](screenshots/home-mobile.webp) |
+
+| Mermaid 图表 | 友链 |
+| --- | --- |
+| ![Mermaid](screenshots/mermaid-light.webp) | ![友链](screenshots/friends-light.webp) |
+
+完整截图（含 404、关于、浅色代码块、暗色 Mermaid）在 [`docs/screenshots/`](screenshots/) 下。
+
+
+
 - 以 `#FF66CC` 为强调色的亮 / 暗双主题设计系统（`src/styles/global.css`），替代了原主题的终端风叠加样式。
 - 阅读进度条、回顶、目录滚动高亮、代码块复制、图片灯箱、mermaid、404 页、控制台彩蛋。
 - Open Graph / Twitter Card / JSON-LD / sitemap / robots / 默认 OG 图（`public/og-default.jpg`）。
