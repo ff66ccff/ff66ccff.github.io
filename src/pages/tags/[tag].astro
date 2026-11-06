@@ -1,0 +1,25 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPublishedPosts, collectTerms, postsWithTerm } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const tags = collectTerms(posts, 'tags');
+  return tags.map((term) => ({
+    params: { tag: term.slug },
+    props: { term, posts: postsWithTerm(posts, 'tags', term.slug) },
+  }));
+}
+
+const { term, posts } = Astro.props;
+---
+
+<PageLayout title={`标签：${term.name}`} kicker="Tag">
+  <div class="post-list">
+    {posts.map((post) => (
+      <PostCard post={post} />
+    ))}
+  </div>
+  <p class="page-desc"><a href="/tags/">← 返回全部标签</a></p>
+</PageLayout>

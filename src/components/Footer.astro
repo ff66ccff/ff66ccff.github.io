@@ -1,0 +1,29 @@
+---
+import Icon from './Icon.astro';
+import { SITE } from '../consts';
+import { profile } from '../lib/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-meta">
+      <span>© {SITE.since}–{year} <a href="/about/">{profile.name}</a></span>
+      <span class="footer-sep">·</span>
+      <span>
+        内容遵循
+        <a href={SITE.license.url} rel="license noopener" target="_blank">{SITE.license.name}</a>
+        协议
+      </span>
+    </div>
+    <div class="footer-links">
+      <a href="/atom.xml"><Icon name="rss" size={12} /> RSS</a>
+      <a href="/sitemap-index.xml">Sitemap</a>
+      <a href="https://github.com/ff66ccff" rel="noopener" target="_blank">
+        <Icon name="github" size={12} /> GitHub
+      </a>
+      <span>Built with Astro</span>
+    </div>
+  </div>
+</footer>

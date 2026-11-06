@@ -1,0 +1,35 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import FriendCard from '../../components/FriendCard.astro';
+import { friends } from '../../lib/site';
+---
+
+<PageLayout
+  title="友链"
+  kicker="Friends"
+  description="海内存知己，天涯若比邻。这里记录了常来常往的朋友与同行的站点。"
+>
+  <div class="friends-intro">
+    <p>
+      这些是我常读的站点与同行的朋友。如果你也有一个认真打理的角落，欢迎通过
+      <a href="https://github.com/ff66ccff" rel="noopener" target="_blank">GitHub</a>
+      找到我交换友链。
+    </p>
+  </div>
+
+  {
+    friends.map((group) => (
+      <section class="friend-group" aria-label={group.group}>
+        <h2 class="friend-group-title">{group.group}</h2>
+        {group.description && <p class="friend-group-desc">{group.description}</p>}
+        <ul class="friends-grid">
+          {group.items.map((item) => (
+            <li>
+              <FriendCard item={item} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</PageLayout>

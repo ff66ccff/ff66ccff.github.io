@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<BaseLayout title="404 · 页面不存在" noindex canonical={false}>
+  <div class="container not-found">
+    <div>
+      <div class="not-found-code">404</div>
+      <h1 class="not-found-title">二向箔已经抵达，这一页不存在了</h1>
+      <p class="not-found-desc">
+        你访问的页面可能被折叠进了二维空间，或者链接地址写错了。回到首页，继续向尘世之外瞥一眼吧。
+      </p>
+      <div class="not-found-actions">
+        <a class="btn btn-primary" href="/"><Icon name="home" size={16} /> 回到首页</a>
+        <a class="btn" href="/archives/"><Icon name="archive" size={16} /> 浏览归档</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

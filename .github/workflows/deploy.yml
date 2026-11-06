@@ -1,4 +1,4 @@
-name: Deploy Hexo site to Pages
+name: Deploy Astro site to Pages
 
 on:
   push:
@@ -19,63 +19,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+
+      - name: Install, build and upload site
+        uses: withastro/action@v6
         with:
-          fetch-depth: 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Ensure volantis theme
-        run: |
-          if [ ! -d themes/volantis ]; then
-            git clone --depth=1 https://github.com/volantis-x/hexo-theme-volantis.git themes/volantis
-          fi
-
-      - name: Auto-generate frontmatter
-        run: node scripts/add-frontmatter.js
-
-      - name: Build with Hexo
-        run: |
-          npx hexo clean --config _config.yml
-          npx hexo generate --config _config.yml
-
-      - name: Verify output
-        run: |
-          if [ ! -d public ]; then
-            echo "public directory missing"
-            find . -maxdepth 3 -type f -name index.html | head -n 50
-            exit 1
-          fi
-          if [ ! -f public/index.html ]; then
-            echo "public/index.html missing"
-            find public -maxdepth 3 -type f -name index.html | head -n 20
-            exit 1
-          fi
-          touch public/.nojekyll
-          ls -la public | head -n 40
-          echo "index size:" $(stat -c%s public/index.html)
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./public
+          node-version: 24
+          package-manager: npm
 
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    name: Deploy
     permissions:
       contents: read
       pages: write
@@ -83,6 +40,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/deploy-pages@v5

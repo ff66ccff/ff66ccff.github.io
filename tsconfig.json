@@ -1,25 +1,9 @@
 {
-    "compilerOptions": {
-        "module": "esnext",
-        "moduleResolution": "bundler",
-        "target": "esnext",
-        "strict": true,
-        "jsx": "preserve",
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "types": [
-            "vitepress/client"
-        ]
-    },
-    "include": [
-        "docs/**/*.ts",
-        "docs/**/*.vue",
-        "docs/**/*.md"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "src/**/*", "astro.config.mjs", "scripts/**/*.mjs"],
+  "exclude": ["dist", "node_modules", "public", "themes", "source"],
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "allowJs": true
+  }
 }

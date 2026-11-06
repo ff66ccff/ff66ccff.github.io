@@ -1,0 +1,26 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getPublishedPosts, groupByYear, postPath } from '../../lib/posts';
+import { compactDate } from '../../lib/format';
+
+const posts = await getPublishedPosts();
+const years = groupByYear(posts);
+---
+
+<PageLayout title="归档" kicker="Archive" description={`共 ${posts.length} 篇文章，按年份排列。`}>
+  {
+    years.map((group) => (
+      <section class="archive-group" aria-label={`${group.year} 年`}>
+        <h2 class="archive-year">{group.year}</h2>
+        <ul class="archive-list">
+          {group.posts.map((post) => (
+            <li class="archive-item">
+              <span class="archive-date">{compactDate(post.data.date)}</span>
+              <a class="archive-title" href={postPath(post)}>{post.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</PageLayout>

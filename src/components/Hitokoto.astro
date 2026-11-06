@@ -1,0 +1,46 @@
+---
+import Icon from './Icon.astro';
+import quotes from '../data/quotes.json';
+
+const sentences = quotes as string[];
+// 以「距 2026-01-01 的天数」取模：同一构建自然日产物一致，每天换一句，
+// 避免 Math.random() 让每次构建产物都不同。
+const daysSinceEpoch = Math.floor(Date.now() / 86_400_000);
+const initial = sentences[daysSinceEpoch % sentences.length] ?? 'Talk is cheap, show me the code.';
+---
+
+<section class="hitokoto" data-hitokoto data-quote={initial} aria-labelledby="hitokoto-label">
+  <div class="hitokoto-head" aria-hidden="true">
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="hitokoto-label" id="hitokoto-label">一言 · hitokoto</span>
+  </div>
+
+  <div class="hitokoto-text" aria-hidden="true">
+    <span data-hitokoto-static>{initial}</span>
+    <span data-hitokoto-dynamic></span>
+  </div>
+
+  <p class="sr-only" data-hitokoto-live aria-live="polite">{initial}</p>
+
+  <div class="hitokoto-foot">
+    <span>点击换一句 · 共 {sentences.length} 句</span>
+    <button class="hitokoto-next" type="button" data-hitokoto-next>
+      <Icon name="refresh" size={12} />
+      换一句
+    </button>
+  </div>
+</section>
+
+<script>
+  import { mountAllHitokoto } from '../scripts/hitokoto';
+
+  const init = () => mountAllHitokoto();
+  document.addEventListener('astro:page-load', init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>

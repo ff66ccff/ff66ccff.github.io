@@ -1,0 +1,48 @@
+---
+import type { Post } from '../lib/posts';
+import { postPath } from '../lib/posts';
+import { compactDate, excerpt, readingTime, slugifyTerm } from '../lib/format';
+
+interface Props {
+  post: Post;
+  featured?: boolean;
+  showTags?: boolean;
+}
+
+const { post, featured = false, showTags = true } = Astro.props;
+const { title, date, categories, tags } = post.data;
+const body = post.body ?? '';
+const minutes = readingTime(body);
+---
+
+<article class:list={['post-card', featured && 'is-featured']}>
+  <div class="post-card-meta">
+    <time datetime={date.toISOString()}>{compactDate(date)}</time>
+    {
+      categories.map((category) => (
+        <>
+          <span class="sep">/</span>
+          <a class="category" href={`/categories/${slugifyTerm(category)}/`}>{category}</a>
+        </>
+      ))
+    }
+    <span class="sep">·</span>
+    <span>{minutes} 分钟</span>
+  </div>
+
+  <h2 class="post-card-title">
+    <a href={postPath(post)}>{title}</a>
+  </h2>
+
+  <p class="post-card-excerpt">{excerpt(body, featured ? 180 : 110)}</p>
+
+  {
+    showTags && tags.length > 0 && (
+      <div class="post-card-tags">
+        {tags.map((tag) => (
+          <a class="tag" href={`/tags/${slugifyTerm(tag)}/`}>#{tag}</a>
+        ))}
+      </div>
+    )
+  }
+</article>

@@ -1,0 +1,120 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { SITE } from '../consts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  bodyClass?: string;
+  jsonLd?: Record<string, unknown>;
+  /** 设为 false 可关闭 canonical（例如 404 页） */
+  canonical?: string | false;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image = '/og-default.jpg',
+  type = 'website',
+  noindex = false,
+  bodyClass,
+  jsonLd,
+  canonical: canonicalOverride,
+} = Astro.props;
+
+const pageTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} · 技术与生活手记`;
+const canonical =
+  canonicalOverride === false
+    ? null
+    : new URL(canonicalOverride ?? Astro.url.pathname, SITE.url).toString();
+const ogImage = new URL(image, SITE.url).toString();
+
+const siteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.title,
+  alternateName: 'ff66ccff 的个人主页',
+  url: SITE.url,
+  description: SITE.description,
+  author: { '@type': 'Person', name: SITE.author, url: SITE.url },
+};
+---
+
+<!doctype html>
+<html lang={SITE.locale} data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.author} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/atom+xml" title={`${SITE.title} · Atom`} href="/atom.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.title} · RSS`} href="/rss.xml" />
+    <meta name="theme-color" content="#faf8fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0910" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(siteJsonLd)} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    <ClientRouter />
+
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored === 'dark' || stored === 'light' ? stored : prefersDark ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">跳到正文</a>
+    <div class="progress-bar" data-progress aria-hidden="true"></div>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <button class="back-to-top" data-back-to-top type="button" aria-label="回到顶部" title="回到顶部">
+      <Icon name="arrow-up" size={18} />
+    </button>
+
+    <dialog class="lightbox" data-lightbox aria-label="图片预览">
+      <button class="lightbox-close" data-lightbox-close type="button" aria-label="关闭预览">
+        <Icon name="close" size={18} />
+      </button>
+      <img data-lightbox-img alt="" />
+    </dialog>
+
+    <script>
+      import '../scripts/ui';
+    </script>
+  </body>
+</html>
