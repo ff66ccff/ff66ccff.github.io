@@ -19,6 +19,65 @@
   line-height: 1.2;
 }
 
+/* ==========================================================================
+   首页文字层可读性遮罩
+   --------------------------------------------------------------------------
+   壁纸换成高亮、细节密集的插画后，白色标题/打字机副标题容易和背景糊在一起。
+   这里用两层纯 CSS 阴影遮罩（不占布局、不拦截点击）压暗文字背后的画面：
+   1) .banner-text-overlay::before —— 覆盖层整体柔和暗角；
+   2) .banner-subtitle::before —— 打字机副标题专用的模糊阴影带，边缘
+      完全羽化，长句/短句来回切换时也不会露出硬边。
+   ========================================================================== */
+.banner-text-overlay {
+  isolation: isolate;
+}
+
+.banner-text-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 66% 64% at 50% 50%,
+    rgba(0, 0, 0, 0.36) 0%,
+    rgba(0, 0, 0, 0.24) 42%,
+    rgba(0, 0, 0, 0.11) 66%,
+    rgba(0, 0, 0, 0.03) 84%,
+    transparent 100%
+  );
+}
+
+/* 文字容器需要在遮罩之上（覆盖层是 flex 容器，z-index 对 flex 子项生效） */
+.banner-text-overlay > div {
+  position: relative;
+  z-index: 1;
+}
+
+/* 打字机副标题：加一层跟随整行文字的柔和阴影遮罩 */
+.banner-subtitle {
+  position: relative;
+  isolation: isolate;
+}
+
+.banner-subtitle::before {
+  content: "";
+  position: absolute;
+  inset: -0.85em -1.6em;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 999px;
+  background: radial-gradient(
+    closest-side,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.54) 40%,
+    rgba(0, 0, 0, 0.28) 66%,
+    rgba(0, 0, 0, 0.09) 84%,
+    transparent 100%
+  );
+  filter: blur(14px);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
