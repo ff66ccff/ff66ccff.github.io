@@ -1,11 +1,9 @@
 ---
-title: "辞旧迎新之时"
-date: "2026-01-02T00:00:00+08:00"
-categories:
-  - "生活"
+title: "辞旧迎新之时[BGM]"
+published: 2026-01-02T00:00:00+08:00
+category: "生活"
+draft: false
 ---
-
-# 辞旧迎新之时[BGM]
 
 <div class="music-player">
 <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="https://music.163.com/outchain/player?type=2&id=2616680887&auto=0&height=66"></iframe>

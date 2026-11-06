@@ -1,0 +1,94 @@
+---
+import { getImage } from "astro:assets";
+import type { ImageFormat } from "../../../types/config";
+import {
+	publicImageUrl,
+	resolveImageMetadata,
+} from "../../../utils/image-source-utils";
+import {
+	getImageFormats,
+	getImageQuality,
+	shouldAddNoReferrer,
+} from "../../../utils/image-utils";
+
+interface Props {
+	id?: string;
+	src: string;
+	media: string;
+	alt?: string;
+	class?: string;
+	position?: string;
+	loading?: "eager" | "lazy";
+	fetchpriority?: "high" | "low" | "auto";
+	formats?: ImageFormat[];
+	widths?: number[];
+	sizes?: string;
+	quality?: number;
+}
+
+const {
+	id,
+	src,
+	media,
+	alt = "",
+	position = "center",
+	loading = "lazy",
+	fetchpriority,
+	formats = getImageFormats(),
+	widths,
+	sizes,
+	quality = getImageQuality(),
+} = Astro.props;
+const className = Astro.props.class;
+const metadata = await resolveImageMetadata(src);
+const browserSrc = publicImageUrl(src);
+const sources = metadata
+	? await Promise.all(
+			formats.map(async (format) => {
+				const image = await getImage({
+					src: metadata,
+					format,
+					quality,
+					widths,
+				});
+				return {
+					format,
+					srcset: image.srcSet.attribute || image.src,
+				};
+			}),
+		)
+	: [{ format: undefined, srcset: browserSrc }];
+const transparentFallback =
+	"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/%3E";
+const referrerPolicy = shouldAddNoReferrer(browserSrc)
+	? "no-referrer"
+	: undefined;
+
+function getImageMimeType(format: ImageFormat | undefined): string | undefined {
+	if (!format) return undefined;
+	return `image/${format === "jpg" ? "jpeg" : format}`;
+}
+---
+
+<picture id={id} class="block w-full h-full">
+	{sources.map((source) => (
+		<source
+			media={media}
+			srcset={source.srcset}
+			sizes={sizes}
+			type={getImageMimeType(source.format)}
+		/>
+	))}
+	<img
+		src={transparentFallback}
+		alt={alt}
+		class={className}
+		style={`object-position: ${position}`}
+		width={metadata?.width ?? 1}
+		height={metadata?.height ?? 1}
+		loading={loading}
+		decoding="async"
+		fetchpriority={fetchpriority}
+		referrerpolicy={referrerPolicy}
+	/>
+</picture>

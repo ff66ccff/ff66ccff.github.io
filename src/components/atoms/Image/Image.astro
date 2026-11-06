@@ -1,0 +1,125 @@
+---
+import { Image as AstroImage, Picture } from "astro:assets";
+import type { ImageFormat, ResponsiveImageLayout } from "../../../types/config";
+import {
+	isRemoteImageSource,
+	publicImageUrl,
+	resolveImageMetadata,
+} from "../../../utils/image-source-utils";
+import {
+	getFallbackFormat,
+	getImageFormats,
+	getImageQuality,
+	shouldAddNoReferrer,
+} from "../../../utils/image-utils";
+
+interface Props {
+	id?: string;
+	src: string;
+	class?: string;
+	alt?: string;
+	position?: string;
+	basePath?: string;
+	loading?: "eager" | "lazy";
+	fetchpriority?: "high" | "low" | "auto";
+	// 响应式图像属性
+	layout?: ResponsiveImageLayout;
+	usePicture?: boolean;
+	formats?: ImageFormat[];
+	widths?: number[];
+	sizes?: string;
+	quality?: number;
+	overlay?: boolean;
+}
+
+const {
+	id,
+	src,
+	alt,
+	position = "center",
+	basePath = "/",
+	loading = "lazy",
+	fetchpriority,
+	layout = "constrained",
+	usePicture = true,
+	formats = getImageFormats(),
+	widths,
+	sizes,
+	quality = getImageQuality(),
+	overlay = true,
+} = Astro.props;
+const className = Astro.props.class;
+
+const fallbackFormat = getFallbackFormat();
+
+const isRemote = isRemoteImageSource(src);
+const isPublic = src.startsWith("/") && !isRemote;
+const img = await resolveImageMetadata(src, basePath);
+if (!img && !isPublic && !isRemote) {
+	console.error(`\n[ERROR] Image file not found: ${src}`);
+}
+
+const imageClass = "w-full h-full object-cover";
+const imageStyle = `object-position: ${position}`;
+
+// 基于通配符配置检查是否需要添加 referrerpolicy（仅对非本地图片）
+const fullSrc = isPublic ? publicImageUrl(src) : src;
+const referrerPolicy =
+	!img && shouldAddNoReferrer(fullSrc) ? "no-referrer" : undefined;
+
+// 构建响应式图像属性
+const responsiveProps = {
+	...(layout && { layout }),
+	...(widths && { widths }),
+	...(sizes && { sizes }),
+	...(quality && { quality }),
+};
+---
+
+<div id={id} class:list={[className, "overflow-hidden relative"]}>
+	{overlay && (
+		<div class="transition absolute inset-0 dark:bg-black/10 bg-opacity-50 pointer-events-none" />
+	)}
+	{
+		img && usePicture && (
+			<Picture
+				src={img}
+				alt={alt || ""}
+				class={imageClass}
+				style={imageStyle}
+				loading={loading}
+				fetchpriority={fetchpriority}
+				formats={formats}
+				fallbackFormat={fallbackFormat}
+				{...responsiveProps}
+			/>
+		)
+	}
+	{
+		img && !usePicture && (
+			<AstroImage
+				src={img}
+				alt={alt || ""}
+				class={imageClass}
+				style={imageStyle}
+				loading={loading}
+				fetchpriority={fetchpriority}
+				{...responsiveProps}
+			/>
+		)
+	}
+	{
+		!img && (
+			<img
+				src={fullSrc}
+				alt={alt || ""}
+				class={imageClass}
+				style={imageStyle}
+				loading={loading}
+				referrerpolicy={referrerPolicy}
+				decoding="async"
+				fetchpriority={fetchpriority}
+			/>
+		)
+	}
+</div>

@@ -1,0 +1,267 @@
+@reference "tailwindcss";
+
+.expressive-code {
+  @apply relative;
+
+  .frame {
+    @apply !shadow-none;
+  }
+
+  .title {
+    font-family: var(--ec-codeFontFml, "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+  }
+
+  /* 复制按钮样式 (Copy Button) */
+  .copy-btn {
+    all: initial;
+    @apply opacity-0 absolute active:scale-90 h-8 w-8 top-3 right-3 text-sm rounded-lg transition-all ease-in-out z-20 cursor-pointer;
+    background: var(--btn-regular-bg);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .copy-btn:hover {
+    background: var(--btn-regular-bg-hover);
+  }
+
+  .copy-btn-icon {
+    @apply absolute top-1/2 left-1/2 transition -translate-x-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none;
+    fill: var(--btn-content);
+  }
+
+  /* 默认复制图标 */
+  .copy-btn .copy-icon {
+    @apply opacity-100;
+    fill: var(--btn-content);
+  }
+
+  /* 复制成功状态图标 */
+  .copy-btn .success-icon {
+    @apply opacity-0;
+    fill: var(--btn-content);
+  }
+
+  /* 成功状态下的切换动画 */
+  .copy-btn.success .copy-icon {
+    @apply opacity-0 fill-(--deep-text);
+  }
+
+  .copy-btn.success .success-icon {
+    @apply opacity-100;
+  }
+
+  /* 悬停 frame 时显示复制按钮 */
+  .frame:hover .copy-btn {
+    opacity: 1;
+  }
+}
+
+/* 允许代码文本被选择 */
+.expressive-code .frame pre,
+.expressive-code .frame code {
+  user-select: text;
+}
+
+/* 代码行号不可选，但行内容可选 */
+.expressive-code code span.line::before {
+  user-select: none;
+}
+
+/* 长代码块沿用 Mizuki 原有的右上角折叠交互，由配置控制自动触发阈值。 */
+.expressive-code.auto-collapsible .frame {
+  position: relative;
+}
+
+.expressive-code.auto-collapsible .collapse-toggle-btn {
+  all: initial;
+  position: absolute;
+  top: 0.75rem;
+  right: 3.5rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  color: var(--btn-content);
+  background: var(--btn-regular-bg);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 150ms ease,
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+
+.expressive-code.auto-collapsible.collapsed .collapse-toggle-btn,
+.expressive-code.auto-collapsible .frame:hover .collapse-toggle-btn,
+.expressive-code.auto-collapsible .collapse-toggle-btn:focus-visible {
+  opacity: 1;
+}
+
+.expressive-code.auto-collapsible .collapse-toggle-btn:hover {
+  background: var(--btn-regular-bg-hover);
+}
+
+.expressive-code.auto-collapsible .collapse-toggle-btn:active {
+  transform: scale(0.9);
+}
+
+.expressive-code.auto-collapsible .collapse-toggle-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.expressive-code.auto-collapsible .collapse-toggle-btn svg {
+  width: 1rem;
+  height: 1rem;
+  pointer-events: none;
+  transition: transform 200ms ease;
+}
+
+.expressive-code.auto-collapsible.collapsed .collapse-toggle-btn svg {
+  transform: rotate(180deg);
+}
+
+.expressive-code.auto-collapsible .frame pre {
+  position: relative;
+  transition: max-height 250ms ease;
+}
+
+.expressive-code.auto-collapsible.collapsed .frame pre {
+  max-height: var(--code-collapse-preview-height, 16rem);
+  overflow: hidden;
+}
+
+.expressive-code.auto-collapsible.collapsed .frame pre::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4.5rem;
+  background: linear-gradient(to bottom, transparent, var(--codeblock-bg));
+  pointer-events: none;
+}
+
+/* 移动端适配 (Mobile) */
+@media (width < 768px) {
+  /* 调整复制按钮大小和位置 */
+  .expressive-code .copy-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .expressive-code .copy-btn-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .expressive-code.auto-collapsible .collapse-toggle-btn {
+    top: 0.5rem;
+    right: 3rem;
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .expressive-code.auto-collapsible .collapse-toggle-btn svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  /* 隐藏语言标签以节省空间 */
+  .expressive-code [data-language]::before {
+    display: none !important;
+  }
+}
+
+/* 主题适配 (Theme Support) */
+@media (prefers-color-scheme: light) {
+  .expressive-code .copy-btn {
+    box-shadow:
+      0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* 支持 Astro 的主题切换（非 dark 类时） */
+:root:not(.dark) .expressive-code .copy-btn {
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+@media print {
+  .expressive-code.auto-collapsible.collapsed .frame pre {
+    max-height: none !important;
+  }
+
+  .expressive-code.auto-collapsible.collapsed .frame pre::after,
+  .expressive-code .copy-btn,
+  .expressive-code .collapse-toggle-btn {
+    display: none !important;
+  }
+}
+/*
+ * Tab 代码组（rehype-code-group）
+ * Portions adapted from https://github.com/CuteLeaf/Firefly
+ * Copyright (c) 2024 saicaca
+ * Copyright (c) 2025 CuteLeaf
+ * Licensed under the MIT License. See THIRD_PARTY_NOTICES.md.
+ */
+.rehype-code-group {
+	margin: 1.5rem 0;
+	border-radius: var(--radius-large);
+	overflow: hidden;
+	background: var(--codeblock-bg);
+}
+
+.rehype-code-group .rcg-tab-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	padding: 0.45rem 0.55rem 0;
+	background: var(--codeblock-bg);
+	border-bottom: 1px solid var(--line-divider);
+}
+
+.rehype-code-group .rcg-tab {
+	padding: 0.55rem 0.75rem;
+	color: var(--tw-prose-body);
+	border: 0;
+	border-bottom: 2px solid transparent;
+	background: transparent;
+	cursor: pointer;
+	font: inherit;
+	font-size: 0.875rem;
+	transition: color 150ms ease, border-color 150ms ease;
+}
+
+.rehype-code-group .rcg-tab:hover,
+.rehype-code-group .rcg-tab.active {
+	color: var(--primary);
+	border-bottom-color: var(--primary);
+}
+
+.rehype-code-group .rcg-tab:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: -2px;
+}
+
+.rehype-code-group .rcg-block > .expressive-code {
+	margin: 0 !important;
+}
+
+.rehype-code-group .rcg-block > :first-child {
+	margin-top: 0;
+}
+
+.rehype-code-group .rcg-block > :last-child {
+	margin-bottom: 0;
+}

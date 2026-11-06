@@ -1,26 +1,29 @@
-import rss from '@astrojs/rss';
-import type { APIContext } from 'astro';
-import { getPublishedPosts } from '../lib/posts';
-import { buildFeedItems } from '../lib/feed';
-import { SITE } from '../consts';
+import type { RSSFeedItem } from "@astrojs/rss";
+import rss from "@astrojs/rss";
+import type { APIContext } from "astro";
+
+import { siteConfig } from "@/config";
+import { getFeedContentItems } from "@/utils/feed-data";
+import { escapeXml } from "@/utils/feed-xml";
 
 export async function GET(context: APIContext) {
-  const posts = await getPublishedPosts();
-  const items = buildFeedItems(posts);
+	if (!context.site) throw new Error("site not set");
 
-  return rss({
-    title: SITE.title,
-    description: SITE.description,
-    site: context.site ?? SITE.url,
-    trailingSlash: true,
-    customData: '<language>zh-CN</language>',
-    items: items.map((item) => ({
-      title: item.title,
-      pubDate: item.pubDate,
-      description: item.description,
-      link: item.link,
-      content: item.content,
-      categories: item.categories,
-    })),
-  });
+	const items: RSSFeedItem[] = (await getFeedContentItems(context.site)).map(
+		(item) => ({
+			title: item.title,
+			description: item.description,
+			pubDate: item.pubDate,
+			link: item.link,
+			content: item.content,
+		}),
+	);
+
+	return rss({
+		title: siteConfig.title,
+		description: siteConfig.subtitle || "No description",
+		site: context.site,
+		items,
+		customData: `<language>${escapeXml(siteConfig.lang)}</language>`,
+	});
 }

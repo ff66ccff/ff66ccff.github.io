@@ -1,12 +1,9 @@
 ---
 title: "C++ 竞赛（CSP）常用 STL 全注释版"
-date: "2026-01-22T00:00:00+08:00"
-categories:
-  - "编程"
+published: 2026-01-22T00:00:00+08:00
+category: "编程"
+draft: false
 ---
-
-
-# C++ 竞赛（CSP）常用 STL 全注释版
 
 ## 1. 基础容器：`array` / `vector` / `string`
 

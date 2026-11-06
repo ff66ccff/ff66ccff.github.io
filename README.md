@@ -4,108 +4,112 @@ ff66ccff 的个人主页：技术手记、生活随想、中文 VOCALOID 与科�
 
 线上地址：<https://ff66ccff.github.io>
 
-2026 年从 **Hexo 7 + Volantis** 迁移到 **Astro 7**：文章、个人资料、友链与一言数据全部保留，URL 兼容旧站。
+2026 年从 **Hexo 7 + Volantis** 迁移到 **Astro 7 + [Mizuki](https://github.com/LyraVoid/Mizuki) 主题**：文章、个人资料、友链与一言数据全部保留，文章链接保持旧的 `/年/月/日/文件名/` 格式。
 
-![首页（亮色）](docs/screenshots/home-light.webp)
+> 本项目基于开源主题 Mizuki（Apache-2.0）构建，只改了配置、内容、数据与少量主题适配，没有重写主题组件。
+
+| 首页 | 文章页 |
+| --- | --- |
+| ![首页](docs/screenshots/home-dark.webp) | ![文章页](docs/screenshots/post-dark.webp) |
+
+| 友链 | 移动端 |
+| --- | --- |
+| ![友链](docs/screenshots/friends-dark.webp) | ![移动端](docs/screenshots/home-mobile.webp) |
 
 ## 技术栈
 
 | 能力 | 实现 |
 | --- | --- |
-| 框架 | [Astro 7](https://astro.build)（Content Collections、ClientRouter 视图过渡） |
-| 语言 | TypeScript（strict） |
-| 样式 | 手写 CSS 设计系统，亮 / 暗双主题，无 CSS 框架 |
-| 代码高亮 | Shiki，`github-light` / `github-dark` 双主题 |
-| 一言打字机 | [typewriter-effect](https://www.npmjs.com/package/typewriter-effect)（MIT）+ 构建期静态整句 |
-| 图表 | mermaid（按需加载） |
-| 评论 | giscus（GitHub Discussions） |
-| 订阅 | Atom（/atom.xml）与 RSS（/rss.xml） |
-| SEO | Open Graph、Twitter Card、JSON-LD、sitemap、robots.txt |
-| 字体 | Inter Variable / JetBrains Mono Variable（fontsource，自托管） |
+| 框架 | Astro 7.1.3（静态输出） |
+| 主题 | Mizuki（Apache-2.0；Tailwind CSS 4、Svelte 5、Swup 页面过渡） |
+| 代码高亮 | Expressive Code |
+| 一言打字机 | 主题内置 `TypewriterText` 组件 + 本仓库的 710 句一言列表 |
+| 评论 | giscus（沿用旧站同一仓库与 pathname 映射） |
+| 搜索 | Pagefind（构建时生成索引） |
+| 订阅 | Atom（/atom.xml）、RSS（/rss.xml）、兼容旧 /rss2.xml |
+| 其他 | KaTeX、Mermaid、Fancybox 灯箱、目录、暗色模式、i18n（zh_CN） |
 | 部署 | GitHub Actions + GitHub Pages |
 
 ## 本地开发
 
-需要 Node.js **>= 22.23.4**（Astro 7 最低要求）。
+需要 Node.js >= 22.12 与 pnpm 11。
 
 ```bash
-npm install
-npm run dev      # 开发服务器 http://localhost:4321
-npm run build    # 构建到 dist/
-npm run preview  # 预览构建产物
-npm run check    # Astro + TypeScript 类型检查
-npm run sync     # 手动生成 Content Collections 类型（一般由 dev/build 自动完成）
+corepack enable        # 启用 package.json 里声明的 pnpm 版本
+pnpm install
+pnpm dev               # http://localhost:3000
+pnpm build             # 构建 dist/ 并生成 Pagefind 搜索索引
+pnpm preview           # 预览生产构建
+pnpm check             # astro check
 ```
+
+> 本地构建不需要外部内容仓库：根目录 `.env` 中 `ENABLE_CONTENT_SYNC=false` 即可（该文件不入库）。
 
 ## 目录结构
 
 ```text
 src/
-├─ content/posts/       # 文章（Markdown）
-├─ data/                # 结构化数据：个人资料 / 友链 / 一言
-├─ components/          # Hero、Hitokoto、PostCard、TOC、Giscus…
-├─ layouts/             # BaseLayout / PostLayout / PageLayout
-├─ lib/                 # posts / feed / format / site 等纯逻辑
-├─ pages/               # 路由：首页、文章、归档、分类、标签、友链、关于、404、feed
-├─ scripts/             # 客户端交互（主题、灯箱、打字机、mermaid…）
-├─ styles/global.css    # 设计系统
-└─ content.config.ts    # Content Collections schema
-public/                 # 头像、照片、favicon、OG 图等静态资源
-research/               # 迁移前的调研报告（Astro 7 / 一言打字机）
-docs/                   # 迁移说明
+├─ config/              # 站点配置（Mizuki 的配置体系）
+│  ├─ siteConfig.ts     # 站点标题、语言、主题色、横幅与一言、特色页面开关
+│  ├─ profileConfig.ts  # 个人资料：头像、昵称、简介、社交链接
+│  ├─ navBarConfig.ts   # 导航栏
+│  ├─ commentConfig.ts  # giscus 配置
+│  ├─ footerConfig.ts   # 页脚
+│  ├─ permalinkConfig.ts# 旧站永久链接格式
+│  └─ sidebarConfig.ts  # 侧边栏组件布局
+├─ content/
+│  ├─ posts/            # 8 篇文章
+│  └─ spec/             # 关于 / 友链页面的 Markdown
+├─ data/
+│  ├─ friends.ts        # 友链数据
+│  └─ quotes.ts         # 710 句一言
+├─ pages/               # 路由（主题提供）
+└─ components/          # 主题组件
+public/                 # 头像、照片、favicon、旧站 URL 跳转页
+docs/                   # 主题文档 + 迁移说明
+research/               # 迁移前的调研与验证记录（历史资料）
 ```
 
 ## 内容维护
 
 ### 新增文章
 
-在 `src/content/posts/` 新建 Markdown 文件，文件名即 URL 的最后一段：
+在 `src/content/posts/` 新建 Markdown 文件：
 
 ```yaml
 ---
 title: "文章标题"
-date: "2026-11-06T12:00:00+08:00"
-updated: "2026-11-06T12:00:00+08:00"   # 可选
-categories:
-  - 编程
-tags:
-  - Astro
-description: "可选的摘要，用于 SEO 与 RSS"
+published: 2026-11-06T12:00:00+08:00
+updated: 2026-11-06T12:00:00+08:00   # 可选
+tags: ["Astro", "前端"]
+category: "编程"
+draft: false
 ---
 ```
 
-文章 URL 为 `/年/月/日/文件名/`（与 Hexo 时代一致）。正文开头如果还写着 `# 标题`，构建时会自动去掉，避免与页面标题重复；磁盘上的 Markdown 不会被修改。
+文章 URL 由 `src/config/permalinkConfig.ts` 控制，当前为 `%year%/%monthnum%/%day%/%raw_postname%`，与 Hexo 旧链接一致（保留文件名大小写）。标题由主题从 frontmatter 渲染，正文不需要再写一级标题。
 
-### 个人资料
+### 修改个人资料 / 友链 / 一言
 
-编辑 `src/data/profile.json`：昵称、头像、站点描述、社交链接（RSS / GitHub / 网易云音乐）、giscus 评论配置。
-
-### 友链
-
-编辑 `src/data/friends.json`，按分组维护 `title / url / avatar / description / keywords / color`。
-
-### 一言
-
-`src/data/quotes.json` 中是一言句子数组（当前 710 条）。首屏会在构建期随机取一句静态渲染（无 JS 也可见），点击「换一句」时才动态加载全部句子并用 typewriter-effect 打字。
-
-### 导航
-
-`src/lib/site.ts` 中的 `nav` 数组。
+- 个人资料：`src/config/profileConfig.ts`
+- 友链：`src/data/friends.ts`（友链页介绍文字在 `src/content/spec/friends.md`）
+- 一言：`src/data/quotes.ts`（首页横幅的打字机按顺序轮播）
+- 站点标题、主题色、横幅图、特色页面开关：`src/config/siteConfig.ts`
 
 ## 部署
 
-推送到 `main` 后，`.github/workflows/deploy.yml` 会用 `withastro/action@v6` 构建并部署到 GitHub Pages。仓库是用户主页根仓库（`ff66ccff.github.io`），因此 `astro.config.mjs` 中 **不能设置 `base`**。
+推送到 `main` 后，`.github/workflows/deploy.yml` 使用 `withastro/action@v6`（Node 24 + pnpm 11）构建并部署到 GitHub Pages。仓库是用户主页根仓库，因此 `base` 保持 `/`。
 
-## 从 Hexo 迁移
+## 旧站兼容
 
-- 迁移说明与 URL 对照：[docs/migration-from-hexo.md](docs/migration-from-hexo.md)
-- Astro 7 官方文档调研：[research/astro7-official.md](research/astro7-official.md)
-- 一言打字机调研：[research/typewriter-and-astro.md](research/typewriter-and-astro.md)
-- 内容迁移校验报告：[research/content-migration-report.md](research/content-migration-report.md)
-- 独立 QA 验收报告：[research/qa-report.md](research/qa-report.md)
+- 文章：`/2025/11/09/welcome-to-the-blog/` 等 8 个旧链接全部保留。
+- `/archives/`、`/tags/*`、`/categories/*`：静态跳转页，自动跳到主题的 `/archive/` 并带上对应筛选参数。
+- `/atom.xml`、`/rss.xml`、`/rss2.xml`：均可用。
+- 评论区沿用 giscus 的 `pathname` 映射，旧文章链接下的历史评论继续可见。
 
-旧 Hexo 文件已从工作区移除，仍保留在 git 历史中（迁移前最后一次提交为 `eb2f92e`）。
+详细迁移记录见 [docs/migration-from-hexo.md](docs/migration-from-hexo.md)。
 
-## 协议
+## 许可
 
-文章内容遵循 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans) 协议。
+- 站点内容：<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans">CC BY-NC-SA 4.0</a>
+- 主题：[Mizuki](https://github.com/LyraVoid/Mizuki)，Apache-2.0（仓库内保留 `LICENSE`、`LICENSE.MIT`、`THIRD_PARTY_NOTICES.md`）
