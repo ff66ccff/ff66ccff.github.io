@@ -34,6 +34,7 @@ npm run dev      # 开发服务器 http://localhost:4321
 npm run build    # 构建到 dist/
 npm run preview  # 预览构建产物
 npm run check    # Astro + TypeScript 类型检查
+npm run sync     # 手动生成 Content Collections 类型（一般由 dev/build 自动完成）
 ```
 
 ## 目录结构
